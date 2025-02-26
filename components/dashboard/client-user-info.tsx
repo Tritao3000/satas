@@ -78,7 +78,7 @@ export default function ClientUserInfo({
           </Avatar>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent side="right" align="start" className="w-56">
+      <DropdownMenuContent side="top" align="center" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{username}</p>
