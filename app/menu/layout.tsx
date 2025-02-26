@@ -6,6 +6,7 @@ import {
   SidebarProvider,
 } from "@/components/dashboard/sidebar";
 import { ProfileProvider } from "@/components/dashboard/profile-context";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function MenuLayout({
   children,
@@ -91,6 +92,7 @@ export default function MenuLayout({
       <SidebarProvider defaultOpen={true}>
         <div className="flex min-h-screen w-full">
           <DashboardSidebar />
+          <SidebarTrigger className="absolute top-4 left-4 md:hidden" />
           <main className="flex-1 p-6 overflow-auto w-full">{children}</main>
         </div>
       </SidebarProvider>
