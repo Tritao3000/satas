@@ -14,9 +14,13 @@ import {
   MoreVertical,
   User2Icon,
   PaletteIcon,
+  BriefcaseBusiness,
+  UserCog,
+  Contact,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useProfile } from "./profile-context";
 
 import {
   Sidebar,
@@ -32,8 +36,18 @@ import {
 } from "@/components/ui/sidebar";
 
 import ClientUserInfo from "./client-user-info";
+
+// Define the type for navigation items
+interface NavItem {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description?: string;
+  role?: "individual" | "startup";
+}
+
 // Navigation items for the sidebar
-const navItems = [
+const navItems: NavItem[] = [
   {
     name: "Dashboard",
     href: "/menu",
@@ -46,18 +60,43 @@ const navItems = [
   },
   {
     name: "Jobs",
+    href: "/jobs",
+    icon: BriefcaseBusiness,
+    description: "Browse and apply for jobs",
+  },
+  {
+    name: "My Applications",
+    href: "/menu/applications",
+    icon: UserCog,
+    description: "Track your job applications",
+    role: "individual",
+  },
+  {
+    name: "Manage Jobs",
     href: "/menu/jobs",
-    icon: BriefcaseIcon,
+    icon: UserCog,
+    description: "Create and manage job postings",
+    role: "startup",
   },
   {
     name: "Events",
-    href: "/menu/events",
+    href: "/events",
     icon: CalendarIcon,
+    description: "Browse upcoming events",
   },
   {
-    name: "Messages",
-    href: "/menu/messages",
-    icon: MessageSquareIcon,
+    name: "My Events",
+    href: "/menu/my-events",
+    icon: Contact,
+    description: "View events you're registered for",
+    role: "individual",
+  },
+  {
+    name: "Manage Events",
+    href: "/menu/events",
+    icon: Contact,
+    description: "Create and manage your events",
+    role: "startup",
   },
   {
     name: "Settings",
@@ -72,6 +111,15 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isExpanded = state === "expanded";
+  const { userType, isLoading } = useProfile();
+
+  // Filter navigation items based on user role
+  const filteredNavItems = navItems.filter((item) => {
+    // If the item has no role restriction, show it to everyone
+    if (!item.role) return true;
+    // Otherwise, only show if the user's role matches
+    return item.role === userType;
+  });
 
   return (
     <Sidebar collapsible="icon">
@@ -82,7 +130,7 @@ export function DashboardSidebar() {
 
       <SidebarContent className="p-2">
         <SidebarMenu>
-          {navItems.map((item) => {
+          {filteredNavItems.map((item) => {
             const Icon = item.icon;
             return (
               <SidebarMenuItem
@@ -107,7 +155,11 @@ export function DashboardSidebar() {
                     )}
                   >
                     <Icon className="h-5 w-5 flex-shrink-0" />
-                    {isExpanded && <span>{item.name}</span>}
+                    {isExpanded && (
+                      <div className="flex flex-col">
+                        <span>{item.name}</span>
+                      </div>
+                    )}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -116,7 +168,7 @@ export function DashboardSidebar() {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="border-t ">
+      <SidebarFooter className="border-t">
         <ClientUserInfo isExpanded={isExpanded} />
       </SidebarFooter>
     </Sidebar>

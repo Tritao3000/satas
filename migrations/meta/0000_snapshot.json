@@ -1,5 +1,5 @@
 {
-  "id": "488dbf80-6a19-4802-9f7a-043da34eb3cb",
+  "id": "30789da2-32d5-4d58-99a1-d8f05ed74880",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -30,17 +30,70 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "event_registrations_event_id_idx": {
+          "name": "event_registrations_event_id_idx",
+          "columns": [
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "event_registrations_registrant_id_idx": {
+          "name": "event_registrations_registrant_id_idx",
+          "columns": [
+            {
+              "expression": "registrant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "event_registrations_unique": {
+          "name": "event_registrations_unique",
+          "columns": [
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "registrant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "event_registrations_event_id_events_id_fk": {
           "name": "event_registrations_event_id_events_id_fk",
@@ -55,15 +108,15 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "event_registrations_registrant_id_individual_profiles_user_id_fk": {
-          "name": "event_registrations_registrant_id_individual_profiles_user_id_fk",
+        "event_registrations_registrant_id_users_id_fk": {
+          "name": "event_registrations_registrant_id_users_id_fk",
           "tableFrom": "event_registrations",
-          "tableTo": "individual_profiles",
+          "tableTo": "users",
           "columnsFrom": [
             "registrant_id"
           ],
           "columnsTo": [
-            "user_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -127,33 +180,71 @@
           "primaryKey": false,
           "notNull": false
         },
+        "event_image_path": {
+          "name": "event_image_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "events_startup_id_idx": {
+          "name": "events_startup_id_idx",
+          "columns": [
+            {
+              "expression": "startup_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "events_date_idx": {
+          "name": "events_date_idx",
+          "columns": [
+            {
+              "expression": "date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
-        "events_startup_id_startup_profiles_user_id_fk": {
-          "name": "events_startup_id_startup_profiles_user_id_fk",
+        "events_startup_id_users_id_fk": {
+          "name": "events_startup_id_users_id_fk",
           "tableFrom": "events",
-          "tableTo": "startup_profiles",
+          "tableTo": "users",
           "columnsFrom": [
             "startup_id"
           ],
           "columnsTo": [
-            "user_id"
+            "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -229,6 +320,12 @@
         },
         "github": {
           "name": "github",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cv_path": {
+          "name": "cv_path",
           "type": "text",
           "primaryKey": false,
           "notNull": false

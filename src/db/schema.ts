@@ -5,6 +5,8 @@ import {
   text,
   timestamp,
   uuid,
+  index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -57,6 +59,7 @@ export const individualProfiles = pgTable("individual_profiles", {
   linkedin: text("linkedin"),
   twitter: text("twitter"),
   github: text("github"),
+  cvPath: text("cv_path"),
   website: text("website"),
   profilePicture: text("profile_picture"),
   coverPicture: text("cover_picture"),
@@ -103,37 +106,57 @@ export const jobApplications = pgTable("job_applications", {
 
 export type JobApplication = typeof jobApplications;
 
-export const events = pgTable("events", {
-  id: uuid("id").primaryKey(),
-  startupId: uuid("startup_id")
-    .notNull()
-    .references(() => startupProfiles.userId, { onDelete: "cascade" }),
-  title: text("title").notNull(),
-  description: text("description"),
-  location: text("location").notNull(),
-  date: timestamp("date").notNull(),
-  startTime: timestamp("start_time"),
-  endTime: timestamp("end_time"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .$onUpdate(() => new Date()),
-});
+export const events = pgTable(
+  "events",
+  {
+    id: uuid("id").primaryKey(),
+    startupId: uuid("startup_id")
+      .notNull()
+      .references(() => users.id),
+    title: text("title").notNull(),
+    description: text("description"),
+    location: text("location").notNull(),
+    date: timestamp("date").notNull(),
+    startTime: timestamp("start_time"),
+    endTime: timestamp("end_time"),
+    eventImagePath: text("event_image_path"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => {
+    return {
+      startupIdIdx: index("events_startup_id_idx").on(table.startupId),
+      dateIdx: index("events_date_idx").on(table.date),
+    };
+  }
+);
+
+export const eventRegistrations = pgTable(
+  "event_registrations",
+  {
+    id: uuid("id").primaryKey(),
+    eventId: uuid("event_id")
+      .notNull()
+      .references(() => events.id, { onDelete: "cascade" }),
+    registrantId: uuid("registrant_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => {
+    return {
+      eventIdIdx: index("event_registrations_event_id_idx").on(table.eventId),
+      registrantIdIdx: index("event_registrations_registrant_id_idx").on(
+        table.registrantId
+      ),
+      // Ensure a user can only register once for an event
+      uniqueRegistration: uniqueIndex("event_registrations_unique").on(
+        table.eventId,
+        table.registrantId
+      ),
+    };
+  }
+);
 
 export type Event = typeof events;
-
-export const eventRegistrations = pgTable("event_registrations", {
-  id: uuid("id").primaryKey(),
-  eventId: uuid("event_id")
-    .notNull()
-    .references(() => events.id, { onDelete: "cascade" }),
-  registrantId: uuid("registrant_id")
-    .notNull()
-    .references(() => individualProfiles.userId, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .$onUpdate(() => new Date()),
-});
-
-export type EventRegistration = typeof eventRegistrations;
