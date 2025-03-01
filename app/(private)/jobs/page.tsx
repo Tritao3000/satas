@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useJobs } from "@/app/hooks/use-jobs";
-import { JobCard } from "@/components/jobs/job-card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Loader2, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from 'react';
+import { useJobs } from '@/app/hooks/use-jobs';
+import { JobCard } from '@/components/jobs/job-card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { BriefcaseBusiness, Loader2, Search } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 type JobType = {
   id: string;
@@ -24,7 +24,7 @@ type JobType = {
 export default function JobsPage() {
   const router = useRouter();
   const { jobs, isLoading, isError } = useJobs();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [jobType, setJobType] = useState<string | null>(null);
   const [filteredJobs, setFilteredJobs] = useState<JobType[]>([]);
 
@@ -48,22 +48,22 @@ export default function JobsPage() {
   }, [jobs, searchTerm, jobType]);
 
   const handleReset = () => {
-    setSearchTerm("");
+    setSearchTerm('');
     setJobType(null);
   };
 
   return (
-    <div className="container py-10">
-      <div className="mb-8 text-center max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">
-          Find Your Next Job
-        </h1>
-        <p className="text-muted-foreground">
-          Browse through job opportunities from innovative startups
-        </p>
+    <div className="">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold">Jobs</h1>
+          <p className="text-muted-foreground text-sm">
+            Browse through job opportunities from innovative startups
+          </p>
+        </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
@@ -75,8 +75,9 @@ export default function JobsPage() {
         </div>
 
         <Tabs
-          defaultValue={jobType || "all"}
-          onValueChange={(value) => setJobType(value === "all" ? null : value)}
+          defaultValue={jobType || 'all'}
+          onValueChange={(value) => setJobType(value === 'all' ? null : value)}
+          className="w-full md:w-auto"
         >
           <TabsList>
             <TabsTrigger value="all">All Types</TabsTrigger>
@@ -96,6 +97,7 @@ export default function JobsPage() {
       {isLoading ? (
         <div className="flex justify-center p-12">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <span className="ml-2">Loading jobs...</span>
         </div>
       ) : isError ? (
         <div className="text-center p-12 text-destructive">
@@ -109,8 +111,9 @@ export default function JobsPage() {
         </div>
       ) : (
         <div className="text-center p-12 border rounded-lg bg-muted/50">
-          <h3 className="font-medium text-lg mb-2">No jobs found</h3>
-          <p className="text-muted-foreground">
+          <BriefcaseBusiness className="mx-auto size-8 text-muted-foreground" />
+          <h3 className="font-medium text-lg  mt-2">No jobs found</h3>
+          <p className="text-muted-foreground text-sm">
             Try adjusting your search criteria or check back later for new
             opportunities.
           </p>

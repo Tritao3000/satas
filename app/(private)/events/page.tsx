@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Search, Loader2 } from "lucide-react";
-import { useEvents } from "../../hooks/use-events";
-import { EventCard } from "@/components/events/event-card";
-import Link from "next/link";
+import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calendar, Search, Loader2 } from 'lucide-react';
+import { useEvents } from '../../hooks/use-events';
+import { EventCard } from '@/components/events/event-card';
+import Link from 'next/link';
 
 export default function EventsPage() {
   const { events, isLoading, isError } = useEvents();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
     if (!events) return;
@@ -33,10 +33,10 @@ export default function EventsPage() {
     }
 
     // Apply tab filter
-    if (activeTab === "upcoming") {
+    if (activeTab === 'upcoming') {
       const now = new Date();
       filtered = filtered.filter((event) => new Date(event.date) >= now);
-    } else if (activeTab === "past") {
+    } else if (activeTab === 'past') {
       const now = new Date();
       filtered = filtered.filter((event) => new Date(event.date) < now);
     }
@@ -45,7 +45,7 @@ export default function EventsPage() {
     filtered.sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
-      return activeTab === "past"
+      return activeTab === 'past'
         ? dateB.getTime() - dateA.getTime()
         : dateA.getTime() - dateB.getTime();
     });
@@ -58,58 +58,60 @@ export default function EventsPage() {
   };
 
   const handleReset = () => {
-    setSearchTerm("");
-    setActiveTab("all");
+    setSearchTerm('');
+    setActiveTab('all');
   };
 
   return (
-    <div className="container py-8">
-      <div className="flex flex-col items-center mb-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Events</h1>
-        <p className="text-muted-foreground mt-2 max-w-2xl">
-          Discover networking events, workshops, and opportunities to connect
-          with startups and professionals.
-        </p>
+    <div className="">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold">Events</h1>
+          <p className="text-muted-foreground text-sm">
+            Discover networking events, workshops, and opportunities
+          </p>
+        </div>
       </div>
 
-      <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
-        <div className="relative w-full md:w-1/2">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search events..."
-            className="pl-8"
+            className="pl-9"
             value={searchTerm}
             onChange={handleSearch}
           />
         </div>
+
+        <Tabs
+          defaultValue="all"
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full md:w-auto"
+        >
+          <TabsList>
+            <TabsTrigger value="all">All Events</TabsTrigger>
+            <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+            <TabsTrigger value="past">Past Events</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         <Button
           variant="outline"
           onClick={handleReset}
           className="w-full md:w-auto"
-          disabled={!searchTerm && activeTab === "all"}
+          disabled={!searchTerm && activeTab === 'all'}
         >
-          Reset Filters
+          Reset
         </Button>
       </div>
-
-      <Tabs
-        defaultValue="all"
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="w-full mb-8"
-      >
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all">All Events</TabsTrigger>
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-          <TabsTrigger value="past">Past Events</TabsTrigger>
-        </TabsList>
-      </Tabs>
 
       {isLoading ? (
         <div className="flex justify-center items-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-2 text-lg">Loading events...</span>
+          <span className="ml-2">Loading events...</span>
         </div>
       ) : isError ? (
         <div className="text-center py-12">
@@ -119,23 +121,13 @@ export default function EventsPage() {
           </Button>
         </div>
       ) : filteredEvents.length === 0 ? (
-        <div className="text-center py-12 border rounded-lg bg-muted/20">
-          <Calendar className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">No events found</h3>
-          <p className="text-muted-foreground mt-2">
-            {searchTerm
-              ? "Try adjusting your search term."
-              : activeTab === "upcoming"
-                ? "There are no upcoming events scheduled at the moment."
-                : activeTab === "past"
-                  ? "There are no past events to display."
-                  : "There are no events to display."}
+        <div className="text-center p-12 border rounded-lg bg-muted/50">
+          <Calendar className="mx-auto size-8 text-muted-foreground" />
+          <h3 className="font-medium text-lg  mt-2">No events found</h3>
+          <p className="text-muted-foreground text-sm">
+            Try adjusting your search criteria or check back later for new
+            opportunities.
           </p>
-          {searchTerm && (
-            <Button variant="outline" onClick={handleReset} className="mt-4">
-              Clear Search
-            </Button>
-          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

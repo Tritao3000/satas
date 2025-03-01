@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -9,23 +9,23 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Building, Calendar } from "lucide-react";
-import { toast } from "sonner";
-import { format } from "date-fns";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import useSWR from "swr";
-import Image from "next/image";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, Building, Calendar, BriefcaseBusiness } from 'lucide-react';
+import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import useSWR from 'swr';
+import Image from 'next/image';
+import { Label } from '@/components/ui/label';
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
   const res = await fetch(url);
   if (!res.ok) {
-    throw new Error("An error occurred while fetching the data.");
+    throw new Error('An error occurred while fetching the data.');
   }
   return res.json();
 };
@@ -50,14 +50,14 @@ type JobApplication = {
 
 export default function ApplicationsPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState('all');
 
   // Fetch user data using SWR
   const {
     data: userData,
     error: userError,
     isLoading: userIsLoading,
-  } = useSWR("/api/user/me", fetcher);
+  } = useSWR('/api/user/me', fetcher);
 
   // Fetch applications data based on user type
   const {
@@ -66,7 +66,7 @@ export default function ApplicationsPage() {
     isLoading: applicationsIsLoading,
   } = useSWR(
     () =>
-      userData?.userType === "individual" ? "/api/jobs/applications" : null,
+      userData?.userType === 'individual' ? '/api/jobs/applications' : null,
     fetcher
   );
 
@@ -76,9 +76,19 @@ export default function ApplicationsPage() {
   // Handle loading state
   if (isLoading) {
     return (
-      <div className="container mx-auto py-10">
-        <h1 className="text-3xl font-bold">Applications</h1>
-        <div className="mt-6">Loading applications...</div>
+      <div className="">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-semibold">Applications</h1>
+            <p className="text-muted-foreground text-sm">
+              Manage your job applications
+            </p>
+          </div>
+        </div>
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="ml-2">Loading applications...</span>
+        </div>
       </div>
     );
   }
@@ -86,9 +96,16 @@ export default function ApplicationsPage() {
   // Handle error state
   if (error) {
     return (
-      <div className="container mx-auto py-10">
-        <h1 className="text-3xl font-bold">Applications</h1>
-        <div className="mt-6 text-red-500">
+      <div className="">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-semibold">Applications</h1>
+            <p className="text-muted-foreground text-sm">
+              Manage your job applications
+            </p>
+          </div>
+        </div>
+        <div className="text-center py-12 text-destructive">
           Error loading applications. Please try again later.
         </div>
       </div>
@@ -96,28 +113,24 @@ export default function ApplicationsPage() {
   }
 
   // Handle user type check
-  if (userData?.userType !== "individual") {
+  if (userData?.userType !== 'individual') {
     return (
-      <div className="container mx-auto py-10">
-        <h1 className="text-3xl font-bold">Applications</h1>
-        <div className="mt-6">
-          This page is only available for individual users.
+      <div className="">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-semibold">Applications</h1>
+            <p className="text-muted-foreground text-sm">
+              Manage your job applications
+            </p>
+          </div>
         </div>
-      </div>
-    );
-  }
-
-  // Handle no applications
-  if (!applications || applications.length === 0) {
-    return (
-      <div className="container mx-auto py-10">
-        <h1 className="text-3xl font-bold">Applications</h1>
-        <div className="mt-6">
-          You haven't applied to any jobs yet. Check out available jobs{" "}
-          <Link href="/jobs" className="text-blue-500 underline">
-            here
-          </Link>
-          .
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
+            This page is only available for individual users.
+          </p>
+          <Button asChild className="mt-4">
+            <Link href="/menu">Go to Dashboard</Link>
+          </Button>
         </div>
       </div>
     );
@@ -125,59 +138,72 @@ export default function ApplicationsPage() {
 
   // Group applications by status
   const pendingApplications = applications.filter(
-    (app: JobApplication) => app.status === "pending"
+    (app: JobApplication) => app.status === 'pending'
   );
   const acceptedApplications = applications.filter(
-    (app: JobApplication) => app.status === "accepted"
+    (app: JobApplication) => app.status === 'accepted'
   );
   const rejectedApplications = applications.filter(
-    (app: JobApplication) => app.status === "rejected"
+    (app: JobApplication) => app.status === 'rejected'
   );
 
+  // Filter applications based on active tab
+  const filteredApplications = applications?.filter((app: JobApplication) => {
+    if (activeTab === 'all') return true;
+    return app.status.toLowerCase() === activeTab.toLowerCase();
+  });
+
+  // Determine which applications to display based on active tab
+  const applicationsToDisplay =
+    activeTab === 'all'
+      ? applications
+      : activeTab === 'pending'
+        ? pendingApplications
+        : activeTab === 'accepted'
+          ? acceptedApplications
+          : rejectedApplications;
+
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold">Applications</h1>
-      <Tabs defaultValue="all" className="mt-6">
+    <div className="">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold">Applications</h1>
+          <p className="text-muted-foreground text-sm">
+            Manage your job applications
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/jobs">Browse Jobs</Link>
+        </Button>
+      </div>
+      <Tabs
+        defaultValue="all"
+        className="w-full mb-6"
+        value={activeTab}
+        onValueChange={setActiveTab}
+      >
         <TabsList>
-          <TabsTrigger value="all">All ({applications.length})</TabsTrigger>
-          <TabsTrigger value="pending">
-            Pending ({pendingApplications.length})
-          </TabsTrigger>
-          <TabsTrigger value="accepted">
-            Accepted ({acceptedApplications.length})
-          </TabsTrigger>
-          <TabsTrigger value="rejected">
-            Rejected ({rejectedApplications.length})
-          </TabsTrigger>
+          <TabsTrigger value="all">All Applications</TabsTrigger>
+          <TabsTrigger value="pending">Pending</TabsTrigger>
+          <TabsTrigger value="accepted">Accepted</TabsTrigger>
+          <TabsTrigger value="rejected">Rejected</TabsTrigger>
         </TabsList>
-        <TabsContent value="all">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {applications.map((application: JobApplication) => (
+
+        {applicationsToDisplay.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-6">
+            {applicationsToDisplay.map((application: JobApplication) => (
               <ApplicationCard key={application.id} application={application} />
             ))}
           </div>
-        </TabsContent>
-        <TabsContent value="pending">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {pendingApplications.map((application: JobApplication) => (
-              <ApplicationCard key={application.id} application={application} />
-            ))}
+        ) : (
+          <div className="text-center p-12 border rounded-lg bg-muted/50 mt-6">
+            <BriefcaseBusiness className="mx-auto size-8 text-muted-foreground" />
+            <h3 className="font-medium text-lg mt-2">No applications found</h3>
+            <p className="text-muted-foreground text-sm">
+              You haven't applied to any jobs in this category yet.
+            </p>
           </div>
-        </TabsContent>
-        <TabsContent value="accepted">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {acceptedApplications.map((application: JobApplication) => (
-              <ApplicationCard key={application.id} application={application} />
-            ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="rejected">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {rejectedApplications.map((application: JobApplication) => (
-              <ApplicationCard key={application.id} application={application} />
-            ))}
-          </div>
-        </TabsContent>
+        )}
       </Tabs>
     </div>
   );
@@ -185,9 +211,9 @@ export default function ApplicationsPage() {
 
 function ApplicationCard({ application }: { application: JobApplication }) {
   const statusVariant = {
-    pending: "bg-yellow-100 text-yellow-800",
-    accepted: "bg-green-100 text-green-800",
-    rejected: "bg-red-100 text-red-800",
+    pending: 'bg-yellow-100 text-yellow-800',
+    accepted: 'bg-green-100 text-green-800',
+    rejected: 'bg-red-100 text-red-800',
   };
 
   const statusClass =
@@ -195,7 +221,7 @@ function ApplicationCard({ application }: { application: JobApplication }) {
     statusVariant.pending;
   const date = application.createdAt
     ? new Date(application.createdAt).toLocaleDateString()
-    : "Unknown date";
+    : 'Unknown date';
 
   return (
     <Card>
@@ -204,7 +230,7 @@ function ApplicationCard({ application }: { application: JobApplication }) {
           {application.startup?.logo ? (
             <Image
               src={application.startup.logo}
-              alt={application.startup.name || "Company logo"}
+              alt={application.startup.name || 'Company logo'}
               width={40}
               height={40}
               className="rounded-md"
@@ -216,10 +242,10 @@ function ApplicationCard({ application }: { application: JobApplication }) {
           )}
           <div>
             <CardTitle>
-              {application.job?.title || "Unknown position"}
+              {application.job?.title || 'Unknown position'}
             </CardTitle>
             <div className="text-sm text-muted-foreground">
-              {application.startup?.name || "Unknown company"}
+              {application.startup?.name || 'Unknown company'}
             </div>
           </div>
         </div>
@@ -229,13 +255,13 @@ function ApplicationCard({ application }: { application: JobApplication }) {
           <div className="flex justify-between">
             <Label>Location</Label>
             <span className="text-sm">
-              {application.job?.location || "Not specified"}
+              {application.job?.location || 'Not specified'}
             </span>
           </div>
           <div className="flex justify-between">
             <Label>Type</Label>
             <span className="text-sm">
-              {application.job?.type || "Not specified"}
+              {application.job?.type || 'Not specified'}
             </span>
           </div>
           <div className="flex justify-between">
