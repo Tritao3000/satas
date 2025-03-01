@@ -6,7 +6,7 @@ import { createClient } from '@/utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import { JobCard } from '@/components/jobs/job-card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { PlusIcon, Loader2 } from 'lucide-react';
+import { PlusIcon, Loader2, BriefcaseBusiness } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -114,15 +114,15 @@ export default function JobsManagementPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center p-8 border rounded-lg bg-muted/50">
-              <p className="text-muted-foreground mb-4">
+            <div className="text-center p-12 border rounded-lg bg-muted/50">
+              <BriefcaseBusiness className="mx-auto size-8 text-muted-foreground" />
+              <h3 className="font-medium text-lg  mt-2">No jobs found</h3>
+              <p className="text-muted-foreground text-sm">
                 You haven't posted any jobs yet
               </p>
-              <Button asChild>
-                <Link href="/menu/jobs/create">
-                  <PlusIcon className="h-4 w-4 mr-2" />
-                  Post Your First Job
-                </Link>
+
+              <Button className="mt-4" asChild>
+                <Link href="/menu/jobs/create">Post Your First Job</Link>
               </Button>
             </div>
           )}
@@ -149,8 +149,16 @@ export default function JobsManagementPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center p-8 border rounded-lg bg-muted/50">
-              <p className="text-muted-foreground">No jobs found</p>
+            <div className="text-center p-12 border rounded-lg bg-muted/50">
+              <BriefcaseBusiness className="mx-auto size-8 text-muted-foreground" />
+              <h3 className="font-medium text-lg  mt-2">No jobs found</h3>
+              <p className="text-muted-foreground text-sm">
+                You haven't posted any jobs yet
+              </p>
+
+              <Button className="mt-4" asChild>
+                <Link href="/menu/jobs/create">Post Your First Job</Link>
+              </Button>
             </div>
           )}
         </TabsContent>

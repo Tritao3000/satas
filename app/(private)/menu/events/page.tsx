@@ -5,7 +5,7 @@ import { useEvents } from '@/app/hooks/use-events';
 import { createClient } from '@/utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Loader2 } from 'lucide-react';
+import { Plus, Search, Loader2, Calendar } from 'lucide-react';
 import { EventCard } from '@/components/events/event-card';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -197,23 +197,14 @@ export default function EventsManagementPage() {
           </Button>
         </div>
       ) : filteredEvents.length === 0 ? (
-        <div className="text-center py-12 border rounded-lg bg-muted/20">
-          <h3 className="mt-4 text-lg font-semibold">No events found</h3>
-          <p className="text-muted-foreground mt-2">
-            {searchTerm
-              ? 'Try adjusting your search term.'
-              : activeTab === 'upcoming'
-                ? 'You have no upcoming events scheduled.'
-                : activeTab === 'past'
-                  ? 'You have no past events to display.'
-                  : "You haven't created any events yet."}
+        <div className="text-center p-12 border rounded-lg bg-muted/50">
+          <Calendar className="mx-auto size-8 text-muted-foreground" />
+          <h3 className="font-medium text-lg  mt-2">No events found</h3>
+          <p className="text-muted-foreground text-sm">
+            You haven't created any events yet
           </p>
-          {searchTerm && (
-            <Button variant="outline" onClick={handleReset} className="mt-4">
-              Clear Search
-            </Button>
-          )}
-          <Button asChild className="mt-4 ml-2">
+
+          <Button asChild className="mt-4 ">
             <Link href="/menu/events/new">Create Your First Event</Link>
           </Button>
         </div>
