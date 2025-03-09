@@ -5,42 +5,22 @@ import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { EventForm } from "@/components/events/event-form";
 import { Loader2 } from "lucide-react";
-
+import { useProfile } from "@/components/dashboard/profile-context";
+import { toast } from "sonner";
 export default function NewEventPage() {
-  const [isStartup, setIsStartup] = useState<boolean | null>(null);
   const router = useRouter();
+  const { userType, isLoading: isProfileLoading } = useProfile();
 
   useEffect(() => {
-    const checkUser = async () => {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getUser();
-
-      if (data.user) {
-        // Get user type
-        const { data: userData } = await supabase
-          .from("users")
-          .select("type")
-          .eq("id", data.user.id)
-          .single();
-
-        if (userData?.type === "startup") {
-          setIsStartup(true);
-        } else {
-          setIsStartup(false);
-          // Redirect non-startup users
-          router.push("/events");
-        }
-      } else {
-        // Redirect unauthenticated users
-        router.push("/login");
-      }
-    };
-
-    checkUser();
-  }, [router]);
+    if (!isProfileLoading && userType !== "startup") {
+      // Redirect non-startup users to events browsing
+      toast("Only startups can create events");
+      router.push("/events");
+    }
+  }, [userType, isProfileLoading, router]);
 
   // Show loading state while checking user type
-  if (isStartup === null) {
+  if (isProfileLoading || userType !== "startup") {
     return (
       <div className="container py-8 flex justify-center items-center min-h-[60vh]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
