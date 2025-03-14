@@ -162,9 +162,13 @@ export function EventCard({
 
       <CardFooter className="flex-col space-y-2 pt-2">
         {isPublic ? (
-          <Button asChild className="w-full">
-            <Link href={link || `/events/${event.id}`}>View Details</Link>
-          </Button>
+          link ? (
+            <Button className="w-full">View Details</Button>
+          ) : (
+            <Button asChild className="w-full">
+              <Link href={`/events/${event.id}`}>View Details</Link>
+            </Button>
+          )
         ) : (
           <div className="flex space-x-2 w-full">
             <Button asChild variant="outline" className="flex-1">

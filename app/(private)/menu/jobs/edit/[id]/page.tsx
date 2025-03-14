@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useJob } from "@/app/hooks/use-jobs";
 import { createClient } from "@/utils/supabase/client";
 import { JobForm } from "@/components/jobs/job-form";
@@ -8,9 +8,14 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
-export default function EditJobPage({ params }: { params: { id: string } }) {
+export default function EditJobPage({
+  params,
+}: {
+  params: Promise<{ id: string }> | { id: string };
+}) {
+  const jobId = params instanceof Promise ? use(params).id : params.id;
   const router = useRouter();
-  const { job, isLoading: isJobLoading, isError } = useJob(params.id);
+  const { job, isLoading: isJobLoading, isError } = useJob(jobId);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [userType, setUserType] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);

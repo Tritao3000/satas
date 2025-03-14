@@ -7,10 +7,11 @@ import { eq, and } from "drizzle-orm";
 // GET - Retrieve a specific job
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const jobId = params.id;
+    const awaitedParams = await params;
+    const jobId = awaitedParams.id;
 
     const job = await db.select().from(jobs).where(eq(jobs.id, jobId)).limit(1);
 
@@ -28,10 +29,11 @@ export async function GET(
 // PUT - Update a job
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const jobId = params.id;
+    const awaitedParams = await params;
+    const jobId = awaitedParams.id;
     const jobData = await request.json();
 
     // Get current user from Supabase auth
@@ -89,10 +91,11 @@ export async function PUT(
 // DELETE - Remove a job
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const jobId = params.id;
+    const awaitedParams = await params;
+    const jobId = awaitedParams.id;
 
     // Get current user from Supabase auth
     const supabase = await createClient();

@@ -7,10 +7,11 @@ import { eq, and } from "drizzle-orm";
 // GET - Retrieve a specific event
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const eventId = params.id;
+    const awaitedParams = await params;
+    const eventId = awaitedParams.id;
 
     const event = await db
       .select()
@@ -35,10 +36,11 @@ export async function GET(
 // PUT - Update an event
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const eventId = params.id;
+    const awaitedParams = await params;
+    const eventId = awaitedParams.id;
     const eventData = await request.json();
 
     // Get current user from Supabase auth
@@ -106,10 +108,11 @@ export async function PUT(
 // DELETE - Remove an event
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const eventId = params.id;
+    const awaitedParams = await params;
+    const eventId = awaitedParams.id;
 
     // Get current user from Supabase auth
     const supabase = await createClient();

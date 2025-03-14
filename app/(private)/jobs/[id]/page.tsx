@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useJob } from "@/app/hooks/use-jobs";
 import { Button } from "@/components/ui/button";
+import { useProfile } from "@/components/dashboard/profile-context";
 import {
   Card,
   CardContent,
@@ -27,55 +28,31 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function JobDetailPage({ params }: { params: { id: string } }) {
+export default function JobDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }> | { id: string };
+}) {
   const router = useRouter();
-  const { job, isLoading, isError } = useJob(params.id);
+  // Handle both Promise and direct object cases for backwards compatibility
+  const jobId = params instanceof Promise ? use(params).id : params.id;
+  const { job, isLoading, isError } = useJob(jobId);
   const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [userType, setUserType] = useState<string | null>(null);
+
+  const { userType, isLoading: isProfileLoading } = useProfile();
   const [hasApplied, setHasApplied] = useState(false);
   const [startupData, setStartupData] = useState<any>(null);
 
   // Check user authentication and type
   useEffect(() => {
-    async function checkUser() {
+    const checkUser = async () => {
       const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+    };
 
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (!userError && user) {
-        setUserId(user.id);
-
-        // Get user type
-        const { data: userData } = await supabase
-          .from("users")
-          .select("user_type")
-          .eq("id", user.id)
-          .single();
-
-        setUserType(userData?.user_type);
-
-        // Check if user already applied to this job
-        if (userData?.user_type === "individual" && job) {
-          const { data: applicationData } = await supabase
-            .from("job_applications")
-            .select("id")
-            .eq("job_id", job.id)
-            .eq("applicant_id", user.id)
-            .limit(1);
-
-          setHasApplied(Boolean(applicationData && applicationData.length > 0));
-        }
-      }
-    }
-
-    if (job) {
-      checkUser();
-    }
-  }, [job]);
+    checkUser();
+  }, []);
 
   // Fetch startup data
   useEffect(() => {

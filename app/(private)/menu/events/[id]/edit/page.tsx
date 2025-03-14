@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { EventForm } from "@/components/events/event-form";
@@ -8,10 +8,15 @@ import { Loader2 } from "lucide-react";
 import { useEvent } from "@/app/hooks/use-events";
 import { useProfile } from "@/components/dashboard/profile-context";
 
-export default function EditEventPage({ params }: { params: { id: string } }) {
+export default function EditEventPage({
+  params,
+}: {
+  params: Promise<{ id: string }> | { id: string };
+}) {
+  const eventId = params instanceof Promise ? use(params).id : params.id;
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const router = useRouter();
-  const { event, isLoading: isEventLoading, isError } = useEvent(params.id);
+  const { event, isLoading: isEventLoading, isError } = useEvent(eventId);
   const { userType, isLoading: isProfileLoading } = useProfile();
 
   useEffect(() => {

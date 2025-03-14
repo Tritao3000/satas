@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   useEvent,
   useEventRegistrations,
@@ -28,14 +28,19 @@ import { formatDate } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/components/dashboard/profile-context";
 
-export default function EventPage({ params }: { params: { id: string } }) {
+export default function EventPage({
+  params,
+}: {
+  params: Promise<{ id: string }> | { id: string };
+}) {
+  const eventId = params instanceof Promise ? use(params).id : params.id;
   const {
     event,
     isLoading: eventLoading,
     isError: eventError,
-  } = useEvent(params.id);
+  } = useEvent(eventId);
   const { registrations, isLoading: registrationsLoading } =
-    useEventRegistrations(params.id);
+    useEventRegistrations(eventId);
   const [user, setUser] = useState<any>(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -67,7 +72,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
   const handleRegister = async () => {
     if (!user) {
       router.push(
-        "/login?redirect=" + encodeURIComponent(`/events/${params.id}`)
+        "/login?redirect=" + encodeURIComponent(`/events/${eventId}`)
       );
       return;
     }
@@ -86,7 +91,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ eventId: params.id }),
+        body: JSON.stringify({ eventId: eventId }),
       });
 
       if (!response.ok) {
@@ -116,7 +121,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ eventId: params.id }),
+        body: JSON.stringify({ eventId: eventId }),
       });
 
       if (!response.ok) {
