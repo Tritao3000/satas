@@ -81,7 +81,7 @@ export default function EditJobPage({
 
   if (isCheckingAuth || isJobLoading) {
     return (
-      <div className="container py-10 flex justify-center">
+      <div className="flex justify-center">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
           <p>Loading...</p>
@@ -92,7 +92,7 @@ export default function EditJobPage({
 
   if (isError) {
     return (
-      <div className="container py-10">
+      <div>
         <div className="text-center p-8 text-destructive">
           Failed to load job information. Please try again.
         </div>
@@ -102,14 +102,14 @@ export default function EditJobPage({
 
   if (!job) {
     return (
-      <div className="container py-10">
+      <div>
         <div className="text-center p-8">Job not found</div>
       </div>
     );
   }
 
   return (
-    <div className="container py-10 max-w-3xl">
+    <div>
       <h1 className="text-2xl font-bold tracking-tight mb-6">
         Edit Job Listing
       </h1>

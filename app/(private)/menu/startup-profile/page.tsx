@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Fetcher function for SWR
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -70,8 +71,43 @@ export default function StartupProfileSetup() {
   // Show loading state while checking profile status
   if (!profileStatus && !profileStatusError) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        Loading...
+      <div className="max-w-3xl mx-auto py-12 px-4">
+        <Skeleton className="h-10 w-3/4 mb-6" />
+        <Skeleton className="h-4 w-2/3 mb-10" />
+
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2 md:col-span-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-36" />
+            <Skeleton className="h-32 w-full" />
+          </div>
+
+          <Skeleton className="h-6 w-48 mt-8 mb-4" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ))}
+          </div>
+
+          <Skeleton className="h-10 w-full mt-8" />
+        </div>
       </div>
     );
   }

@@ -1,24 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useEvents } from '@/app/hooks/use-events';
-import { createClient } from '@/utils/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Plus, Search, Loader2, Calendar } from 'lucide-react';
-import { EventCard } from '@/components/events/event-card';
-import Link from 'next/link';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useProfile } from '@/components/dashboard/profile-context';
-import { PlusIcon } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useEvents } from "@/app/hooks/use-events";
+import { createClient } from "@/utils/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Plus, Search, Loader2, Calendar } from "lucide-react";
+import { EventCard } from "@/components/events/event-card";
+import { EventCardSkeleton } from "@/components/events/event-card-skeleton";
+import Link from "next/link";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useProfile } from "@/components/dashboard/profile-context";
+import { PlusIcon } from "lucide-react";
 
 export default function EventsManagementPage() {
   const [userId, setUserId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState("all");
   const router = useRouter();
   const { userType, isLoading: isProfileLoading } = useProfile();
 
@@ -38,7 +39,7 @@ export default function EventsManagementPage() {
         setUserId(data.user.id);
       } else {
         // Redirect unauthenticated users
-        router.push('/login');
+        router.push("/login");
       }
     };
 
@@ -47,9 +48,9 @@ export default function EventsManagementPage() {
 
   // Handle redirection based on user type
   useEffect(() => {
-    if (!isProfileLoading && userType !== 'startup') {
+    if (!isProfileLoading && userType !== "startup") {
       // Redirect non-startup users to events browsing
-      router.push('/events');
+      router.push("/events");
     }
   }, [userType, isProfileLoading, router]);
 
@@ -72,9 +73,9 @@ export default function EventsManagementPage() {
 
     // Apply tab filter
     const now = new Date();
-    if (activeTab === 'upcoming') {
+    if (activeTab === "upcoming") {
       filtered = filtered.filter((event) => new Date(event.date) >= now);
-    } else if (activeTab === 'past') {
+    } else if (activeTab === "past") {
       filtered = filtered.filter((event) => new Date(event.date) < now);
     }
 
@@ -82,7 +83,7 @@ export default function EventsManagementPage() {
     filtered.sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
-      return activeTab === 'past'
+      return activeTab === "past"
         ? dateB.getTime() - dateA.getTime()
         : dateA.getTime() - dateB.getTime();
     });
@@ -95,27 +96,27 @@ export default function EventsManagementPage() {
   };
 
   const handleReset = () => {
-    setSearchTerm('');
-    setActiveTab('all');
+    setSearchTerm("");
+    setActiveTab("all");
   };
 
   const handleDeleteEvent = async (eventId: string) => {
     try {
       const response = await fetch(`/api/events/${eventId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete event');
+        throw new Error(errorData.error || "Failed to delete event");
       }
 
-      toast('Event deleted successfully');
+      toast("Event deleted successfully");
       mutate(); // Refresh events list
     } catch (error: any) {
-      console.error('Error deleting event:', error);
-      toast('Error deleting event', {
-        description: error.message || 'Please try again.',
+      console.error("Error deleting event:", error);
+      toast("Error deleting event", {
+        description: error.message || "Please try again.",
       });
     }
   };
@@ -123,17 +124,28 @@ export default function EventsManagementPage() {
   const isLoading = isProfileLoading || isEventsLoading;
 
   // Show loading state while checking user type or loading events
-  if (isLoading || userType !== 'startup') {
+  if (isLoading || userType !== "startup") {
     return (
-      <div className="container py-8 flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2 text-lg">Loading...</span>
+      <div className="container py-8">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-semibold">Manage Events</h1>
+            <p className="text-muted-foreground text-sm">
+              Create and manage events for your startup
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <EventCardSkeleton key={index} />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Manage Events</h1>
@@ -178,16 +190,17 @@ export default function EventsManagementPage() {
           variant="outline"
           onClick={handleReset}
           className="w-full md:w-auto"
-          disabled={!searchTerm && activeTab === 'all'}
+          disabled={!searchTerm && activeTab === "all"}
         >
           Reset
         </Button>
       </div>
 
       {isEventsLoading ? (
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-2 text-lg">Loading events...</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <EventCardSkeleton key={index} />
+          ))}
         </div>
       ) : isError ? (
         <div className="text-center py-12">

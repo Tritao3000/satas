@@ -1,16 +1,18 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useJobs } from '@/app/hooks/use-jobs';
-import { createClient } from '@/utils/supabase/client';
-import { Button } from '@/components/ui/button';
-import { JobCard } from '@/components/jobs/job-card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { PlusIcon, Loader2, BriefcaseBusiness } from 'lucide-react';
-import Link from 'next/link';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { useProfile } from '@/components/dashboard/profile-context';
+import { useEffect, useState } from "react";
+import { useJobs } from "@/app/hooks/use-jobs";
+import { createClient } from "@/utils/supabase/client";
+import { Button } from "@/components/ui/button";
+import { JobCard } from "@/components/jobs/job-card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { PlusIcon, Loader2, BriefcaseBusiness } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useProfile } from "@/components/dashboard/profile-context";
+import { JobsPageSkeleton } from "@/components/jobs/jobs-page-skeleton";
+import { JobCardSkeleton } from "@/components/jobs/job-card-skeleton";
 
 export default function JobsManagementPage() {
   const router = useRouter();
@@ -34,8 +36,8 @@ export default function JobsManagementPage() {
       } = await supabase.auth.getUser();
 
       if (userError || !user) {
-        toast('Authentication required');
-        router.push('/sign-in');
+        toast("Authentication required");
+        router.push("/sign-in");
         return;
       }
 
@@ -47,9 +49,9 @@ export default function JobsManagementPage() {
 
   // Redirect if not a startup user
   useEffect(() => {
-    if (!isProfileLoading && userType !== 'startup') {
-      toast('Only startups can access this page');
-      router.push('/menu');
+    if (!isProfileLoading && userType !== "startup") {
+      toast("Only startups can access this page");
+      router.push("/menu");
     }
   }, [userType, isProfileLoading, router]);
 
@@ -59,19 +61,12 @@ export default function JobsManagementPage() {
 
   const isLoading = isProfileLoading || isJobsLoading || !userId;
 
-  if (isLoading || userType !== 'startup') {
-    return (
-      <div className="container py-10 flex justify-center">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
+  if (isLoading || userType !== "startup") {
+    return <JobsPageSkeleton />;
   }
 
   return (
-    <div className="">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Job Listings</h1>
@@ -95,8 +90,10 @@ export default function JobsManagementPage() {
 
         <TabsContent value="active" className="space-y-4">
           {isJobsLoading ? (
-            <div className="flex justify-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <JobCardSkeleton key={index} />
+              ))}
             </div>
           ) : isError ? (
             <div className="text-center p-8 text-destructive">
@@ -130,8 +127,10 @@ export default function JobsManagementPage() {
 
         <TabsContent value="all" className="space-y-4">
           {isJobsLoading ? (
-            <div className="flex justify-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <JobCardSkeleton key={index} />
+              ))}
             </div>
           ) : isError ? (
             <div className="text-center p-8 text-destructive">

@@ -54,7 +54,7 @@ export default function EditEventPage({
   // Show loading state while checking authorization or loading event
   if (isEventLoading || isProfileLoading || isAuthorized === null) {
     return (
-      <div className="container py-8 flex justify-center items-center min-h-[60vh]">
+      <div className="flex justify-center items-center min-h-[60vh]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <span className="ml-2 text-lg">Loading...</span>
       </div>
@@ -64,7 +64,7 @@ export default function EditEventPage({
   // Show error state if event couldn't be loaded
   if (isError || !event) {
     return (
-      <div className="container py-8 text-center">
+      <div className="text-center">
         <h1 className="text-2xl font-bold mb-4">Event Not Found</h1>
         <p className="text-muted-foreground mb-4">
           The event you're trying to edit doesn't exist or has been removed.
@@ -82,7 +82,7 @@ export default function EditEventPage({
   // Show unauthorized state if user doesn't own the event
   if (isAuthorized === false) {
     return (
-      <div className="container py-8 text-center">
+      <div className="text-center">
         <h1 className="text-2xl font-bold mb-4">Unauthorized</h1>
         <p className="text-muted-foreground mb-4">
           You don't have permission to edit this event.
@@ -98,8 +98,8 @@ export default function EditEventPage({
   }
 
   return (
-    <div className="container py-8">
-      <div className="max-w-4xl mx-auto">
+    <div>
+      <div className=" mx-auto">
         <h1 className="text-3xl font-bold tracking-tight mb-6">Edit Event</h1>
         <EventForm
           defaultValues={event}

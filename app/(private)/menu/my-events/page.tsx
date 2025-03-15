@@ -1,15 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useMyEventRegistrations } from '@/app/hooks/use-events';
-import { Button } from '@/components/ui/button';
-import { Loader2, Calendar, X } from 'lucide-react';
-import { EventCard } from '@/components/events/event-card';
-import Link from 'next/link';
-import { toast } from 'sonner';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useProfile } from '@/components/dashboard/profile-context';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMyEventRegistrations } from "@/app/hooks/use-events";
+import { Button } from "@/components/ui/button";
+import { Loader2, Calendar, X } from "lucide-react";
+import { EventCard } from "@/components/events/event-card";
+import { EventCardSkeleton } from "@/components/events/event-card-skeleton";
+import Link from "next/link";
+import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useProfile } from "@/components/dashboard/profile-context";
 
 export default function MyEventsPage() {
   const router = useRouter();
@@ -20,44 +21,44 @@ export default function MyEventsPage() {
     isError,
     mutate,
   } = useMyEventRegistrations();
-  const [activeTab, setActiveTab] = useState('upcoming');
+  const [activeTab, setActiveTab] = useState("upcoming");
   const { userType, isLoading: isProfileLoading } = useProfile();
 
   useEffect(() => {
     if (!isProfileLoading) {
       if (!userType) {
         // Redirect unauthenticated users
-        router.push('/login');
-      } else if (userType !== 'individual') {
+        router.push("/login");
+      } else if (userType !== "individual") {
         // Redirect non-individual users to the events management page
-        router.push('/menu/events');
+        router.push("/menu/events");
       }
     }
   }, [userType, isProfileLoading, router]);
 
   const handleUnregister = async (eventId: string) => {
     try {
-      const response = await fetch('/api/events/unregister', {
-        method: 'POST',
+      const response = await fetch("/api/events/unregister", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ eventId }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to unregister from event');
+        throw new Error(errorData.error || "Failed to unregister from event");
       }
 
-      toast('Unregistered successfully', {
-        description: 'You have been removed from this event.',
+      toast("Unregistered successfully", {
+        description: "You have been removed from this event.",
       });
       mutate(); // Refresh events list
     } catch (error: any) {
-      console.error('Unregistration error:', error);
-      toast('Unregistration failed', {
-        description: error.message || 'Please try again.',
+      console.error("Unregistration error:", error);
+      toast("Unregistration failed", {
+        description: error.message || "Please try again.",
       });
     }
   };
@@ -70,22 +71,33 @@ export default function MyEventsPage() {
     myEvents?.filter((event) => new Date(event.date) < now) || [];
 
   // Show loading state while checking user type or loading events
-  if (isProfileLoading || (userType === 'individual' && isEventsLoading)) {
+  if (isProfileLoading || (userType === "individual" && isEventsLoading)) {
     return (
-      <div className="container py-8 flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2 text-lg">Loading...</span>
+      <div className="container py-8">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-semibold">My Events</h1>
+            <p className="text-muted-foreground text-sm">
+              View and manage your event registrations
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <EventCardSkeleton key={index} />
+          ))}
+        </div>
       </div>
     );
   }
 
   // Don't render the main content if user is not an individual
-  if (userType !== 'individual') {
+  if (userType !== "individual") {
     return null; // This will prevent a flash of content before redirect
   }
 
   return (
-    <div className="">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-semibold">My Events</h1>
@@ -111,9 +123,10 @@ export default function MyEventsPage() {
 
         <TabsContent value="upcoming" className="mt-6">
           {isEventsLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="ml-2 text-lg">Loading events...</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <EventCardSkeleton key={index} />
+              ))}
             </div>
           ) : isError ? (
             <div className="text-center py-12">
@@ -156,9 +169,10 @@ export default function MyEventsPage() {
 
         <TabsContent value="past" className="mt-6">
           {isEventsLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="ml-2 text-lg">Loading events...</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <EventCardSkeleton key={index} />
+              ))}
             </div>
           ) : isError ? (
             <div className="text-center py-12">

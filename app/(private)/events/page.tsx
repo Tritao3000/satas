@@ -1,19 +1,21 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Search, Loader2 } from 'lucide-react';
-import { useEvents } from '../../hooks/use-events';
-import { EventCard } from '@/components/events/event-card';
-import Link from 'next/link';
-
+import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar, Search, Loader2 } from "lucide-react";
+import { useEvents } from "../../hooks/use-events";
+import { EventCard } from "@/components/events/event-card";
+import { EventCardSkeleton } from "@/components/events/event-card-skeleton";
+import Link from "next/link";
+import { useProfile } from "@/components/dashboard/profile-context";
 export default function EventsPage() {
   const { events, isLoading, isError } = useEvents();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState("all");
+  const { userType } = useProfile();
 
   useEffect(() => {
     if (!events) return;
@@ -33,10 +35,10 @@ export default function EventsPage() {
     }
 
     // Apply tab filter
-    if (activeTab === 'upcoming') {
+    if (activeTab === "upcoming") {
       const now = new Date();
       filtered = filtered.filter((event) => new Date(event.date) >= now);
-    } else if (activeTab === 'past') {
+    } else if (activeTab === "past") {
       const now = new Date();
       filtered = filtered.filter((event) => new Date(event.date) < now);
     }
@@ -45,7 +47,7 @@ export default function EventsPage() {
     filtered.sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
-      return activeTab === 'past'
+      return activeTab === "past"
         ? dateB.getTime() - dateA.getTime()
         : dateA.getTime() - dateB.getTime();
     });
@@ -58,12 +60,12 @@ export default function EventsPage() {
   };
 
   const handleReset = () => {
-    setSearchTerm('');
-    setActiveTab('all');
+    setSearchTerm("");
+    setActiveTab("all");
   };
 
   return (
-    <div className="">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Events</h1>
@@ -102,16 +104,17 @@ export default function EventsPage() {
           variant="outline"
           onClick={handleReset}
           className="w-full md:w-auto"
-          disabled={!searchTerm && activeTab === 'all'}
+          disabled={!searchTerm && activeTab === "all"}
         >
           Reset
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-2">Loading events...</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <EventCardSkeleton key={index} />
+          ))}
         </div>
       ) : isError ? (
         <div className="text-center py-12">
@@ -133,6 +136,7 @@ export default function EventsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map((event) => (
             <EventCard
+              registerButtonDisabled={userType !== "individual"}
               key={event.id}
               event={event}
               isPublic

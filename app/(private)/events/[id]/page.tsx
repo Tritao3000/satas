@@ -27,6 +27,14 @@ import { toast } from "sonner";
 import { formatDate } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/components/dashboard/profile-context";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export default function EventPage({
   params,
@@ -145,9 +153,75 @@ export default function EventPage({
 
   if (eventLoading || isProfileLoading) {
     return (
-      <div className="container py-8 flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2 text-lg">Loading event details...</span>
+      <div className="container py-8">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center">
+            <Skeleton className="h-4 w-4 mr-1" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-start flex-wrap gap-4">
+              <div>
+                <Skeleton className="h-5 w-20 mb-2" />
+                <Skeleton className="h-9 w-72 mb-2" />
+                <div className="flex items-center mt-2">
+                  <Skeleton className="h-4 w-4 mr-2" />
+                  <Skeleton className="h-4 w-36" />
+                </div>
+              </div>
+
+              <Skeleton className="h-10 w-36" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center">
+                <Skeleton className="h-5 w-5 mr-2" />
+                <Skeleton className="h-5 w-24" />
+              </div>
+
+              <div className="flex items-center">
+                <Skeleton className="h-5 w-5 mr-2" />
+                <Skeleton className="h-5 w-32" />
+              </div>
+
+              <div className="flex items-center">
+                <Skeleton className="h-5 w-5 mr-2" />
+                <Skeleton className="h-5 w-28" />
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg md:max-w-3xl mx-auto">
+            <Skeleton className="h-full w-full" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2">
+              <Skeleton className="h-7 w-48 mb-4" />
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-5 w-full" />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="bg-muted p-4 rounded-lg">
+                <Skeleton className="h-6 w-32 mb-4" />
+                <Skeleton className="h-5 w-40 mb-3" />
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <Skeleton key={i} className="w-9 h-9 rounded-full" />
+                  ))}
+                </div>
+                <Skeleton className="h-10 w-full mt-4" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -186,25 +260,21 @@ export default function EventPage({
   const isUpcoming = new Date(event.date) >= new Date();
 
   return (
-    <main className="container py-8">
-      <div className="flex flex-col gap-6">
-        <Link
-          href="/events"
-          className="flex items-center text-primary hover:underline"
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back to Events
-        </Link>
+    <main>
+      <div className="flex flex-col gap-4">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/events">Events</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>{event.title}</BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-start flex-wrap gap-4">
             <div>
-              <Badge
-                variant={isUpcoming ? "default" : "secondary"}
-                className="mb-2"
-              >
-                {isUpcoming ? "Upcoming" : "Past"}
-              </Badge>
               <h1 className="text-3xl font-bold tracking-tight">
                 {event.title}
               </h1>
@@ -214,6 +284,14 @@ export default function EventPage({
                   <span>Hosted by {event.startup.name}</span>
                 </div>
               )}
+            </div>
+            <div>
+              <Badge
+                variant={isUpcoming ? "default" : "secondary"}
+                className="mb-2"
+              >
+                {isUpcoming ? "Upcoming" : "Past"}
+              </Badge>
             </div>
 
             {userType === "individual" && isUpcoming && (
@@ -230,7 +308,10 @@ export default function EventPage({
                     Cancel Registration
                   </Button>
                 ) : (
-                  <Button onClick={handleRegister} disabled={isRegistering}>
+                  <Button
+                    onClick={handleRegister}
+                    disabled={isRegistering || isUnregistering || isRegistered}
+                  >
                     {isRegistering && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
@@ -298,8 +379,13 @@ export default function EventPage({
             <div className="bg-muted p-4 rounded-lg">
               <h3 className="text-lg font-medium mb-2">Attendees</h3>
               {registrationsLoading ? (
-                <div className="flex items-center justify-center py-4">
-                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <div className="space-y-3">
+                  <Skeleton className="h-5 w-40 mb-3" />
+                  <div className="flex flex-wrap gap-2">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Skeleton key={i} className="w-9 h-9 rounded-full" />
+                    ))}
+                  </div>
                 </div>
               ) : registrations && registrations.length > 0 ? (
                 <div className="space-y-3">
@@ -337,11 +423,11 @@ export default function EventPage({
                 </p>
               )}
 
-              {userType === "individual" && isUpcoming && !isRegistered && (
+              {userType === "individual" && isUpcoming && (
                 <Button
                   className="w-full mt-4"
                   onClick={handleRegister}
-                  disabled={isRegistering}
+                  disabled={isRegistering || isUnregistering || isRegistered}
                 >
                   {isRegistering && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

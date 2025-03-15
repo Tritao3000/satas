@@ -146,23 +146,28 @@ export function FileUpload({
                 previewClassName
               )}
             >
-              <div className="flex items-center">
-                <FileText className="h-8 w-8 mr-2 text-primary" />
-                <span className="text-sm">
-                  CV File {preview === "new-cv-file" ? "Selected" : "Uploaded"}
-                </span>
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <FileText className="h-8 w-8 mr-2 text-primary" />
+                  <div className="flex flex-col ">
+                    <span className="text-sm">
+                      CV File{" "}
+                      {preview === "new-cv-file" ? "Selected" : "Uploaded"}
+                    </span>
+                    {preview === "existing-cv-file" && previewUrl && (
+                      <a
+                        href={previewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center text-xs text-primary hover:underline"
+                      >
+                        <ExternalLink className="h-3 w-3 mr-1" />
+                        View
+                      </a>
+                    )}
+                  </div>
+                </div>
               </div>
-              {preview === "existing-cv-file" && previewUrl && (
-                <a
-                  href={previewUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center text-xs text-primary hover:underline"
-                >
-                  <ExternalLink className="h-4 w-4 mr-1" />
-                  View
-                </a>
-              )}
             </div>
           ) : (
             <div
@@ -184,10 +189,10 @@ export function FileUpload({
             type="button"
             size="icon"
             variant="destructive"
-            className="absolute top-2 right-2 h-6 w-6 rounded-full"
+            className="absolute top-2 right-2 h-5 w-5 rounded-full"
             onClick={removeFile}
           >
-            <X className="h-4 w-4" />
+            <X className="h-3 w-3" />
           </Button>
         </div>
       )}

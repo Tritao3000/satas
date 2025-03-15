@@ -27,7 +27,7 @@ function MenuLayoutContent({ children }: { children: React.ReactNode }) {
   if (!isProfileSetup) {
     return (
       <div className="min-h-screen w-full">
-        <main className="p-6 w-full">{children}</main>
+        <main className="p-8 w-full max-w-5xl mx-auto">{children}</main>
       </div>
     );
   }
@@ -38,7 +38,9 @@ function MenuLayoutContent({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-screen w-full">
         <DashboardSidebar />
         <SidebarTrigger className="absolute top-4 left-4 md:hidden" />
-        <main className="flex-1 p-6 overflow-auto w-full">{children}</main>
+        <main className="flex-1 p-8 overflow-auto w-full max-w-5xl mx-auto">
+          {children}
+        </main>
       </div>
     </SidebarProvider>
   );

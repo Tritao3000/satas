@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { BuildingIcon, User2Icon } from "lucide-react";
 import useSWR from "swr";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Fetcher function for SWR
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -78,8 +79,54 @@ export default function ProfileSetup() {
   // Show loading state while checking profile status
   if (!profileStatus && !error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        Loading...
+      <div className="flex flex-col items-center justify-center w-full max-w-3xl mx-auto py-12">
+        <Skeleton className="h-10 w-64 mb-6" />
+        <Skeleton className="h-4 w-80 mb-2" />
+        <Skeleton className="h-4 w-72 mb-10" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+          {/* Startup card skeleton */}
+          <div className="border-2 rounded-lg p-6">
+            <div className="space-y-2 mb-6">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-6 w-6" />
+                <Skeleton className="h-7 w-32" />
+              </div>
+              <Skeleton className="h-4 w-full" />
+            </div>
+
+            <Skeleton className="h-4 w-48 mb-3" />
+            <div className="space-y-2 mb-6 ml-5">
+              <Skeleton className="h-4 w-36" />
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-44" />
+            </div>
+
+            <Skeleton className="h-10 w-full mt-4" />
+          </div>
+
+          {/* Individual card skeleton */}
+          <div className="border-2 rounded-lg p-6">
+            <div className="space-y-2 mb-6">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-6 w-6" />
+                <Skeleton className="h-7 w-32" />
+              </div>
+              <Skeleton className="h-4 w-full" />
+            </div>
+
+            <Skeleton className="h-4 w-48 mb-3" />
+            <div className="space-y-2 mb-6 ml-5">
+              <Skeleton className="h-4 w-36" />
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-44" />
+            </div>
+
+            <Skeleton className="h-10 w-full mt-4" />
+          </div>
+        </div>
       </div>
     );
   }

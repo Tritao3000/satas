@@ -21,12 +21,21 @@ import {
   MapPin,
   Building,
   DollarSign,
+  Send,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Breadcrumb,
+  BreadcrumbSeparator,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbLink,
+} from "@/components/ui/breadcrumb";
 
 export default function JobDetailPage({
   params,
@@ -41,7 +50,7 @@ export default function JobDetailPage({
   const [userId, setUserId] = useState<string | null>(null);
 
   const { userType, isLoading: isProfileLoading } = useProfile();
-  const [hasApplied, setHasApplied] = useState(false);
+
   const [startupData, setStartupData] = useState<any>(null);
 
   // Check user authentication and type
@@ -49,6 +58,10 @@ export default function JobDetailPage({
     const checkUser = async () => {
       const supabase = createClient();
       const { data } = await supabase.auth.getUser();
+
+      if (data.user) {
+        setUserId(data.user.id);
+      }
     };
 
     checkUser();
@@ -92,11 +105,6 @@ export default function JobDetailPage({
       return;
     }
 
-    if (hasApplied) {
-      toast("You have already applied to this job");
-      return;
-    }
-
     setIsSubmittingApplication(true);
 
     try {
@@ -118,8 +126,6 @@ export default function JobDetailPage({
       toast("Application submitted successfully", {
         description: "The company will be in touch if they want to proceed.",
       });
-
-      setHasApplied(true);
     } catch (error: any) {
       console.error("Error applying for job:", error);
       toast(error.message || "Failed to apply for job", {
@@ -132,8 +138,72 @@ export default function JobDetailPage({
 
   if (isLoading) {
     return (
-      <div className="container py-10 flex justify-center">
-        <div>Loading...</div>
+      <div>
+        <div>
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-64 mb-2" />
+                  <div className="flex items-center gap-2 text-sm">
+                    <Skeleton className="h-4 w-24" />
+                    <span>•</span>
+                    <div className="flex items-center">
+                      <Skeleton className="h-4 w-4 mr-1" />
+                      <Skeleton className="h-4 w-20" />
+                    </div>
+                    <span>•</span>
+                    <div className="flex items-center">
+                      <Skeleton className="h-4 w-4 mr-1" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-6 w-16" />
+                  <Skeleton className="h-9 w-20 ml-2" />
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center">
+                    <Skeleton className="h-5 w-5 mr-2" />
+                    <div>
+                      <Skeleton className="h-4 w-16 mb-1" />
+                      <Skeleton className="h-5 w-24" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Separator className="my-6" />
+
+              <Tabs defaultValue="description">
+                <TabsList className="w-full">
+                  <TabsTrigger className="w-full" value="description" disabled>
+                    <Skeleton className="h-4 w-3/5" />
+                  </TabsTrigger>
+                  <TabsTrigger className="w-full" value="company" disabled>
+                    <Skeleton className="h-4 w-3/5" />
+                  </TabsTrigger>
+                </TabsList>
+
+                <div className="mt-4">
+                  <Skeleton className="h-6 w-40 mb-4" />
+                  <div className="space-y-2">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <Skeleton key={i} className="h-4 w-full" />
+                    ))}
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
+                </div>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
@@ -161,8 +231,19 @@ export default function JobDetailPage({
     : "Not specified";
 
   return (
-    <div className="container py-10">
-      <div className="max-w-4xl mx-auto">
+    <div>
+      <div className=" flex flex-col gap-4">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/jobs">Jobs</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              {job.title} @ {startupData?.name}
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <Card className="mb-6">
           <CardHeader>
             <div className="flex justify-between items-start">
@@ -186,7 +267,20 @@ export default function JobDetailPage({
                   </div>
                 </CardDescription>
               </div>
-              <Badge className="text-sm">{job.type}</Badge>
+              <div className="flex items-center gap-2">
+                <Badge className="text-sm">{job.type}</Badge>
+
+                <Button
+                  disabled={userType === "startup"}
+                  variant="outline"
+                  size="sm"
+                  className="ml-2"
+                >
+                  <Send className="h-4 w-4 mr-1" />
+                  <span>Apply</span>
+                  <span className="sr-only">Apply for this job</span>
+                </Button>
+              </div>
             </div>
           </CardHeader>
 
@@ -220,9 +314,13 @@ export default function JobDetailPage({
             <Separator className="my-6" />
 
             <Tabs defaultValue="description">
-              <TabsList>
-                <TabsTrigger value="description">Job Description</TabsTrigger>
-                <TabsTrigger value="company">Company</TabsTrigger>
+              <TabsList className="w-full">
+                <TabsTrigger className="w-full" value="description">
+                  Job Description
+                </TabsTrigger>
+                <TabsTrigger className="w-full" value="company">
+                  Company
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="description" className="mt-4">
@@ -256,29 +354,25 @@ export default function JobDetailPage({
                       </div>
                     </div>
                   ) : (
-                    <p>Loading company information...</p>
+                    <div className="space-y-3">
+                      <div className="flex items-center mb-2">
+                        <Skeleton className="h-4 w-4 mr-2" />
+                        <Skeleton className="h-5 w-40" />
+                      </div>
+                      <div className="flex items-center">
+                        <Skeleton className="h-4 w-4 mr-2" />
+                        <Skeleton className="h-5 w-32" />
+                      </div>
+                      <div className="mt-4">
+                        <Skeleton className="h-9 w-36" />
+                      </div>
+                    </div>
                   )}
                 </div>
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
-
-        <div className="flex justify-center">
-          <Button
-            size="lg"
-            onClick={handleApply}
-            disabled={
-              isSubmittingApplication || hasApplied || userType === "startup"
-            }
-          >
-            {hasApplied
-              ? "Already Applied"
-              : isSubmittingApplication
-                ? "Submitting..."
-                : "Apply Now"}
-          </Button>
-        </div>
       </div>
     </div>
   );

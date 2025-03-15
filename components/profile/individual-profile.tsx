@@ -1,86 +1,41 @@
-"use client";
-
-import { db } from "@/src/db";
-import { individualProfiles } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
-import { notFound, useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
 import {
   GlobeIcon,
   MapPin,
-  Briefcase,
   Linkedin,
+  Briefcase,
   Github,
   Twitter,
   User,
-  Loader,
+  Pencil,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import useSWR, { mutate } from "swr";
-import { useEffect } from "react";
 
-// Fetcher function for SWR
-const fetcher = async (url: string) => {
-  const response = await fetch(url, {
-    headers: {
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
-    },
-  });
-  if (!response.ok) {
-    throw new Error("An error occurred while fetching the data.");
-  }
-  return response.json();
+export type IndividualProfileType = {
+  name: string;
+  email: string;
+  phone: string | null;
+  location: string | null;
+  industry: string | null;
+  role: string | null;
+  description: string | null;
+  linkedin: string | null;
+  twitter: string | null;
+  github: string | null;
+  website: string | null;
+  profilePicture: string | null;
+  coverPicture: string | null;
+  cvPath: string | null;
 };
 
-export default function UserProfilePage() {
-  const params = useParams();
-  const userId = params.id as string;
-  const router = useRouter();
+interface IndividualProfileProps {
+  profile: IndividualProfileType;
+}
 
-  // Force revalidation when the component mounts
-  useEffect(() => {
-    mutate(`/api/profile/individual/${userId}`);
-  }, [userId]);
-
-  // Fetch current user
-  const { data: currentUser, error: currentUserError } = useSWR(
-    "/api/user/me",
-    fetcher
-  );
-
-  // Fetch individual profile
-  const {
-    data: profile,
-    error: profileError,
-    isLoading,
-  } = useSWR(`/api/profile/individual/${userId}`, fetcher, {
-    revalidateOnFocus: true,
-    revalidateIfStale: true,
-  });
-
-  // Handle loading state
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <Loader className="h-6 w-6 animate-spin" />
-        <p className="mt-2">Loading profile...</p>
-      </div>
-    );
-  }
-
-  // Handle errors
-  if (profileError || !profile) {
-    return notFound();
-  }
-
-  // Check if current user is viewing their own profile
-  const isOwnProfile = currentUser?.id === userId;
-
+export function IndividualProfile({ profile }: IndividualProfileProps) {
   return (
     <div>
       {/* Cover Picture */}
@@ -98,18 +53,19 @@ export default function UserProfilePage() {
         )}
 
         {/* Edit Profile Button */}
-        {isOwnProfile && (
-          <div className="absolute top-4 right-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="bg-background/80 hover:bg-background/90 backdrop-blur-sm"
-              asChild
-            >
-              <Link href="/menu/profile/edit">Edit Profile</Link>
-            </Button>
-          </div>
-        )}
+        <div className="absolute top-4 right-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="bg-background/80 hover:bg-background/90 backdrop-blur-sm"
+            asChild
+          >
+            <Link href="/menu/profile/edit">
+              <Pencil className="h-4 w-4 mr-2" />
+              Edit Profile
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Profile Summary */}

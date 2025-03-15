@@ -92,7 +92,7 @@ export function JobCard({ job, allowEdit = false, onDelete }: JobCardProps) {
           )}
           <span className="mx-2">•</span>
           <CalendarIcon className="h-4 w-4 mr-1" />
-          <span>Posted {postedDate}</span>
+          <span>{postedDate}</span>
         </div>
 
         <p className="text-sm mt-4 line-clamp-3">{job.description}</p>

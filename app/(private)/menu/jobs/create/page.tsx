@@ -29,7 +29,7 @@ export default function CreateJobPage() {
 
   if (isLoading || userType !== "startup") {
     return (
-      <div className="container py-10 flex justify-center">
+      <div className="flex justify-center">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
           <p>Loading...</p>
@@ -39,7 +39,7 @@ export default function CreateJobPage() {
   }
 
   return (
-    <div className="container py-10 max-w-3xl">
+    <div>
       <h1 className="text-2xl font-bold tracking-tight mb-6">
         Create Job Listing
       </h1>

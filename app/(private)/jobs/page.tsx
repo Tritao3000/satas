@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useJobs } from '@/app/hooks/use-jobs';
-import { JobCard } from '@/components/jobs/job-card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { BriefcaseBusiness, Loader2, Search } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useJobs } from "@/app/hooks/use-jobs";
+import { JobCard } from "@/components/jobs/job-card";
+import { JobCardSkeleton } from "@/components/jobs/job-card-skeleton";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { BriefcaseBusiness, Loader2, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type JobType = {
   id: string;
@@ -24,7 +25,7 @@ type JobType = {
 export default function JobsPage() {
   const router = useRouter();
   const { jobs, isLoading, isError } = useJobs();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [jobType, setJobType] = useState<string | null>(null);
   const [filteredJobs, setFilteredJobs] = useState<JobType[]>([]);
 
@@ -48,12 +49,12 @@ export default function JobsPage() {
   }, [jobs, searchTerm, jobType]);
 
   const handleReset = () => {
-    setSearchTerm('');
+    setSearchTerm("");
     setJobType(null);
   };
 
   return (
-    <div className="">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Jobs</h1>
@@ -75,8 +76,8 @@ export default function JobsPage() {
         </div>
 
         <Tabs
-          defaultValue={jobType || 'all'}
-          onValueChange={(value) => setJobType(value === 'all' ? null : value)}
+          defaultValue={jobType || "all"}
+          onValueChange={(value) => setJobType(value === "all" ? null : value)}
           className="w-full md:w-auto"
         >
           <TabsList>
@@ -95,16 +96,17 @@ export default function JobsPage() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center p-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          <span className="ml-2">Loading jobs...</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <JobCardSkeleton key={index} />
+          ))}
         </div>
       ) : isError ? (
         <div className="text-center p-12 text-destructive">
           Failed to load jobs. Please try again.
         </div>
       ) : filteredJobs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredJobs.map((job) => (
             <JobCard key={job.id} job={job} allowEdit={false} />
           ))}

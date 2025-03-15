@@ -32,6 +32,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Event = {
   id: string;
@@ -53,6 +54,7 @@ type EventCardProps = {
   onDelete?: (eventId: string) => void;
   isPublic?: boolean;
   link?: string;
+  registerButtonDisabled?: boolean;
 };
 
 export function EventCard({
@@ -61,6 +63,7 @@ export function EventCard({
   onDelete,
   isPublic = false,
   link,
+  registerButtonDisabled = false,
 }: EventCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -172,17 +175,18 @@ export function EventCard({
         ) : (
           <div className="flex space-x-2 w-full">
             <Button asChild variant="outline" className="flex-1">
+              <Link href={`/menu/events/${event.id}`}>See details</Link>
+            </Button>
+            <Button asChild variant="outline" size="icon">
               <Link href={`/menu/events/${event.id}/edit`}>
-                <PencilIcon className="h-4 w-4 mr-2" />
-                Edit
+                <PencilIcon className="h-4 w-4" />
               </Link>
             </Button>
 
             <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
               <DialogTrigger asChild>
-                <Button variant="destructive" className="flex-1">
-                  <Trash2Icon className="h-4 w-4 mr-2" />
-                  Delete
+                <Button variant="destructive" size="icon">
+                  <Trash2Icon className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -213,12 +217,14 @@ export function EventCard({
           </div>
         )}
 
-        {isPublic && isUpcoming && (
-          <Button variant="outline" className="w-full">
-            <Users className="h-4 w-4 mr-2" />
-            Register
-          </Button>
-        )}
+        <Button
+          variant="outline"
+          className="w-full"
+          disabled={registerButtonDisabled || !isPublic || !isUpcoming}
+        >
+          <Users className="h-4 w-4" />
+          Register
+        </Button>
       </CardFooter>
     </>
   );
@@ -234,10 +240,4 @@ export function EventCard({
       )}
     </Card>
   );
-}
-
-// Helper function to check if an event date is in the past
-function isPastEvent(dateString: string): boolean {
-  const eventDate = new Date(dateString);
-  return eventDate < new Date();
 }

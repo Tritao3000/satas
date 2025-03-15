@@ -7,7 +7,12 @@ import { randomUUID } from "crypto";
 
 export async function POST(request: Request) {
   try {
-    const { jobId } = await request.json();
+    console.log("Applying for job");
+    const body = await request.json();
+    console.log("Body:", body);
+    const { jobId } = body;
+
+    console.log("Job ID:", jobId);
 
     if (!jobId) {
       return NextResponse.json(
@@ -61,6 +66,8 @@ export async function POST(request: Request) {
           eq(jobApplications.applicantId, user.id)
         )
       );
+
+    console.log("Existing applications:", existingApplications);
 
     if (existingApplications.length > 0) {
       return NextResponse.json(

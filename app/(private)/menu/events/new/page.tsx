@@ -22,7 +22,7 @@ export default function NewEventPage() {
   // Show loading state while checking user type
   if (isProfileLoading || userType !== "startup") {
     return (
-      <div className="container py-8 flex justify-center items-center min-h-[60vh]">
+      <div className="flex justify-center items-center min-h-[60vh]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <span className="ml-2 text-lg">Loading...</span>
       </div>
@@ -30,8 +30,8 @@ export default function NewEventPage() {
   }
 
   return (
-    <div className="container py-8">
-      <div className="max-w-4xl mx-auto">
+    <div>
+      <div className=" mx-auto">
         <h1 className="text-3xl font-bold tracking-tight mb-6">
           Create New Event
         </h1>
