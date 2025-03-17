@@ -175,7 +175,7 @@ export function EventCard({
         ) : (
           <div className="flex space-x-2 w-full">
             <Button asChild variant="outline" className="flex-1">
-              <Link href={`/menu/events/${event.id}`}>See details</Link>
+              <Link href={`/events/${event.id}`}>See details</Link>
             </Button>
             <Button asChild variant="outline" size="icon">
               <Link href={`/menu/events/${event.id}/edit`}>

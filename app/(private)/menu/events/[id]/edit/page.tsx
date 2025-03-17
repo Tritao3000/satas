@@ -7,6 +7,8 @@ import { EventForm } from "@/components/events/event-form";
 import { Loader2 } from "lucide-react";
 import { useEvent } from "@/app/hooks/use-events";
 import { useProfile } from "@/components/dashboard/profile-context";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function EditEventPage({
   params,
@@ -54,9 +56,58 @@ export default function EditEventPage({
   // Show loading state while checking authorization or loading event
   if (isEventLoading || isProfileLoading || isAuthorized === null) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2 text-lg">Loading...</span>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight mb-6">Edit Event</h1>
+        <Card>
+          <CardHeader>
+            <CardTitle>Edit Event</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-32 w-full" />
+            </div>
+
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-4 w-48" />
+              </div>
+              <div className="mt-4">
+                <Skeleton className="h-40 w-full md:w-1/2 rounded-md" />
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Skeleton className="h-10 w-24" />
+          </CardFooter>
+        </Card>
       </div>
     );
   }
