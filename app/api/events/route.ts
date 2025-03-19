@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { db } from "@/src/db";
-import { events } from "@/src/db/schema";
+import { events, users } from "@/src/db/schema";
 import { eq, desc, and, gte } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
@@ -51,20 +51,20 @@ export async function POST(request: Request) {
     }
 
     // Check if user is a startup
-    const { data: userData, error: userDataError } = await supabase
-      .from("users")
-      .select("user_type")
-      .eq("id", user.id)
-      .single();
+    const userData = await db
+      .select({ userType: users.userType })
+      .from(users)
+      .where(eq(users.id, user.id))
+      .limit(1);
 
-    if (userDataError) {
+    if (userData.length === 0) {
       return NextResponse.json(
         { error: "Failed to fetch user data" },
         { status: 500 }
       );
     }
 
-    if (userData.user_type !== "startup") {
+    if (userData[0].userType !== "startup") {
       return NextResponse.json(
         { error: "Only startups can create events" },
         { status: 403 }
