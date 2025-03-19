@@ -49,36 +49,26 @@ export default function EventPage({
   } = useEvent(eventId);
   const { registrations, isLoading: registrationsLoading } =
     useEventRegistrations(eventId);
-  const [user, setUser] = useState<any>(null);
+
   const [isRegistered, setIsRegistered] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [isUnregistering, setIsUnregistering] = useState(false);
   const router = useRouter();
-  const { userType, isLoading: isProfileLoading } = useProfile();
+  const { userId, userType, isLoading: isProfileLoading } = useProfile();
+
+
 
   useEffect(() => {
-    const checkUser = async () => {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getUser();
-      if (data.user) {
-        setUser(data.user);
-      }
-    };
-
-    checkUser();
-  }, []);
-
-  useEffect(() => {
-    if (user && registrations) {
+    if (userId && registrations) {
       const userRegistration = registrations.find(
-        (reg) => reg.userId === user.id
+        (reg) => reg.userId === userId
       );
       setIsRegistered(!!userRegistration);
     }
-  }, [user, registrations]);
+  }, [userId, registrations]);
 
   const handleRegister = async () => {
-    if (!user) {
+    if (!userId) {
       router.push(
         "/login?redirect=" + encodeURIComponent(`/events/${eventId}`)
       );

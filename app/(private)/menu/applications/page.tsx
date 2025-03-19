@@ -12,6 +12,7 @@ import {
   JobApplication,
 } from "@/components/applications/application-card";
 import { ApplicationCardSkeleton } from "@/components/applications/application-card-skeleton";
+import { useProfile } from "@/components/dashboard/profile-context";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -23,15 +24,9 @@ const fetcher = async (url: string) => {
 };
 
 export default function ApplicationsPage() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState("all");
-
-  // Fetch user data using SWR
-  const {
-    data: userData,
-    error: userError,
-    isLoading: userIsLoading,
-  } = useSWR("/api/user/me", fetcher);
+  const { userId, userType, isLoading: isProfileLoading } = useProfile();
+  
 
   // Fetch applications data based on user type
   const {
@@ -40,12 +35,12 @@ export default function ApplicationsPage() {
     isLoading: applicationsIsLoading,
   } = useSWR(
     () =>
-      userData?.userType === "individual" ? "/api/jobs/applications" : null,
+      userType === "individual" ? "/api/jobs/applications" : null,
     fetcher
   );
 
-  const isLoading = userIsLoading || applicationsIsLoading;
-  const error = userError || applicationsError;
+  const isLoading = isProfileLoading || applicationsIsLoading;
+  const error = applicationsError;
 
   // Handle loading state
   if (isLoading) {
@@ -88,7 +83,7 @@ export default function ApplicationsPage() {
   }
 
   // Handle user type check
-  if (userData?.userType !== "individual") {
+  if (userType !== "individual") {
     return (
       <div>
         <div className="flex justify-between items-center mb-6">

@@ -23,7 +23,7 @@ type JobType = {
 };
 
 export default function JobsPage() {
-  const router = useRouter();
+
   const { jobs, isLoading, isError } = useJobs();
   const [searchTerm, setSearchTerm] = useState("");
   const [jobType, setJobType] = useState<string | null>(null);

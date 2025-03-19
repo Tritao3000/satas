@@ -19,7 +19,7 @@ export default function EditEventPage({
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const router = useRouter();
   const { event, isLoading: isEventLoading, isError } = useEvent(eventId);
-  const { userType, isLoading: isProfileLoading } = useProfile();
+  const { userId, userType, isLoading: isProfileLoading } = useProfile();
 
   useEffect(() => {
     // Only run this effect when both profile and event are loaded
@@ -38,10 +38,9 @@ export default function EditEventPage({
 
       // Check if user owns the event
       const checkOwnership = async () => {
-        const supabase = createClient();
-        const { data } = await supabase.auth.getUser();
+        
 
-        if (data.user && event.startupId === data.user.id) {
+        if (userId && event.startupId === userId) {
           setIsAuthorized(true);
         } else {
           setIsAuthorized(false);
@@ -51,7 +50,7 @@ export default function EditEventPage({
 
       checkOwnership();
     }
-  }, [isProfileLoading, isEventLoading, userType, event, router]);
+  }, [isProfileLoading, isEventLoading, userId, event, router]);
 
   // Show loading state while checking authorization or loading event
   if (isEventLoading || isProfileLoading || isAuthorized === null) {

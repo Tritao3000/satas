@@ -16,36 +16,13 @@ import { JobCardSkeleton } from "@/components/jobs/job-card-skeleton";
 
 export default function JobsManagementPage() {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>(null);
-  const { userType, isLoading: isProfileLoading } = useProfile();
+  const { userType, isLoading: isProfileLoading, userId } = useProfile();
   const {
     jobs,
     isLoading: isJobsLoading,
     isError,
     mutate,
   } = useJobs(userId || undefined);
-
-  useEffect(() => {
-    async function getUserDetails() {
-      const supabase = createClient();
-
-      // Get current user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        toast("Authentication required");
-        router.push("/sign-in");
-        return;
-      }
-
-      setUserId(user.id);
-    }
-
-    getUserDetails();
-  }, [router]);
 
   // Redirect if not a startup user
   useEffect(() => {
@@ -59,7 +36,7 @@ export default function JobsManagementPage() {
     mutate();
   };
 
-  const isLoading = isProfileLoading || isJobsLoading || !userId;
+  const isLoading = isProfileLoading || isJobsLoading;
 
   if (isLoading || userType !== "startup") {
     return <JobsPageSkeleton />;

@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import useSWR, { mutate } from "swr";
 import { useEffect } from "react";
+import { useProfile } from "@/components/dashboard/profile-context";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -40,18 +41,14 @@ const fetcher = async (url: string) => {
 export default function UserProfilePage() {
   const params = useParams();
   const userId = params.id as string;
-  const router = useRouter();
+  const { userId: currentUserId, userType, isLoading: isProfileLoading } = useProfile();
 
   // Force revalidation when the component mounts
   useEffect(() => {
     mutate(`/api/profile/individual/${userId}`);
   }, [userId]);
 
-  // Fetch current user
-  const { data: currentUser, error: currentUserError } = useSWR(
-    "/api/user/me",
-    fetcher
-  );
+
 
   // Fetch individual profile
   const {
@@ -79,7 +76,7 @@ export default function UserProfilePage() {
   }
 
   // Check if current user is viewing their own profile
-  const isOwnProfile = currentUser?.id === userId;
+  const isOwnProfile = currentUserId === userId;
 
   return (
     <div>

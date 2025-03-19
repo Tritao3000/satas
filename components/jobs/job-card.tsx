@@ -99,7 +99,7 @@ export function JobCard({ job, allowEdit = false, onDelete }: JobCardProps) {
       </CardContent>
 
       <CardFooter className="flex justify-between pt-2 pb-4">
-        <Button asChild variant="secondary">
+        <Button asChild variant="default">
           <Link href={`/jobs/${job.id}`}>View Details</Link>
         </Button>
 
@@ -111,12 +111,12 @@ export function JobCard({ job, allowEdit = false, onDelete }: JobCardProps) {
               </Link>
             </Button>
             <Button
-              variant="outline"
+              variant="destructive"
               size="icon"
               onClick={handleDelete}
               disabled={isDeleting}
             >
-              <Trash2Icon className="h-4 w-4 text-destructive" />
+              <Trash2Icon className="h-4 w-4 text-white" />
             </Button>
           </div>
         )}

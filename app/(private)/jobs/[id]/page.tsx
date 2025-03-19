@@ -47,26 +47,13 @@ export default function JobDetailPage({
   const jobId = params instanceof Promise ? use(params).id : params.id;
   const { job, isLoading, isError } = useJob(jobId);
   const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
 
-  const { userType, isLoading: isProfileLoading } = useProfile();
+
+  const { userId, userType, isLoading: isProfileLoading } = useProfile();
 
   const [startupData, setStartupData] = useState<any>(null);
 
-  // Check user authentication and type
-  useEffect(() => {
-    const checkUser = async () => {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getUser();
-
-      if (data.user) {
-        setUserId(data.user.id);
-      }
-    };
-
-    checkUser();
-  }, []);
-
+  
   // Fetch startup data
   useEffect(() => {
     async function fetchStartupData() {

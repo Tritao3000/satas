@@ -12,7 +12,8 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 
 // Create a wrapper component that uses the ProfileContext
 function MenuLayoutContent({ children }: { children: React.ReactNode }) {
-  const { isProfileSetup, isLoading } = useProfile();
+  const profile = useProfile();
+  const { isProfileSetup, isLoading } = profile;
 
   // Show loading state or just the content while checking profile status
   if (isLoading) {

@@ -16,12 +16,11 @@ import { useProfile } from "@/components/dashboard/profile-context";
 import { PlusIcon } from "lucide-react";
 
 export default function EventsManagementPage() {
-  const [userId, setUserId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("all");
   const router = useRouter();
-  const { userType, isLoading: isProfileLoading } = useProfile();
+  const { userId, userType, isLoading: isProfileLoading } = useProfile();
 
   const {
     events,
@@ -30,21 +29,7 @@ export default function EventsManagementPage() {
     mutate,
   } = useEvents(userId || undefined);
 
-  useEffect(() => {
-    const getUserId = async () => {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getUser();
 
-      if (data.user) {
-        setUserId(data.user.id);
-      } else {
-        // Redirect unauthenticated users
-        router.push("/login");
-      }
-    };
-
-    getUserId();
-  }, [router]);
 
   // Handle redirection based on user type
   useEffect(() => {
@@ -155,7 +140,7 @@ export default function EventsManagementPage() {
         </div>
         <Button asChild>
           <Link href="/menu/events/new">
-            <PlusIcon className="h-4 w-4 mr-2" />
+            <PlusIcon className="h-4 w-4" />
             Create Event
           </Link>
         </Button>

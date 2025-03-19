@@ -34,8 +34,7 @@ import {
 } from "@/components/profile/edit/file-upload-utils";
 
 export default function ProfileEditPage() {
-  const supabase = createClient();
-  const router = useRouter();
+ 
   const { userType: contextUserType, isLoading: isProfileLoading } =
     useProfile();
 

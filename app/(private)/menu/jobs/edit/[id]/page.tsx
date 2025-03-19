@@ -2,13 +2,12 @@
 
 import { use, useEffect, useState } from "react";
 import { useJob } from "@/app/hooks/use-jobs";
-import { createClient } from "@/utils/supabase/client";
 import { JobForm } from "@/components/jobs/job-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useProfile } from "@/components/dashboard/profile-context";
 
 export default function EditJobPage({
   params,
@@ -18,60 +17,16 @@ export default function EditJobPage({
   const jobId = params instanceof Promise ? use(params).id : params.id;
   const router = useRouter();
   const { job, isLoading: isJobLoading, isError } = useJob(jobId);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [userType, setUserType] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const { userId, userType, isLoading: isProfileLoading } = useProfile();
+  const isCheckingAuth = isProfileLoading;
 
-  // Check if the user is authorized to edit this job
+  // Check if user type is valid for this page
   useEffect(() => {
-    async function checkAuthorization() {
-      try {
-        const supabase = createClient();
-
-        // Get current user
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-
-        if (userError || !user) {
-          toast("Authentication required");
-          router.push("/sign-in");
-          return;
-        }
-
-        setUserId(user.id);
-
-        // Get user type
-        const { data: userData, error: userDataError } = await supabase
-          .from("users")
-          .select("user_type")
-          .eq("id", user.id)
-          .single();
-
-        if (userDataError) {
-          throw new Error(userDataError.message);
-        }
-
-        setUserType(userData?.user_type);
-
-        // If not a startup, redirect
-        if (userData?.user_type !== "startup") {
-          toast("Only startups can edit job listings");
-          router.push("/menu");
-          return;
-        }
-
-        setIsCheckingAuth(false);
-      } catch (error: any) {
-        console.error("Error checking authorization:", error);
-        toast("An error occurred. Please try again.");
-        router.push("/menu/jobs");
-      }
+    if (!isProfileLoading && userType !== "startup") {
+      toast("Only startups can edit job listings");
+      router.push("/menu");
     }
-
-    checkAuthorization();
-  }, [router]);
+  }, [userType, isProfileLoading, router]);
 
   // Check job ownership once data is loaded
   useEffect(() => {
