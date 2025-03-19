@@ -5,14 +5,12 @@ import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/app/actions";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useProfile } from "@/components/dashboard/profile-context";
 
 export default function ClientUserInfo({
@@ -42,8 +40,8 @@ export default function ClientUserInfo({
   const username = email.split("@")[0];
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         {isExpanded ? (
           <div className="flex items-center gap-3 p-3 cursor-pointer bg-sidebar-accent/20 hover:bg-sidebar-accent/30 transition-colors rounded-md">
             <Avatar className="h-10 w-10 border border-sidebar-border ring-1 ring-sidebar-accent/50">
@@ -77,47 +75,47 @@ export default function ClientUserInfo({
             </AvatarFallback>
           </Avatar>
         )}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="top" align="center" className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{username}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/menu/profile" className="cursor-pointer">
+      </PopoverTrigger>
+      <PopoverContent side="top" align="center" className="w-56 p-3">
+        <div className="flex flex-col space-y-1 mb-2">
+          <p className="text-sm font-medium leading-none">{username}</p>
+          <p className="text-xs leading-none text-muted-foreground mt-1">
+            {email}
+          </p>
+        </div>
+        
+        <div className="border-t my-2" />
+        
+        <div className="flex items-center py-1.5 hover:bg-accent hover:text-accent-foreground rounded-md px-2 transition-colors">
+          <Link href="/menu/profile" className="flex items-center w-full cursor-pointer">
             <User2Icon className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <span className="text-sm">Profile</span>
           </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <PaletteIcon className="mr-2 h-4 w-4" />
-          <span>Theme</span>
-          <div className="ml-auto">
-            <ThemeSwitcher />
+        </div>
+        
+        
+        
+        <div className="flex items-center justify-between py-1.5 px-2 hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+          <div className="flex items-center">
+            <PaletteIcon className="mr-2 h-4 w-4" />
+            <span className="text-sm">Theme</span>
           </div>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          asChild
-          className="text-destructive focus:text-destructive"
-        >
-          <form action={signOutAction} className="w-full">
-            <Button
-              type="submit"
-              variant="ghost"
-              className="flex items-center p-0 h-auto w-full justify-start font-normal text-current"
-            >
-              <LogOutIcon className="mr-2 h-4 w-4" />
-              <span>Sign out</span>
-            </Button>
-          </form>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <ThemeSwitcher />
+        </div>
+        
+        <div className="border-t my-2" />
+        
+        <form action={signOutAction} className="w-full">
+          <Button
+            type="submit"
+            variant="ghost"
+            className="flex items-center w-full justify-start font-normal text-current py-1.5 h-auto hover:bg-accent hover:text-accent-foreground rounded-md px-2 transition-colors"
+          >
+            <LogOutIcon className="mr-2 h-4 w-4" />
+            <span>Sign out</span>
+          </Button>
+        </form>
+      </PopoverContent>
+    </Popover>
   );
 }
