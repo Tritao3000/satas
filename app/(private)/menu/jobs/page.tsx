@@ -53,7 +53,7 @@ export default function JobsManagementPage() {
         </div>
         <Button asChild>
           <Link href="/menu/jobs/create">
-            <PlusIcon className="h-4 w-4 mr-2" />
+            <PlusIcon className="h-4 w-4" />
             Create Job
           </Link>
         </Button>

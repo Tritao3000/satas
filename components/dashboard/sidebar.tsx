@@ -6,19 +6,14 @@ import Link from "next/link";
 import {
   HomeIcon,
   UserIcon,
-  BriefcaseIcon,
   CalendarIcon,
   SettingsIcon,
-  MessageSquareIcon,
-  LogOutIcon,
-  MoreVertical,
-  User2Icon,
-  PaletteIcon,
+
   BriefcaseBusiness,
   UserCog,
   Contact,
 } from "lucide-react";
-
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useProfile } from "./profile-context";
 
@@ -34,8 +29,11 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import LogoDark from "@/public/images/logo-dark.png";
+import LogoLight from "@/public/images/logo-light.png";
 
 import ClientUserInfo from "./client-user-info";
+import { useTheme } from "next-themes";
 
 // Define the type for navigation items
 interface NavItem {
@@ -112,6 +110,8 @@ export function DashboardSidebar() {
   const { state } = useSidebar();
   const isExpanded = state === "expanded";
   const { userType, isLoading } = useProfile();
+  const { theme } = useTheme();
+  
 
   // Filter navigation items based on user role
   const filteredNavItems = navItems.filter((item) => {
@@ -124,7 +124,28 @@ export function DashboardSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="flex flex-row items-center justify-between border-b">
-        {isExpanded && <h1 className="text-xl font-bold">SATAS</h1>}
+        {isExpanded && (
+          <>
+            {theme === "dark" && (
+              <Image
+                loading="eager"
+                src={LogoLight}
+                width={140}
+                height={30}
+                alt="logo"
+              />
+            )}
+            {theme === "light" && (
+              <Image
+                loading="eager"
+                src={LogoDark}
+                width={140}
+                height={30}
+                alt="logo"
+              />
+            )}
+          </>
+        )}
         <SidebarTrigger />
       </SidebarHeader>
 
