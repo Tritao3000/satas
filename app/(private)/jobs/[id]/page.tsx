@@ -48,12 +48,10 @@ export default function JobDetailPage({
   const { job, isLoading, isError } = useJob(jobId);
   const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
 
-
   const { userId, userType, isLoading: isProfileLoading } = useProfile();
 
   const [startupData, setStartupData] = useState<any>(null);
 
-  
   // Fetch startup data
   useEffect(() => {
     async function fetchStartupData() {
@@ -62,7 +60,7 @@ export default function JobDetailPage({
 
         const { data, error } = await supabase
           .from("startup_profiles")
-          .select("name, logo, location")
+          .select("user_id,name, logo, location")
           .eq("user_id", job.startupId)
           .single();
 
@@ -239,7 +237,9 @@ export default function JobDetailPage({
                 <CardDescription>
                   <div className="flex items-center gap-2 text-sm">
                     {startupData?.name && (
-                      <span className="font-medium">{startupData.name}</span>
+                      <Link href={`/startup/${startupData.user_id}`}>
+                        <span className="font-medium">{startupData.name}</span>
+                      </Link>
                     )}
                     <span>•</span>
                     <span className="flex items-center">
