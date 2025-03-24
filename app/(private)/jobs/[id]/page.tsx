@@ -244,7 +244,11 @@ export default function JobDetailPage({
                     <span>•</span>
                     <span className="flex items-center">
                       <MapPin className="h-4 w-4 mr-1" />
-                      {job.location}
+                      <Link
+                        href={`/jobs?location=${encodeURIComponent(job.location)}`}
+                      >
+                        {job.location}
+                      </Link>
                     </span>
                     <span>•</span>
                     <span className="flex items-center">
