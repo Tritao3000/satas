@@ -10,19 +10,9 @@ import {
 } from "@/components/dashboard/profile-context";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-// Create a wrapper component that uses the ProfileContext
 function MenuLayoutContent({ children }: { children: React.ReactNode }) {
   const profile = useProfile();
   const { isProfileSetup, isLoading } = profile;
-
-  // Show loading state or just the content while checking profile status
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
-      </div>
-    );
-  }
 
   // If profile is not set up, only show the content without the sidebar
   if (!isProfileSetup) {
