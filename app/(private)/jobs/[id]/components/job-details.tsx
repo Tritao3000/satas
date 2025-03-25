@@ -1,0 +1,241 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  Briefcase,
+  CalendarDays,
+  Clock,
+  MapPin,
+  Building,
+  DollarSign,
+  Send,
+} from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Breadcrumb,
+  BreadcrumbSeparator,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbLink,
+} from "@/components/ui/breadcrumb";
+
+export default function JobDetails({
+  job,
+  startupData,
+  formattedDate,
+  formattedSalary,
+  userType,
+}) {
+  //TODO: this needs to be changed
+  //const handleApply = async () => {
+  //  if (!userId) {
+  //    toast("Please sign in to apply for jobs", {
+  //      description: "You'll be redirected to the sign in page.",
+  //      action: {
+  //        label: "Sign In",
+  //        onClick: () => router.push("/sign-in"),
+  //      },
+  //    });
+  //    return;
+  //  }
+  //
+  //  if (userType !== "individual") {
+  //    toast("Only individuals can apply for jobs");
+  //    return;
+  //  }
+  //
+  //  setIsSubmittingApplication(true);
+  //
+  //  try {
+  //    const response = await fetch("/api/jobs/apply", {
+  //      method: "POST",
+  //      headers: {
+  //        "Content-Type": "application/json",
+  //      },
+  //      body: JSON.stringify({
+  //        jobId: job?.id,
+  //      }),
+  //    });
+  //
+  //    if (!response.ok) {
+  //      const errorData = await response.json();
+  //      throw new Error(errorData.error || "Failed to apply for job");
+  //    }
+  //
+  //    toast("Application submitted successfully", {
+  //      description: "The company will be in touch if they want to proceed.",
+  //    });
+  //  } catch (error: any) {
+  //    console.error("Error applying for job:", error);
+  //    toast(error.message || "Failed to apply for job", {
+  //      description: "Please try again",
+  //    });
+  //  } finally {
+  //    setIsSubmittingApplication(false);
+  //  }
+  //};
+
+  return (
+    <div>
+      <div className=" flex flex-col gap-4">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/jobs">Jobs</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              {job.title} @ {startupData?.name}
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle className="text-2xl mb-2">{job.title}</CardTitle>
+                <CardDescription>
+                  <div className="flex items-center gap-2 text-sm">
+                    {startupData?.name && (
+                      <Link href={`/startup/${startupData.user_id}`}>
+                        <span className="font-medium">{startupData.name}</span>
+                      </Link>
+                    )}
+                    <span>•</span>
+                    <span className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-1" />
+                      <Link
+                        href={`/jobs?location=${encodeURIComponent(job.location)}`}
+                      >
+                        {job.location}
+                      </Link>
+                    </span>
+                    <span>•</span>
+                    <span className="flex items-center">
+                      <CalendarDays className="h-4 w-4 mr-1" />
+                      Posted {formattedDate}
+                    </span>
+                  </div>
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge className="text-sm">{job.type}</Badge>
+
+                <Button
+                  disabled={userType === "startup"}
+                  variant="outline"
+                  size="sm"
+                  className="ml-2"
+                >
+                  <Send className="h-4 w-4 mr-1" />
+                  <span>Apply</span>
+                  <span className="sr-only">Apply for this job</span>
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="flex items-center">
+                <Briefcase className="h-5 w-5 mr-2 text-muted-foreground" />
+                <div>
+                  <div className="text-sm text-muted-foreground">Job Type</div>
+                  <div>{job.type}</div>
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <DollarSign className="h-5 w-5 mr-2 text-muted-foreground" />
+                <div>
+                  <div className="text-sm text-muted-foreground">Salary</div>
+                  <div>{formattedSalary}</div>
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
+                <div>
+                  <div className="text-sm text-muted-foreground">Posted</div>
+                  <div>{formattedDate}</div>
+                </div>
+              </div>
+            </div>
+
+            <Separator className="my-6" />
+
+            <Tabs defaultValue="description">
+              <TabsList className="w-full">
+                <TabsTrigger className="w-full" value="description">
+                  Job Description
+                </TabsTrigger>
+                <TabsTrigger className="w-full" value="company">
+                  Company
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="description" className="mt-4">
+                <div className="prose prose-sm max-w-none">
+                  <h3 className="text-lg font-medium mb-2">Description</h3>
+                  <div className="whitespace-pre-wrap">{job.description}</div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="company" className="mt-4">
+                <div className="prose prose-sm max-w-none">
+                  <h3 className="text-lg font-medium mb-2">
+                    About the Company
+                  </h3>
+                  {startupData ? (
+                    <div>
+                      <p className="flex items-center mb-2">
+                        <Building className="h-4 w-4 mr-2" />
+                        {startupData.name}
+                      </p>
+                      <p className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        {startupData.location}
+                      </p>
+                      <div className="mt-4">
+                        <Button variant="outline" asChild>
+                          <Link href={`/startup/${job.startupId}`}>
+                            View Company Profile
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-center mb-2">
+                        <Skeleton className="h-4 w-4 mr-2" />
+                        <Skeleton className="h-5 w-40" />
+                      </div>
+                      <div className="flex items-center">
+                        <Skeleton className="h-4 w-4 mr-2" />
+                        <Skeleton className="h-5 w-32" />
+                      </div>
+                      <div className="mt-4">
+                        <Skeleton className="h-9 w-36" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

@@ -1,212 +1,56 @@
-"use client";
-
-import { useState, useEffect, use } from "react";
-import { createClient } from "@/utils/supabase/client";
-import { useJob } from "@/app/hooks/use-jobs";
-import { Button } from "@/components/ui/button";
-import { useProfile } from "@/components/dashboard/profile-context";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import {
-  Briefcase,
-  CalendarDays,
-  Clock,
-  MapPin,
-  Building,
-  DollarSign,
-  Send,
-} from "lucide-react";
+import { db } from "@/src/db";
+import { eq } from "drizzle-orm";
+import { jobs, startupProfiles } from "@/src/db/schema";
+import { createClient } from "@/utils/supabase/server";
 import { format } from "date-fns";
-import { toast } from "sonner";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Breadcrumb,
-  BreadcrumbSeparator,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbLink,
-} from "@/components/ui/breadcrumb";
+import JobDetails from "./components/job-details";
 
-export default function JobDetailPage({
+export default async function JobDetailPage({
   params,
 }: {
   params: Promise<{ id: string }> | { id: string };
 }) {
-  const router = useRouter();
-  // Handle both Promise and direct object cases for backwards compatibility
-  const jobId = params instanceof Promise ? use(params).id : params.id;
-  const { job, isLoading, isError } = useJob(jobId);
-  const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
+  const { id } = await params;
+  const jobId = id;
+  const jobData = await db
+    .select()
+    .from(jobs)
+    .where(eq(jobs.id, jobId))
+    .limit(1);
 
+  const job = jobData[0];
 
-  const { userId, userType, isLoading: isProfileLoading } = useProfile();
-
-  const [startupData, setStartupData] = useState<any>(null);
-
-  
-  // Fetch startup data
-  useEffect(() => {
-    async function fetchStartupData() {
-      if (job) {
-        const supabase = createClient();
-
-        const { data, error } = await supabase
-          .from("startup_profiles")
-          .select("name, logo, location")
-          .eq("user_id", job.startupId)
-          .single();
-
-        if (!error && data) {
-          setStartupData(data);
-        }
-      }
-    }
-
-    fetchStartupData();
-  }, [job]);
-
-  const handleApply = async () => {
-    if (!userId) {
-      toast("Please sign in to apply for jobs", {
-        description: "You'll be redirected to the sign in page.",
-        action: {
-          label: "Sign In",
-          onClick: () => router.push("/sign-in"),
-        },
-      });
-      return;
-    }
-
-    if (userType !== "individual") {
-      toast("Only individuals can apply for jobs");
-      return;
-    }
-
-    setIsSubmittingApplication(true);
-
-    try {
-      const response = await fetch("/api/jobs/apply", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          jobId: job?.id,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to apply for job");
-      }
-
-      toast("Application submitted successfully", {
-        description: "The company will be in touch if they want to proceed.",
-      });
-    } catch (error: any) {
-      console.error("Error applying for job:", error);
-      toast(error.message || "Failed to apply for job", {
-        description: "Please try again",
-      });
-    } finally {
-      setIsSubmittingApplication(false);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div>
-        <div>
-          <Card className="mb-6">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div className="space-y-2">
-                  <Skeleton className="h-8 w-64 mb-2" />
-                  <div className="flex items-center gap-2 text-sm">
-                    <Skeleton className="h-4 w-24" />
-                    <span>•</span>
-                    <div className="flex items-center">
-                      <Skeleton className="h-4 w-4 mr-1" />
-                      <Skeleton className="h-4 w-20" />
-                    </div>
-                    <span>•</span>
-                    <div className="flex items-center">
-                      <Skeleton className="h-4 w-4 mr-1" />
-                      <Skeleton className="h-4 w-32" />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Skeleton className="h-6 w-16" />
-                  <Skeleton className="h-9 w-20 ml-2" />
-                </div>
-              </div>
-            </CardHeader>
-
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="flex items-center">
-                    <Skeleton className="h-5 w-5 mr-2" />
-                    <div>
-                      <Skeleton className="h-4 w-16 mb-1" />
-                      <Skeleton className="h-5 w-24" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <Separator className="my-6" />
-
-              <Tabs defaultValue="description">
-                <TabsList className="w-full">
-                  <TabsTrigger className="w-full" value="description" disabled>
-                    <Skeleton className="h-4 w-3/5" />
-                  </TabsTrigger>
-                  <TabsTrigger className="w-full" value="company" disabled>
-                    <Skeleton className="h-4 w-3/5" />
-                  </TabsTrigger>
-                </TabsList>
-
-                <div className="mt-4">
-                  <Skeleton className="h-6 w-40 mb-4" />
-                  <div className="space-y-2">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <Skeleton key={i} className="h-4 w-full" />
-                    ))}
-                    <Skeleton className="h-4 w-3/4" />
-                  </div>
-                </div>
-              </Tabs>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+  if (!job) {
+    throw new Error("Job not found");
   }
 
-  if (isError || !job) {
-    return (
-      <div className="container py-10">
-        <div className="text-center p-8">
-          Job not found or an error occurred
-        </div>
-      </div>
-    );
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("User not found");
   }
+
+  const startup = await db
+    .select({
+      user_id: startupProfiles.userId,
+      name: startupProfiles.name,
+      logo: startupProfiles.logo,
+      location: startupProfiles.location,
+    })
+    .from(startupProfiles)
+    .where(eq(startupProfiles.userId, job.startupId))
+    .limit(1);
+
+  const startupData = startup[0];
 
   // Format job date
+
   const formattedDate = format(new Date(job.createdAt), "MMMM d, yyyy");
+  const userType = user?.user_metadata?.user_type;
 
   // Format salary
   const formattedSalary = job.salary
@@ -218,149 +62,12 @@ export default function JobDetailPage({
     : "Not specified";
 
   return (
-    <div>
-      <div className=" flex flex-col gap-4">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/jobs">Jobs</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              {job.title} @ {startupData?.name}
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <div>
-                <CardTitle className="text-2xl mb-2">{job.title}</CardTitle>
-                <CardDescription>
-                  <div className="flex items-center gap-2 text-sm">
-                    {startupData?.name && (
-                      <span className="font-medium">{startupData.name}</span>
-                    )}
-                    <span>•</span>
-                    <span className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {job.location}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center">
-                      <CalendarDays className="h-4 w-4 mr-1" />
-                      Posted {formattedDate}
-                    </span>
-                  </div>
-                </CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className="text-sm">{job.type}</Badge>
-
-                <Button
-                  disabled={userType === "startup"}
-                  variant="outline"
-                  size="sm"
-                  className="ml-2"
-                >
-                  <Send className="h-4 w-4 mr-1" />
-                  <span>Apply</span>
-                  <span className="sr-only">Apply for this job</span>
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="flex items-center">
-                <Briefcase className="h-5 w-5 mr-2 text-muted-foreground" />
-                <div>
-                  <div className="text-sm text-muted-foreground">Job Type</div>
-                  <div>{job.type}</div>
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <DollarSign className="h-5 w-5 mr-2 text-muted-foreground" />
-                <div>
-                  <div className="text-sm text-muted-foreground">Salary</div>
-                  <div>{formattedSalary}</div>
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
-                <div>
-                  <div className="text-sm text-muted-foreground">Posted</div>
-                  <div>{formattedDate}</div>
-                </div>
-              </div>
-            </div>
-
-            <Separator className="my-6" />
-
-            <Tabs defaultValue="description">
-              <TabsList className="w-full">
-                <TabsTrigger className="w-full" value="description">
-                  Job Description
-                </TabsTrigger>
-                <TabsTrigger className="w-full" value="company">
-                  Company
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="description" className="mt-4">
-                <div className="prose prose-sm max-w-none">
-                  <h3 className="text-lg font-medium mb-2">Description</h3>
-                  <div className="whitespace-pre-wrap">{job.description}</div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="company" className="mt-4">
-                <div className="prose prose-sm max-w-none">
-                  <h3 className="text-lg font-medium mb-2">
-                    About the Company
-                  </h3>
-                  {startupData ? (
-                    <div>
-                      <p className="flex items-center mb-2">
-                        <Building className="h-4 w-4 mr-2" />
-                        {startupData.name}
-                      </p>
-                      <p className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        {startupData.location}
-                      </p>
-                      <div className="mt-4">
-                        <Button variant="outline" asChild>
-                          <Link href={`/startup/${job.startupId}`}>
-                            View Company Profile
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <div className="flex items-center mb-2">
-                        <Skeleton className="h-4 w-4 mr-2" />
-                        <Skeleton className="h-5 w-40" />
-                      </div>
-                      <div className="flex items-center">
-                        <Skeleton className="h-4 w-4 mr-2" />
-                        <Skeleton className="h-5 w-32" />
-                      </div>
-                      <div className="mt-4">
-                        <Skeleton className="h-9 w-36" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <JobDetails
+      job={job}
+      startupData={startupData}
+      formattedDate={formattedDate}
+      formattedSalary={formattedSalary}
+      userType={userType}
+    />
   );
 }
