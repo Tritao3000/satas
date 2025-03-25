@@ -78,7 +78,7 @@ export function JobCard({ job, allowEdit = false, onDelete }: JobCardProps) {
       <CardContent className="pt-6">
         <div className="flex justify-between">
           <h3 className="text-lg font-medium">{job.title}</h3>
-          <Badge variant={getBadgeVariant(job.type)}>{job.type}</Badge>
+          <Badge variant="secondary">{job.type}</Badge>
         </div>
 
         <div className="flex items-center text-muted-foreground text-sm mt-2">
@@ -125,17 +125,4 @@ export function JobCard({ job, allowEdit = false, onDelete }: JobCardProps) {
   );
 }
 
-// Helper function to get badge variant based on job type
-function getBadgeVariant(type: string): "default" | "secondary" | "outline" {
-  switch (type) {
-    case "Full-time":
-      return "default";
-    case "Part-time":
-    case "Contract":
-      return "secondary";
-    case "Internship":
-    case "Remote":
-    default:
-      return "outline";
-  }
-}
+
