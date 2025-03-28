@@ -4,6 +4,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import localFont from "next/font/local";
 import { Arimo } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { ReactScan } from "@/components/react-scan";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -54,6 +56,7 @@ export default function RootLayout({
       className={`${arimo.className} ${garet.variable} ${garetHeavy.variable}`}
       suppressHydrationWarning
     >
+      <ReactScan />
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
@@ -61,7 +64,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <NuqsAdapter>{children}</NuqsAdapter>
           <Toaster />
         </ThemeProvider>
       </body>
