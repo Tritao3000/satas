@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BriefcaseBusiness, Loader2, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useQueryState } from "nuqs";
 
 type JobType = {
   id: string;
@@ -24,11 +25,14 @@ type JobType = {
 
 export default function JobsPage() {
   const { jobs, isLoading, isError } = useJobs();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [jobType, setJobType] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useQueryState("search", {
+    defaultValue: "",
+  });
+  const [jobType, setJobType] = useQueryState("type", {
+    defaultValue: "",
+  });
   const [filteredJobs, setFilteredJobs] = useState<JobType[]>([]);
 
-  // Filter jobs based on search term and job type
   useEffect(() => {
     if (!jobs) return;
 
