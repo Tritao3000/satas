@@ -10,10 +10,8 @@ const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
   const id = useId();
 
-  // Determine if we're in dark mode
   const isDarkMode = theme === "dark";
 
-  // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
     setMounted(true);
   }, []);

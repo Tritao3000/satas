@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMyEventRegistrations } from "@/app/hooks/use-events";
+import { useMyEventRegistrations } from "@/lib/hooks/use-events";
 import { Button } from "@/components/ui/button";
 import { Loader2, Calendar, X } from "lucide-react";
 import { EventCard } from "@/components/events/event-card";

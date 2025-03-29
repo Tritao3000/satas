@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useJobs } from "@/app/hooks/use-jobs";
+import { useJobs } from "@/lib/hooks/use-jobs";
 import { JobCard } from "@/components/jobs/job-card";
 import { JobCardSkeleton } from "@/components/jobs/job-card-skeleton";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,6 @@ type JobType = {
 };
 
 export default function JobsPage() {
-
   const { jobs, isLoading, isError } = useJobs();
   const [searchTerm, setSearchTerm] = useState("");
   const [jobType, setJobType] = useState<string | null>(null);

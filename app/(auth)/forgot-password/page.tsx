@@ -16,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { createClient } from "@/utils/supabase/client";
-import { SmtpMessage } from "../../../components/smtp-message";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -104,10 +103,6 @@ export default function ForgotPassword() {
           >
             Reset Password
           </Button>
-
-          <div className="mt-2">
-            <SmtpMessage />
-          </div>
         </div>
 
         <div className="text-center text-sm">

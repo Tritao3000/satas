@@ -34,7 +34,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { signOutAction } from "@/app/actions";
+import { signOutAction } from "@/app/actions/actions";
 import {
   Popover,
   PopoverContent,
@@ -130,19 +130,6 @@ export function DashboardSidebar() {
     ? email.split("@")[0].substring(0, 2).toUpperCase()
     : "US";
   const username = email ? email.split("@")[0] : "User";
-
-  // User profile loading state
-  const renderUserProfileLoading = () => (
-    <div className="flex items-center gap-3 animate-pulse p-4">
-      <div className="h-10 w-10 rounded-sm bg-gray-800" />
-      {isExpanded && (
-        <div className="space-y-2 flex-1">
-          <div className="h-3 w-24 bg-gray-800 rounded" />
-          <div className="h-2 w-32 bg-gray-700 rounded" />
-        </div>
-      )}
-    </div>
-  );
 
   return (
     <Sidebar

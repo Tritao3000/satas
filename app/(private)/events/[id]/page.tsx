@@ -5,7 +5,7 @@ import {
   useEvent,
   useEventRegistrations,
   type EventRegistration,
-} from "@/app/hooks/use-events";
+} from "@/lib/hooks/use-events";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,8 +55,6 @@ export default function EventPage({
   const [isUnregistering, setIsUnregistering] = useState(false);
   const router = useRouter();
   const { userId, userType, isLoading: isProfileLoading } = useProfile();
-
-
 
   useEffect(() => {
     if (userId && registrations) {

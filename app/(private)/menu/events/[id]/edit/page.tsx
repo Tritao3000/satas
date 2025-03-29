@@ -5,10 +5,16 @@ import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { EventForm } from "@/components/events/event-form";
 import { Loader2 } from "lucide-react";
-import { useEvent } from "@/app/hooks/use-events";
+import { useEvent } from "@/lib/hooks/use-events";
 import { useProfile } from "@/components/dashboard/profile-context";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function EditEventPage({
   params,
@@ -38,8 +44,6 @@ export default function EditEventPage({
 
       // Check if user owns the event
       const checkOwnership = async () => {
-        
-
         if (userId && event.startupId === userId) {
           setIsAuthorized(true);
         } else {

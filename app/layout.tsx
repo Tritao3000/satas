@@ -11,7 +11,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "SATAS Platform",
+  title: "Satas",
   description: "Social Aid for Talent Acquisition Startups",
 };
 

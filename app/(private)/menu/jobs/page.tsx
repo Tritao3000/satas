@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useJobs } from "@/app/hooks/use-jobs";
+import { useJobs } from "@/lib/hooks/use-jobs";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/jobs/job-card";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useEvents } from "@/app/hooks/use-events";
+import { useEvents } from "@/lib/hooks/use-events";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,8 +28,6 @@ export default function EventsManagementPage() {
     isError,
     mutate,
   } = useEvents(userId || undefined);
-
-
 
   // Handle redirection based on user type
   useEffect(() => {

@@ -1,12 +1,18 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { useJob } from "@/app/hooks/use-jobs";
+import { useJob } from "@/lib/hooks/use-jobs";
 import { JobForm } from "@/components/jobs/job-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useProfile } from "@/components/dashboard/profile-context";
 
 export default function EditJobPage({

@@ -8,7 +8,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import GoogleAuthWrapper from "@/app/auth/components/GoogleAuthWrapper";
+import GoogleAuthWrapper from "@/components/GoogleAuthWrapper";
 import {
   Form,
   FormControl,

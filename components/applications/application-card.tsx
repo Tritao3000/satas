@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 
-// Define type for job applications
 export type JobApplication = {
   id: string;
   jobId: string;
