@@ -10,28 +10,59 @@ export default async function ForgotPassword(props: {
   searchParams: Promise<Message>;
 }) {
   const searchParams = await props.searchParams;
+
+  if (searchParams && "message" in searchParams) {
+    return (
+      <div className="w-full flex-1 flex items-center justify-center">
+        <FormMessage message={searchParams} />
+      </div>
+    );
+  }
+
   return (
-    <>
-      <form className="flex-1 flex flex-col w-full gap-2 text-foreground [&>input]:mb-6 min-w-64 max-w-64 mx-auto">
-        <div>
-          <h1 className="text-2xl font-medium">Reset Password</h1>
-          <p className="text-sm text-secondary-foreground">
-            Already have an account?{" "}
-            <Link className="text-primary underline" href="/sign-in">
-              Sign in
-            </Link>
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+    <div className="w-full">
+      <h2 className="text-2xl font-semibold tracking-tight mb-6">
+        Reset Password
+      </h2>
+      <form className="space-y-4">
+        <p className="text-sm text-muted-foreground mb-4">
+          Remember your password?{" "}
+          <Link
+            className="text-primary font-medium underline hover:text-primary/90"
+            href="/sign-in"
+          >
+            Sign in
+          </Link>
+        </p>
+
+        <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
-          <SubmitButton formAction={forgotPasswordAction}>
-            Reset Password
-          </SubmitButton>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            className="w-full"
+            required
+          />
+        </div>
+
+        <SubmitButton
+          className="w-full"
+          pendingText="Requesting reset..."
+          formAction={forgotPasswordAction}
+        >
+          Reset Password
+        </SubmitButton>
+
+        <div className="mt-4">
           <FormMessage message={searchParams} />
         </div>
       </form>
-      <SmtpMessage />
-    </>
+
+      <div className="mt-6">
+        <SmtpMessage />
+      </div>
+    </div>
   );
 }

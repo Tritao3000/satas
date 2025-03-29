@@ -2,7 +2,7 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import localFont from 'next/font/local';
+import localFont from "next/font/local";
 import { Arimo } from "next/font/google";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -21,26 +21,26 @@ const geistSans = Geist({
 });
 
 const arimo = Arimo({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 const garet = localFont({
-  src: '../public/fonts/Garet-Book.woff2',
-  display: 'swap',
-  variable: '--font-garet',
-  
-  style: 'normal',
+  src: "../public/fonts/Garet-Book.woff2",
+  display: "swap",
+  variable: "--font-garet",
+
+  style: "normal",
 });
 
 const garetHeavy = localFont({
-  src: '../public/fonts/Garet-Heavy.woff2',
-  display: 'swap',
-  variable: '--font-garet-heavy',
-  weight: '700',
-  style: 'normal',
+  src: "../public/fonts/Garet-Heavy.woff2",
+  display: "swap",
+  variable: "--font-garet-heavy",
+  weight: "700",
+  style: "normal",
 });
 
 export default function RootLayout({
@@ -49,7 +49,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${arimo.className} ${garet.variable} ${garetHeavy.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${arimo.className} ${garet.variable} ${garetHeavy.variable}`}
+      suppressHydrationWarning
+    >
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
