@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import { InfoIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import useSWR from 'swr';
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { InfoIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import useSWR from "swr";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Fetcher function for SWR
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -15,7 +16,7 @@ export default function DashboardPage() {
 
   // Use SWR to fetch user profile status
   const { data: profileStatus, error: profileStatusError } = useSWR(
-    '/api/user/profile-status',
+    "/api/user/profile-status",
     fetcher
   );
 
@@ -30,23 +31,23 @@ export default function DashboardPage() {
   useEffect(() => {
     if (profileStatusError) {
       // If there's an authentication error, redirect to sign-in
-      router.push('/sign-in');
+      router.push("/sign-in");
       return;
     }
 
     if (profileStatus) {
       // If user doesn't have a user type, redirect to profile setup
       if (!profileStatus.hasUserType) {
-        router.push('/menu/profile-setup');
+        router.push("/menu/profile-setup");
         return;
       }
 
       // If user has a type but no profile, redirect to profile creation
       if (!profileStatus.hasProfile) {
         router.push(
-          profileStatus.userType === 'startup'
-            ? '/menu/startup-profile'
-            : '/menu/individual-profile'
+          profileStatus.userType === "startup"
+            ? "/menu/startup-profile"
+            : "/menu/individual-profile"
         );
         return;
       }
@@ -58,11 +59,18 @@ export default function DashboardPage() {
 
   if (isLoading || !profileStatus || !profile) {
     return (
-      <div className="flex justify-center items-center h-full min-h-[80vh]">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-12 w-12 bg-muted rounded-full mb-4"></div>
-          <div className="h-4 w-48 bg-muted rounded mb-2"></div>
-          <div className="h-4 w-32 bg-muted rounded"></div>
+      <div className="p-8 w-full max-w-5xl mx-auto">
+        <Skeleton className="h-10 w-3/4 mb-6" />
+        <Skeleton className="h-4 w-2/3 mb-4" />
+        <Skeleton className="h-4 w-1/2 mb-8" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-32 w-full" />
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -100,14 +108,14 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
-              {userType === 'startup' ? 'Applications' : 'Jobs Applied'}
+              {userType === "startup" ? "Applications" : "Jobs Applied"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
-              {userType === 'startup'
-                ? 'No applications to your posts yet'
+              {userType === "startup"
+                ? "No applications to your posts yet"
                 : "You haven't applied to any jobs yet"}
             </p>
           </CardContent>
@@ -115,13 +123,13 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
-              {userType === 'startup' ? 'Events Hosted' : 'Events Joined'}
+              {userType === "startup" ? "Events Hosted" : "Events Joined"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
-              {userType === 'startup'
+              {userType === "startup"
                 ? "You haven't hosted any events yet"
                 : "You haven't joined any events yet"}
             </p>
@@ -130,7 +138,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-6 space-y-4">
-        {userType === 'startup' ? (
+        {userType === "startup" ? (
           <>
             <h2 className="text-xl font-semibold">Startup Dashboard</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

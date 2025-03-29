@@ -10,34 +10,42 @@ import {
 } from "@/components/dashboard/profile-context";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-function MenuLayoutContent({ children }: { children: React.ReactNode }) {
-  const profile = useProfile();
-  const { isProfileSetup, isLoading } = profile;
+function MainContent({ children }: { children: React.ReactNode }) {
+  const { isProfileSetup, isLoading } = useProfile();
 
-  // If profile is not set up, only show the content without the sidebar
-  if (!isProfileSetup) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen w-full">
-        <main className="p-8 w-full max-w-5xl mx-auto">{children}</main>
-      </div>
+      <main className="flex-1 p-8 overflow-auto w-full max-w-5xl mx-auto">
+        {children}
+      </main>
     );
   }
 
-  // If profile is set up, show the layout with sidebar
+  if (!isProfileSetup) {
+    return <main className="p-8 w-full max-w-5xl mx-auto">{children}</main>;
+  }
+
+  return (
+    <main className="flex-1 p-8 overflow-auto w-full max-w-5xl mx-auto">
+      {children}
+    </main>
+  );
+}
+
+function MenuLayoutContent({ children }: { children: React.ReactNode }) {
+  const { isProfileSetup, isLoading } = useProfile();
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full">
-        <DashboardSidebar />
+        {(isProfileSetup || isLoading) && <DashboardSidebar />}
         <SidebarTrigger className="absolute top-4 left-4 md:hidden" />
-        <main className="flex-1 p-8 overflow-auto w-full max-w-5xl mx-auto">
-          {children}
-        </main>
+        <MainContent>{children}</MainContent>
       </div>
     </SidebarProvider>
   );
 }
 
-// Main layout component that provides the ProfileContext
 export default function MenuLayout({
   children,
 }: {
