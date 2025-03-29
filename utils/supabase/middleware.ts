@@ -44,6 +44,7 @@ export const updateSession = async (request: NextRequest) => {
       request.nextUrl.pathname === "/" ||
       request.nextUrl.pathname === "/sign-in" ||
       request.nextUrl.pathname === "/sign-up" ||
+      request.nextUrl.pathname === "/forgot-password" ||
       request.nextUrl.pathname === "/auth/callback";
 
     // Protect all routes except public ones
