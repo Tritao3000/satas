@@ -61,11 +61,7 @@ export default async function Signup(props: {
           />
         </div>
 
-        <SubmitButton
-          className="w-full"
-          pendingText="Signing up..."
-          formAction={signUpAction}
-        >
+        <SubmitButton className="w-full" formAction={signUpAction}>
           Sign up
         </SubmitButton>
 

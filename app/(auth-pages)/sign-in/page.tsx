@@ -64,11 +64,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           />
         </div>
 
-        <SubmitButton
-          className="w-full"
-          pendingText="Signing in..."
-          formAction={signInAction}
-        >
+        <SubmitButton className="w-full" formAction={signInAction}>
           Sign in
         </SubmitButton>
 

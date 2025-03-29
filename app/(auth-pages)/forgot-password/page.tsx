@@ -47,11 +47,7 @@ export default async function ForgotPassword(props: {
           />
         </div>
 
-        <SubmitButton
-          className="w-full"
-          pendingText="Requesting reset..."
-          formAction={forgotPasswordAction}
-        >
+        <SubmitButton formAction={forgotPasswordAction}>
           Reset Password
         </SubmitButton>
 
