@@ -29,27 +29,28 @@ const ThemeSwitcher = () => {
     >
       <span
         id={`${id}-off`}
-        className="group-data-[state=checked]:text-sidebar-foreground group-data-[state=unchecked]:text-sidebar-foreground/50 flex-1 cursor-pointer text-right text-sm font-medium"
+        className="group-data-[state=unchecked]:text-sidebar-foreground group-data-[state=checked]:text-sidebar-foreground/50 flex-1 cursor-pointer text-right text-sm font-medium"
         aria-controls={id}
-        onClick={() => setTheme("dark")}
+        onClick={() => setTheme("light")}
       >
-        <MoonIcon className="size-4" aria-hidden="true" />
+        <SunIcon className="size-4" aria-hidden="true" />
       </span>
       <Switch
+        className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
         id={id}
         size="sm"
-        checked={!isDarkMode}
-        onCheckedChange={(checked) => setTheme(checked ? "light" : "dark")}
+        checked={isDarkMode}
+        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
         aria-labelledby={`${id}-off ${id}-on`}
         aria-label="Toggle between dark and light mode"
       />
       <span
         id={`${id}-on`}
-        className="group-data-[state=unchecked]:text-sidebar-foreground/50 group-data-[state=checked]:text-sidebar-foreground flex-1 cursor-pointer text-left text-sm font-medium"
+        className="group-data-[state=checked]:text-sidebar-foreground group-data-[state=unchecked]:text-sidebar-foreground/50 flex-1 cursor-pointer text-left text-sm font-medium"
         aria-controls={id}
-        onClick={() => setTheme("light")}
+        onClick={() => setTheme("dark")}
       >
-        <SunIcon className="size-4" aria-hidden="true" />
+        <MoonIcon className="size-4" aria-hidden="true" />
       </span>
     </div>
   );
