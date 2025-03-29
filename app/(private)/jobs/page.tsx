@@ -79,7 +79,7 @@ export default function JobsPage() {
         </div>
 
         <Tabs
-          defaultValue={jobType || "all"}
+          value={jobType || "all"}
           onValueChange={(value) => setJobType(value === "all" ? null : value)}
           className="w-full md:w-auto"
         >
