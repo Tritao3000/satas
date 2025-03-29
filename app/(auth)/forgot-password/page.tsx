@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { createClient } from "@/utils/supabase/client";
-import { SmtpMessage } from "../smtp-message";
+import { SmtpMessage } from "../../../components/smtp-message";
 import { toast } from "sonner";
 
 const formSchema = z.object({
