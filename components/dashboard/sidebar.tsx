@@ -63,11 +63,6 @@ const navItems: NavItem[] = [
     icon: HomeIcon,
   },
   {
-    name: "Profile",
-    href: "/menu/profile",
-    icon: UserIcon,
-  },
-  {
     name: "Jobs",
     href: "/jobs",
     icon: BriefcaseBusiness,
