@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { GalleryVerticalEnd } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default async function AuthLayout({
@@ -7,32 +7,34 @@ export default async function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
-      {/* Content Side - Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12">
-        <div className="w-full max-w-md space-y-8">
-          <div className="flex flex-col items-center mb-8">
-            <h1 className="text-2xl font-bold tracking-tight">SATAS</h1>
-            <Badge variant="outline" className="mt-2">
-              Social Aid for Talent Acquisition Startups
-            </Badge>
-          </div>
-          {children}
-          <div className="text-center mt-8">
-            <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} SATAS. All rights reserved.
-            </p>
-          </div>
+    <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        <div className="flex justify-center gap-2 md:justify-start">
+          <a href="/" className="flex items-center gap-2 font-medium">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <GalleryVerticalEnd className="size-4" />
+            </div>
+            <h1 className="font-bold tracking-tight">SATAS</h1>
+          </a>
+        </div>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-md space-y-8">{children}</div>
         </div>
       </div>
-
-      {/* Image Side - Hidden on mobile */}
-      <div className="hidden md:flex md:w-1/2 bg-muted relative overflow-hidden">
+      <div className="relative hidden bg-muted lg:block">
+        <img
+          src="/placeholder.svg"
+          alt="Image"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary-foreground/5">
           <div className="absolute inset-0 bg-primary/5 backdrop-blur-sm"></div>
         </div>
-        <div className="relative w-full h-full flex flex-col justify-center items-center p-12 z-10">
-          <div className="mb-12 w-full max-w-md">
+        <div className="relative z-10 flex h-full flex-col justify-center p-12">
+          <div className="w-full max-w-md">
+            <Badge variant="outline" className="mb-4">
+              Social Aid for Talent Acquisition Startups
+            </Badge>
             <h2 className="text-3xl font-bold mb-4">
               Connect with the best talent and startups
             </h2>
@@ -40,23 +42,6 @@ export default async function AuthLayout({
               SATAS helps startups find the right talent and helps individuals
               discover exciting startup opportunities.
             </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 w-full max-w-md">
-            <div className="bg-background/80 backdrop-blur-sm p-6 rounded-lg">
-              <h3 className="font-semibold mb-2">For Startups</h3>
-              <p className="text-sm text-muted-foreground">
-                Create your profile, post jobs, and connect with qualified
-                candidates.
-              </p>
-            </div>
-            <div className="bg-background/80 backdrop-blur-sm p-6 rounded-lg">
-              <h3 className="font-semibold mb-2">For Individuals</h3>
-              <p className="text-sm text-muted-foreground">
-                Showcase your skills, discover startups, and find your next
-                opportunity.
-              </p>
-            </div>
           </div>
         </div>
       </div>
