@@ -33,20 +33,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-
-type Event = {
-  id: string;
-  title: string;
-  description: string | null;
-  location: string;
-  date: string;
-  startTime?: string | null;
-  endTime?: string | null;
-  eventImagePath?: string | null;
-  createdAt: string;
-  startupId?: string;
-  startupName?: string;
-};
+import { Event } from "@/lib/type";
 
 type EventCardProps = {
   event: Event;
@@ -121,9 +108,9 @@ export function EventCard({
         <div className="flex justify-between items-start">
           <div>
             <CardTitle className="line-clamp-1">{event.title}</CardTitle>
-            {event.startupName && isPublic && (
+            {event.startup?.name && isPublic && (
               <CardDescription className="mt-1">
-                Hosted by {event.startupName}
+                Hosted by {event.startup.name}
               </CardDescription>
             )}
           </div>
