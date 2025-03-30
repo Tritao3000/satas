@@ -18,6 +18,7 @@ import {
   Trash2Icon,
   ClockIcon,
   Users,
+  UserRoundX,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -41,7 +42,10 @@ type EventCardProps = {
   onDelete?: (eventId: string) => void;
   isPublic?: boolean;
   link?: string;
+  showUnRegisterButton?: boolean;
   registerButtonDisabled?: boolean;
+  onUnregister?: () => void;
+  onRegister?: () => void;
 };
 
 export function EventCard({
@@ -50,7 +54,10 @@ export function EventCard({
   onDelete,
   isPublic = false,
   link,
+  showUnRegisterButton,
   registerButtonDisabled = false,
+  onUnregister,
+  onRegister,
 }: EventCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -203,15 +210,6 @@ export function EventCard({
             </Dialog>
           </div>
         )}
-
-        <Button
-          variant="outline"
-          className="w-full"
-          disabled={registerButtonDisabled || !isPublic || !isUpcoming}
-        >
-          <Users className="h-4 w-4" />
-          Register
-        </Button>
       </CardFooter>
     </>
   );
@@ -225,6 +223,28 @@ export function EventCard({
       ) : (
         cardContent
       )}
+      <CardFooter>
+        <Button
+          variant="outline"
+          className="w-full"
+          disabled={registerButtonDisabled || !isPublic || !isUpcoming}
+          onClick={
+            showUnRegisterButton && onUnregister ? onUnregister : onRegister
+          }
+        >
+          {showUnRegisterButton ? (
+            <>
+              <UserRoundX className="h-4 w-4 mr-2" />
+              Unregister
+            </>
+          ) : (
+            <>
+              <Users className="h-4 w-4 mr-2" />
+              Register
+            </>
+          )}
+        </Button>
+      </CardFooter>
     </Card>
   );
 }

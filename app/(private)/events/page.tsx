@@ -10,6 +10,7 @@ import { EventCard } from "@/components/events/event-card";
 import { EventCardSkeleton } from "@/components/events/event-card-skeleton";
 import Link from "next/link";
 import { useProfile } from "@/lib/hooks/use-profile-content";
+import { toast } from "sonner";
 
 export default function EventsPage() {
   const { events, isLoading, isError } = useEvents();
@@ -63,6 +64,30 @@ export default function EventsPage() {
   const handleReset = () => {
     setSearchTerm("");
     setActiveTab("all");
+  };
+
+  const handleRegister = async (eventId: string) => {
+    try {
+      const response = await fetch("/api/events/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ eventId: eventId }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to register for event");
+      }
+      toast("Registration successful", {
+        description: "You have successfully registered for this event.",
+      });
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      toast("Registration failed", {
+        description: error.message || "Please try again.",
+      });
+    }
   };
 
   return (
@@ -142,6 +167,7 @@ export default function EventsPage() {
               event={event}
               isPublic
               link={`/events/${event.id}`}
+              onRegister={() => handleRegister(event.id)}
             />
           ))}
         </div>
