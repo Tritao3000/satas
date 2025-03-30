@@ -10,30 +10,8 @@ import { BriefcaseBusiness, Search } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useDebounce } from "use-debounce";
 import useSWR from "swr";
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) {
-    const error = new Error("An error occurred while fetching the data.");
-    const errorData = await res.json().catch(() => ({}));
-    (error as any).info = errorData;
-    (error as any).status = res.status;
-    throw error;
-  }
-  return res.json();
-};
-
-type Job = {
-  id: string;
-  startupId: string;
-  title: string;
-  description: string;
-  location: string;
-  type: string;
-  salary: number | null;
-  createdAt: string;
-  updatedAt: string;
-};
+import { fetcher } from "@/lib/fetcher";
+import { Job } from "@/lib/type";
 
 export default function JobsPage() {
   const [inputValue, setInputValue] = useState("");

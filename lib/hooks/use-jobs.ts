@@ -1,16 +1,5 @@
 import useSWR from "swr";
-
-type Job = {
-  id: string;
-  startupId: string;
-  title: string;
-  description: string;
-  location: string;
-  type: string;
-  salary: number | null;
-  createdAt: string;
-  updatedAt: string;
-};
+import { Job } from "../type";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -43,7 +32,7 @@ export function useJobs(startupId?: string) {
 export function useJob(jobId: string) {
   const { data, error, isLoading, mutate } = useSWR<Job>(
     jobId ? `/api/jobs/${jobId}` : null,
-    fetcher
+    fetcher,
   );
 
   return {

@@ -43,3 +43,15 @@ export interface BreadcrumbContextType {
   items: BreadcrumbItem[];
   isLoading: boolean;
 }
+
+export interface Job {
+  id: string;
+  startupId: string;
+  title: string;
+  description: string;
+  location: string;
+  type: string;
+  salary: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
