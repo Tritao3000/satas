@@ -11,25 +11,7 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 function MainContent({ children }: { children: React.ReactNode }) {
-  const { isProfileSetup, isLoading } = useProfile();
-
-  if (isLoading) {
-    return (
-      <main className="flex-1 p-8 overflow-auto w-full max-w-5xl mx-auto">
-        {children}
-      </main>
-    );
-  }
-
-  if (!isProfileSetup) {
-    return <main className="p-8 w-full max-w-5xl mx-auto">{children}</main>;
-  }
-
-  return (
-    <main className="flex-1 p-8 overflow-auto w-full max-w-5xl mx-auto">
-      {children}
-    </main>
-  );
+  return <main className="flex-1 p-8 overflow-auto w-full">{children}</main>;
 }
 
 function MenuLayoutContent({ children }: { children: React.ReactNode }) {
