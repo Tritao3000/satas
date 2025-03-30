@@ -8,16 +8,7 @@ import { CalendarIcon, MapPinIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useState } from "react";
-
-type Job = {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  type: string;
-  salary: number | null;
-  createdAt: string;
-};
+import { Job } from "@/lib/type";
 
 type JobCardProps = {
   job: Job;
@@ -124,5 +115,3 @@ export function JobCard({ job, allowEdit = false, onDelete }: JobCardProps) {
     </Card>
   );
 }
-
-
