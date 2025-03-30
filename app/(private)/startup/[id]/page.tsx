@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import useSWR, { mutate } from "swr";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useProfile } from "@/components/dashboard/profile-context";
+import { useProfile } from "@/lib/hooks/use-profile-content";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -42,14 +42,16 @@ const fetcher = async (url: string) => {
 export default function StartupProfilePage() {
   const params = useParams();
   const userId = params.id as string;
-  const { userId: currentUserId, userType, isLoading: isProfileLoading } = useProfile();
+  const {
+    userId: currentUserId,
+    userType,
+    isLoading: isProfileLoading,
+  } = useProfile();
 
   // Force revalidation when the component mounts
   useEffect(() => {
     mutate(`/api/profile/startup/${userId}`);
   }, [userId]);
-
-  
 
   // Fetch startup profile
   const {

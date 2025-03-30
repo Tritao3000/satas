@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { useProfile } from "@/components/dashboard/profile-context";
+import { useProfile } from "@/lib/hooks/use-profile-content";
 import {
   Card,
   CardHeader,
@@ -34,7 +34,6 @@ import {
 } from "@/components/profile/edit/file-upload-utils";
 
 export default function ProfileEditPage() {
- 
   const { userType: contextUserType, isLoading: isProfileLoading } =
     useProfile();
 

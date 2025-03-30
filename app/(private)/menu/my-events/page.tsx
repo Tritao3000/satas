@@ -10,7 +10,7 @@ import { EventCardSkeleton } from "@/components/events/event-card-skeleton";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useProfile } from "@/components/dashboard/profile-context";
+import { useProfile } from "@/lib/hooks/use-profile-content";
 
 export default function MyEventsPage() {
   const router = useRouter();

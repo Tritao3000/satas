@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { EventForm } from "@/components/events/event-form";
 import { Loader2 } from "lucide-react";
 import { useEvent } from "@/lib/hooks/use-events";
-import { useProfile } from "@/components/dashboard/profile-context";
+import { useProfile } from "@/lib/hooks/use-profile-content";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,

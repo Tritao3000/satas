@@ -10,7 +10,7 @@ import { PlusIcon, Loader2, BriefcaseBusiness } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useProfile } from "@/components/dashboard/profile-context";
+import { useProfile } from "@/lib/hooks/use-profile-content";
 import { JobsPageSkeleton } from "@/components/jobs/jobs-page-skeleton";
 import { JobCardSkeleton } from "@/components/jobs/job-card-skeleton";
 

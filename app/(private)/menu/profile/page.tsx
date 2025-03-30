@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useProfile } from "@/components/dashboard/profile-context";
+import { useProfile } from "@/lib/hooks/use-profile-content";
 import { useRouter } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { IndividualProfile } from "@/components/profile/individual-profile";
@@ -24,7 +24,12 @@ const fetcher = async (url: string) => {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { userType, userId, isLoading: userIsLoading, refreshProfileStatus } = useProfile();
+  const {
+    userType,
+    userId,
+    isLoading: userIsLoading,
+    refreshProfileStatus,
+  } = useProfile();
 
   // Force revalidation when the component mounts to ensure fresh data after edits
   useEffect(() => {

@@ -12,7 +12,7 @@ import {
   JobApplication,
 } from "@/components/applications/application-card";
 import { ApplicationCardSkeleton } from "@/components/applications/application-card-skeleton";
-import { useProfile } from "@/components/dashboard/profile-context";
+import { useProfile } from "@/lib/hooks/use-profile-content";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -26,7 +26,6 @@ const fetcher = async (url: string) => {
 export default function ApplicationsPage() {
   const [activeTab, setActiveTab] = useState("all");
   const { userId, userType, isLoading: isProfileLoading } = useProfile();
-  
 
   // Fetch applications data based on user type
   const {
@@ -34,8 +33,7 @@ export default function ApplicationsPage() {
     error: applicationsError,
     isLoading: applicationsIsLoading,
   } = useSWR(
-    () =>
-      userType === "individual" ? "/api/jobs/applications" : null,
+    () => (userType === "individual" ? "/api/jobs/applications" : null),
     fetcher
   );
 

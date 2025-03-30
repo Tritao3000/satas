@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useProfile } from "@/components/dashboard/profile-context";
+import { useProfile } from "@/lib/hooks/use-profile-content";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Breadcrumb,

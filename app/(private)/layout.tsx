@@ -4,10 +4,7 @@ import {
   DashboardSidebar,
   SidebarProvider,
 } from "@/components/dashboard/sidebar";
-import {
-  ProfileProvider,
-  useProfile,
-} from "@/components/dashboard/profile-context";
+import { ProfileProvider, useProfile } from "@/lib/hooks/use-profile-content";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 function MainContent({ children }: { children: React.ReactNode }) {

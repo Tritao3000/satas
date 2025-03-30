@@ -5,7 +5,7 @@ import { JobForm } from "@/components/jobs/job-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { useProfile } from "@/components/dashboard/profile-context";
+import { useProfile } from "@/lib/hooks/use-profile-content";
 
 export default function CreateJobPage() {
   const router = useRouter();
