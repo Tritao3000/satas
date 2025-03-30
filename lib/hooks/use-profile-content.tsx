@@ -74,3 +74,25 @@ export function useUserName() {
 
   return { name, isLoading: false };
 }
+
+export function useUserProfilePicture() {
+  const { userType, userId } = useProfile();
+
+  const { data: profileData, isLoading } = useSWR(
+    userId && userType ? `/api/profile/${userType}/get` : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000,
+    }
+  );
+
+  const profilePicture = React.useMemo(() => {
+    if (!profileData) return null;
+    return userType === "individual"
+      ? profileData.profilePicture
+      : profileData.logo;
+  }, [profileData, userType]);
+
+  return { profilePicture, isLoading };
+}

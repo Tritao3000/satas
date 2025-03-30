@@ -17,7 +17,11 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useProfile, useUserName } from "../../lib/hooks/use-profile-content";
+import {
+  useProfile,
+  useUserName,
+  useUserProfilePicture,
+} from "../../lib/hooks/use-profile-content";
 
 import {
   Sidebar,
@@ -113,6 +117,8 @@ export function DashboardSidebar() {
   const isExpanded = state === "expanded";
   const { userType, isLoading, email } = useProfile();
   const { name: userName, isLoading: isNameLoading } = useUserName();
+  const { profilePicture, isLoading: isProfileLoading } =
+    useUserProfilePicture();
   const { theme } = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -163,7 +169,7 @@ export function DashboardSidebar() {
   const initials = userName ? userName.substring(0, 2).toUpperCase() : "US";
 
   const renderUserProfile = () => {
-    if (isLoading || isNameLoading) {
+    if (isLoading || isNameLoading || isProfileLoading) {
       return (
         <div className="flex items-center gap-3 p-2 cursor-pointer mx-2">
           <Avatar className="h-9 w-9 rounded-sm bg-blue-950/50 animate-pulse">
@@ -191,9 +197,19 @@ export function DashboardSidebar() {
           {isExpanded ? (
             <div className="flex items-center gap-3 p-2 cursor-pointer hover:bg-sidebar-accent/10 rounded-lg transition-colors duration-200 mx-2">
               <Avatar className="h-9 w-9 rounded-sm bg-blue-950 text-blue-400">
-                <AvatarFallback className="rounded-sm bg-blue-950 text-blue-400 font-medium">
-                  {initials}
-                </AvatarFallback>
+                {profilePicture ? (
+                  <Image
+                    src={profilePicture}
+                    alt={userName || "User"}
+                    width={36}
+                    height={36}
+                    className="h-full w-full object-cover rounded-sm"
+                  />
+                ) : (
+                  <AvatarFallback className="rounded-sm bg-blue-950 text-blue-400 font-medium">
+                    {initials}
+                  </AvatarFallback>
+                )}
               </Avatar>
 
               <div className="flex flex-1 items-center justify-between">
@@ -211,9 +227,19 @@ export function DashboardSidebar() {
             </div>
           ) : (
             <Avatar className="cursor-pointer h-9 w-9 mx-auto my-2 rounded-lg bg-blue-950 text-blue-400">
-              <AvatarFallback className="rounded-sm bg-blue-950 text-blue-400 font-medium">
-                {initials}
-              </AvatarFallback>
+              {profilePicture ? (
+                <Image
+                  src={profilePicture}
+                  alt={userName || "User"}
+                  width={36}
+                  height={36}
+                  className="h-full w-full object-cover rounded-sm"
+                />
+              ) : (
+                <AvatarFallback className="rounded-sm bg-blue-950 text-blue-400 font-medium">
+                  {initials}
+                </AvatarFallback>
+              )}
             </Avatar>
           )}
         </PopoverTrigger>
@@ -224,9 +250,19 @@ export function DashboardSidebar() {
         >
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 rounded-sm bg-blue-950 text-blue-400">
-              <AvatarFallback className="rounded-sm bg-blue-950 text-blue-400 font-medium">
-                {initials}
-              </AvatarFallback>
+              {profilePicture ? (
+                <Image
+                  src={profilePicture}
+                  alt={userName || "User"}
+                  width={40}
+                  height={40}
+                  className="h-full w-full object-cover rounded-sm"
+                />
+              ) : (
+                <AvatarFallback className="rounded-sm bg-blue-950 text-blue-400 font-medium">
+                  {initials}
+                </AvatarFallback>
+              )}
             </Avatar>
             <div className="flex flex-col">
               <p className="text-sm font-medium">{userName}</p>
