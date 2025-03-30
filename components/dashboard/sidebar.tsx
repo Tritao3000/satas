@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useProfile } from "./profile-context";
+import { useProfile, useUserName } from "./profile-context";
 
 import {
   Sidebar,
@@ -114,6 +114,7 @@ export function DashboardSidebar() {
   const { state } = useSidebar();
   const isExpanded = state === "expanded";
   const { userType, isLoading, email } = useProfile();
+  const { name: userName, isLoading: isNameLoading } = useUserName();
   const { theme } = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -151,7 +152,9 @@ export function DashboardSidebar() {
                   <span className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500" />
                 )}
                 <Icon className={cn("h-4 w-4", isActive && "text-blue-500")} />
-                <span>{item.name}</span>
+                <span className={cn(isActive && "text-primary")}>
+                  {item.name}
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -159,13 +162,10 @@ export function DashboardSidebar() {
       });
   };
 
-  const initials = email
-    ? email.split("@")[0].substring(0, 2).toUpperCase()
-    : "US";
-  const username = email ? email.split("@")[0] : "User";
+  const initials = userName ? userName.substring(0, 2).toUpperCase() : "US";
 
   const renderUserProfile = () => {
-    if (isLoading || !email) {
+    if (isLoading || isNameLoading) {
       return (
         <div className="flex items-center gap-3 p-2 cursor-pointer mx-2">
           <Avatar className="h-9 w-9 rounded-sm bg-blue-950/50 animate-pulse">
@@ -201,7 +201,7 @@ export function DashboardSidebar() {
               <div className="flex flex-1 items-center justify-between">
                 <div className="flex flex-col overflow-hidden min-w-0">
                   <p className="text-sm font-medium leading-none capitalize">
-                    {username}
+                    {userName}
                   </p>
                   <p className="text-xs text-muted-foreground leading-tight mt-1">
                     {email}
@@ -231,7 +231,7 @@ export function DashboardSidebar() {
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
-              <p className="text-sm font-medium">{username}</p>
+              <p className="text-sm font-medium">{userName}</p>
               <p className="text-xs text-muted-foreground">{email}</p>
             </div>
           </div>
