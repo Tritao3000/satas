@@ -147,19 +147,12 @@ export default function MyEventsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcomingEvents.map((event) => (
                 <div key={event.id} className="relative">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute right-2 top-2 z-10 bg-background/80 backdrop-blur-sm"
-                    onClick={() => handleUnregister(event.id)}
-                    title="Unregister from event"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
                   <EventCard
                     event={event}
+                    showUnRegisterButton={true}
                     isPublic
                     link={`/events/${event.id}`}
+                    onUnregister={() => handleUnregister(event.id)}
                   />
                 </div>
               ))}

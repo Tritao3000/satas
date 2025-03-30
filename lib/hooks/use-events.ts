@@ -63,7 +63,7 @@ export function useEvents(startupId?: string) {
 export function useEvent(eventId: string) {
   const { data, error, isLoading, mutate } = useSWR<Event>(
     eventId ? `/api/events/${eventId}` : null,
-    fetcher
+    fetcher,
   );
 
   return {
@@ -77,7 +77,7 @@ export function useEvent(eventId: string) {
 export function useEventRegistrations(eventId: string) {
   const { data, error, isLoading, mutate } = useSWR<EventRegistration[]>(
     eventId ? `/api/events/${eventId}/registrations` : null,
-    fetcher
+    fetcher,
   );
 
   return {
@@ -91,12 +91,12 @@ export function useEventRegistrations(eventId: string) {
 export function useMyEventRegistrations() {
   const { data, error, isLoading, mutate } = useSWR<{
     registrations: EventRegistration[];
-    events: Event[];
+    eventsData: Event[];
   }>("/api/events/my-registrations", fetcher);
-
+  console.log("data", data);
   return {
     myRegistrations: data?.registrations ?? [],
-    myEvents: data?.events ?? [],
+    myEvents: data?.eventsData ?? [],
     isLoading,
     isError: error,
     mutate,
