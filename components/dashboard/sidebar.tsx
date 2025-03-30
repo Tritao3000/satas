@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useProfile, useUserName } from "./profile-context";
+import { useProfile, useUserName } from "../../lib/hooks/use-profile-content";
 
 import {
   Sidebar,
@@ -46,7 +46,6 @@ import LogoLight from "@/public/images/logo-light.png";
 
 import { useTheme } from "next-themes";
 
-// Define the type for navigation items
 interface NavItem {
   name: string;
   href: string;
@@ -55,7 +54,6 @@ interface NavItem {
   role?: "individual" | "startup";
 }
 
-// Navigation items for the sidebar
 const navItems: NavItem[] = [
   {
     name: "Dashboard",
