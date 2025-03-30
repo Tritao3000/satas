@@ -32,3 +32,14 @@ export interface ProfileContextType {
   data: ProfileData | null;
   refreshProfileStatus: () => void;
 }
+
+export interface BreadcrumbItem {
+  label: string;
+  href: string;
+  isCurrentPage?: boolean;
+}
+
+export interface BreadcrumbContextType {
+  items: BreadcrumbItem[];
+  isLoading: boolean;
+}
