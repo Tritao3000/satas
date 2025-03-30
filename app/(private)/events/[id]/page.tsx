@@ -59,7 +59,7 @@ export default function EventPage({
   useEffect(() => {
     if (userId && registrations) {
       const userRegistration = registrations.find(
-        (reg) => reg.userId === userId
+        (reg) => reg.userId === userId,
       );
       setIsRegistered(!!userRegistration);
     }
@@ -68,7 +68,7 @@ export default function EventPage({
   const handleRegister = async () => {
     if (!userId) {
       router.push(
-        "/login?redirect=" + encodeURIComponent(`/events/${eventId}`)
+        "/login?redirect=" + encodeURIComponent(`/events/${eventId}`),
       );
       return;
     }

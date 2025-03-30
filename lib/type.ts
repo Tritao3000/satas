@@ -55,3 +55,21 @@ export interface Job {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Event {
+  id: string;
+  title: string;
+  description: string | null;
+  location: string;
+  date: string;
+  startTime?: string | null;
+  endTime?: string | null;
+  eventImagePath?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  startup?: {
+    id: string;
+    name: string;
+    logo?: string;
+  };
+}

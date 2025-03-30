@@ -10,6 +10,7 @@ import { EventCard } from "@/components/events/event-card";
 import { EventCardSkeleton } from "@/components/events/event-card-skeleton";
 import Link from "next/link";
 import { useProfile } from "@/lib/hooks/use-profile-content";
+
 export default function EventsPage() {
   const { events, isLoading, isError } = useEvents();
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,7 +31,7 @@ export default function EventsPage() {
           event.title.toLowerCase().includes(search) ||
           (event.description &&
             event.description.toLowerCase().includes(search)) ||
-          event.location.toLowerCase().includes(search)
+          event.location.toLowerCase().includes(search),
       );
     }
 
