@@ -1,70 +1,83 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export function ProfileSkeleton() {
   return (
-    <div>
-      {/* Banner/Cover Skeleton */}
-      <div className="relative w-full h-[200px] md:h-[300px] rounded-t-xl overflow-hidden">
+    <div className="flex flex-col w-full min-w-full">
+      <div className="relative w-full h-[250px] bg-muted">
         <Skeleton className="h-full w-full" />
+
+        <div className="absolute top-4 right-4 z-10">
+          <Skeleton className="h-8 w-24" />
+        </div>
       </div>
 
-      {/* Profile Summary Skeleton */}
-      <div className="relative bg-card border rounded-b-xl p-6 shadow-sm">
-        <div className="flex flex-col items-start">
-          <div className="relative -mt-20 mb-4">
-            <Skeleton className="w-[120px] h-[120px] rounded-full border-4 border-background" />
-          </div>
+      <div className="w-full">
+        <div className="px-4 md:px-6 lg:px-8">
+          <div className="flex flex-col">
+            <div className="flex flex-col items-start -mt-16 mb-6">
+              <div className="relative w-full flex flex-col md:flex-row md:items-end md:justify-between">
+                <div className="flex flex-col md:flex-row md:items-end gap-4">
+                  <Skeleton className="rounded-full w-32 h-32 ring-4 ring-background" />
 
-          <div className="w-full">
-            <Skeleton className="h-8 w-48 mb-2" />
-            <Skeleton className="h-4 w-32 mb-2" />
+                  <div className="mt-4 md:mt-0">
+                    <Skeleton className="h-6 w-48 mb-2" />
 
-            <div className="flex items-center gap-2 mt-2">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-4 w-24" />
+                    <div className="flex items-center gap-2 mt-1">
+                      <Skeleton className="h-6 w-24" />
+                      <Skeleton className="h-6 w-20" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 mt-4 md:mt-0">
+                  <Skeleton className="h-9 w-24" />
+                  <Skeleton className="h-9 w-24" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <Separator className="my-6" />
+        <div className="w-full px-4 md:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="flex-1">
+              <div className="mb-8">
+                <Skeleton className="h-8 w-24 mb-4" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+              </div>
+            </div>
 
-        {/* Profile Details Skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <Skeleton className="h-6 w-24" />
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-            </CardContent>
-          </Card>
+            <div className="lg:w-80">
+              <div className="bg-muted/20 p-6 rounded-lg border border-border/50">
+                <Skeleton className="h-6 w-32 mb-4" />
+                <div className="space-y-5">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="flex items-start">
+                      <Skeleton className="h-5 w-5 mr-3 mt-0.5" />
+                      <div>
+                        <Skeleton className="h-4 w-16 mb-1" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                    </div>
+                  ))}
 
-          <div className="space-y-6">
-            {/* First Card */}
-            <Card>
-              <CardHeader>
-                <Skeleton className="h-6 w-24" />
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-2/3" />
-              </CardContent>
-            </Card>
+                  <div className="pt-4 space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
 
-            {/* Second Card */}
-            <Card>
-              <CardHeader>
-                <Skeleton className="h-6 w-24" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-9 w-full" />
-              </CardContent>
-            </Card>
+                  <div className="pt-4">
+                    <Skeleton className="h-9 w-full" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

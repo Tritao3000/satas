@@ -23,7 +23,7 @@ export function StartupProfile({ profile }: StartupProfileProps) {
             src={profile.banner}
             alt="Banner"
             fill
-            className="object-cover"
+            className="object-cover rounded-t-lg"
             priority
           />
         ) : (

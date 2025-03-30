@@ -1,218 +1,231 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useProfile } from "@/lib/hooks/use-profile-content";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
 import { ProfileEditSkeleton } from "@/components/profile/edit/profile-edit-skeleton";
-import {
-  IndividualProfileForm,
-  IndividualProfileFormData,
-} from "@/components/profile/edit/individual-profile-form";
-import {
-  StartupProfileForm,
-  StartupProfileFormData,
-} from "@/components/profile/edit/startup-profile-form";
+import { IndividualProfileForm } from "@/components/profile/edit/individual-profile-form";
+import { StartupProfileForm } from "@/components/profile/edit/startup-profile-form";
+import { IndividualProfileFormData, StartupProfileFormData } from "@/lib/type";
 import {
   ProfileType,
   uploadFiles as uploadFilesToStorage,
   FileState,
 } from "@/components/profile/edit/file-upload-utils";
+import { useProfileData } from "@/lib/hooks/use-profile-data";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ProfileEditPage() {
-  const { userType: contextUserType, isLoading: isProfileLoading } =
-    useProfile();
-
-  const [loading, setLoading] = useState(true);
-  const [profileType, setProfileType] = useState<ProfileType | null>(null);
-
-  // Files for uploads
+  const router = useRouter();
+  const supabase = createClient();
+  const { userType, isLoading: isProfileContextLoading } = useProfile();
   const [fileState, setFileState] = useState<FileState>({
     profilePicture: null,
     coverPicture: null,
     cv: null,
   });
 
-  // Individual-specific
-  const [individualProfile, setIndividualProfile] =
-    useState<IndividualProfileFormData>({
-      name: "",
-      email: "",
-      phone: "",
-      location: "",
-      industry: "",
-      role: "",
-      description: "",
-      linkedin: "",
-      twitter: "",
-      github: "",
-      website: "",
-      profilePicture: null,
-      coverPicture: null,
-      cvPath: null,
-    });
+  const {
+    profileData,
+    isLoading: isDataLoading,
+    isSubmitting,
+    updateProfile,
+    error,
+  } = useProfileData(userType as ProfileType);
 
-  // Startup-specific
-  const [startupProfile, setStartupProfile] = useState<StartupProfileFormData>({
-    name: "",
-    description: "",
-    location: "",
-    industry: "",
-    stage: "",
-    teamSize: "",
-    foundedYear: "",
-    linkedin: "",
-    website: "",
-    logo: null,
-    banner: null,
-  });
-
-  useEffect(() => {
-    async function fetchUserProfile() {
-      setLoading(true);
-      try {
-        // Use user type from context
-        if (contextUserType) {
-          setProfileType(contextUserType as ProfileType);
-
-          // Fetch profile data using API endpoints that use Drizzle ORM
-          if (contextUserType === "individual") {
-            // Fetch user profile using API endpoint
-            const response = await fetch("/api/profile/individual");
-            if (!response.ok) {
-              throw new Error("Failed to fetch individual profile");
-            }
-            const data = await response.json();
-
-            // Update form state with fetched data
-            setIndividualProfile({
-              name: data.name || "",
-              email: data.email || "",
-              phone: data.phone || "",
-              location: data.location || "",
-              industry: data.industry || "",
-              role: data.role || "",
-              description: data.description || "",
-              linkedin: data.linkedin || "",
-              twitter: data.twitter || "",
-              github: data.github || "",
-              website: data.website || "",
-              profilePicture: data.profilePicture || null,
-              coverPicture: data.coverPicture || null,
-              cvPath: data.cvPath || null,
-            });
-          } else if (contextUserType === "startup") {
-            // Fetch startup profile using API endpoint
-            const response = await fetch("/api/profile/startup");
-            if (!response.ok) {
-              throw new Error("Failed to fetch startup profile");
-            }
-            const data = await response.json();
-
-            // Update form state with fetched data
-            setStartupProfile({
-              name: data.name || "",
-              description: data.description || "",
-              location: data.location || "",
-              industry: data.industry || "",
-              stage: data.stage || "",
-              teamSize: data.teamSize ? data.teamSize.toString() : "",
-              foundedYear: data.foundedYear ? data.foundedYear.toString() : "",
-              linkedin: data.linkedin || "",
-              website: data.website || "",
-              logo: data.logo || null,
-              banner: data.banner || null,
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchUserProfile();
-  }, [contextUserType]);
-
-  // Wrapper for file upload
-  const handleFileUpload = async (userId: string) => {
-    if (!profileType) return {};
-    return uploadFilesToStorage(userId, profileType, fileState);
+  const handleUploadFiles = async (userId: string) => {
+    if (!userType) return {};
+    return uploadFilesToStorage(userId, userType as ProfileType, fileState);
   };
 
-  const isLoading = loading || isProfileLoading;
+  const handleStartupSubmit = async (
+    formData: StartupProfileFormData,
+    fileState: {
+      profilePicture: File | null;
+      coverPicture: File | null;
+      profilePictureRemoved: boolean;
+      coverPictureRemoved: boolean;
+    }
+  ) => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
+      const uploadFileState: FileState = {
+        profilePicture: fileState.profilePicture,
+        coverPicture: fileState.coverPicture,
+        cv: null,
+      };
+
+      const uploadedFiles = await uploadFilesToStorage(
+        user.id,
+        "startup",
+        uploadFileState
+      );
+
+      const updatedData = {
+        ...formData,
+        ...(uploadedFiles.logo && { logo: uploadedFiles.logo }),
+        ...(uploadedFiles.banner && { banner: uploadedFiles.banner }),
+        ...(fileState.profilePictureRemoved &&
+          !uploadedFiles.logo && { logo: null }),
+        ...(fileState.coverPictureRemoved &&
+          !uploadedFiles.banner && { banner: null }),
+      };
+
+      await updateProfile(updatedData);
+      toast.dismiss();
+      router.push("/menu/profile");
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast.dismiss();
+      toast.error(
+        error.message || "Failed to update profile. Please try again."
+      );
+    }
+  };
+
+  const handleIndividualSubmit = async (
+    formData: IndividualProfileFormData,
+    fileState: {
+      profilePicture: File | null;
+      coverPicture: File | null;
+      cv: File | null;
+      profilePictureRemoved: boolean;
+      coverPictureRemoved: boolean;
+      cvRemoved: boolean;
+    }
+  ) => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
+      const uploadFileState: FileState = {
+        profilePicture: fileState.profilePicture,
+        coverPicture: fileState.coverPicture,
+        cv: fileState.cv,
+      };
+
+      const uploadedFiles = await uploadFilesToStorage(
+        user.id,
+        "individual",
+        uploadFileState
+      );
+
+      const updatedData = {
+        ...formData,
+        ...(uploadedFiles.profilePicture && {
+          profilePicture: uploadedFiles.profilePicture,
+        }),
+        ...(uploadedFiles.coverPicture && {
+          coverPicture: uploadedFiles.coverPicture,
+        }),
+        ...(uploadedFiles.cvPath && {
+          cvPath: uploadedFiles.cvPath,
+        }),
+        ...(fileState.profilePictureRemoved &&
+          !uploadedFiles.profilePicture && { profilePicture: null }),
+        ...(fileState.coverPictureRemoved &&
+          !uploadedFiles.coverPicture && { coverPicture: null }),
+        ...(fileState.cvRemoved && !uploadedFiles.cvPath && { cvPath: null }),
+      };
+
+      await updateProfile(updatedData);
+      toast.dismiss();
+      router.push("/menu/profile");
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast.dismiss();
+      toast.error(
+        error.message || "Failed to update profile. Please try again."
+      );
+    }
+  };
+
+  const isLoading = isProfileContextLoading || isDataLoading;
 
   if (isLoading) {
     return <ProfileEditSkeleton />;
   }
 
-  if (!profileType) {
+  if (!userType) {
     return (
-      <div className="container py-10">
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Error</CardTitle>
-            <CardDescription>
-              We couldn't determine your profile type. Please contact support.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+      <div className="space-y-6">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            We couldn't determine your profile type. Please contact support.
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* Back navigation */}
-      <div className=" mb-4">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/menu/profile">Profile</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Edit</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
-
-      <Card className="">
-        <CardHeader>
-          <CardTitle>Edit Profile</CardTitle>
-          <CardDescription>
+    <div className="mx-auto">
+      <div className="flex flex-col space-y-8">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight">Edit Profile</h1>
+          <p className="text-muted-foreground text-sm">
             Update your profile information to help others know you better.
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
 
-        {profileType === "individual" ? (
+        {userType === "individual" ? (
           <IndividualProfileForm
-            profile={individualProfile}
-            uploadFiles={handleFileUpload}
+            profile={
+              (profileData as IndividualProfileFormData) || {
+                name: "",
+                email: "",
+                phone: "",
+                location: "",
+                industry: "",
+                role: "",
+                description: "",
+                linkedin: "",
+                twitter: "",
+                github: "",
+                website: "",
+                profilePicture: null,
+                coverPicture: null,
+                cvPath: null,
+              }
+            }
+            uploadFiles={handleUploadFiles}
+            isSubmitting={isSubmitting}
+            onSubmit={handleIndividualSubmit}
           />
         ) : (
           <StartupProfileForm
-            profile={startupProfile}
-            uploadFiles={handleFileUpload}
+            profile={
+              (profileData as StartupProfileFormData) || {
+                name: "",
+                description: "",
+                location: "",
+                industry: "",
+                stage: "",
+                teamSize: "",
+                foundedYear: "",
+                linkedin: "",
+                website: "",
+                logo: null,
+                banner: null,
+              }
+            }
+            uploadFiles={handleUploadFiles}
+            isSubmitting={isSubmitting}
+            onSubmit={handleStartupSubmit}
           />
         )}
-      </Card>
+      </div>
     </div>
   );
 }
