@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     if (!eventId) {
       return NextResponse.json(
         { error: "Event ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     if (authError || !user) {
       return NextResponse.json(
         { error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -36,14 +36,14 @@ export async function POST(request: Request) {
       .where(
         and(
           eq(eventRegistrations.eventId, eventId),
-          eq(eventRegistrations.registrantId, user.id)
-        )
+          eq(eventRegistrations.registrantId, user.id),
+        ),
       );
 
     if (existingRegistrations.length === 0) {
       return NextResponse.json(
         { error: "You are not registered for this event" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -53,8 +53,8 @@ export async function POST(request: Request) {
       .where(
         and(
           eq(eventRegistrations.eventId, eventId),
-          eq(eventRegistrations.registrantId, user.id)
-        )
+          eq(eventRegistrations.registrantId, user.id),
+        ),
       );
 
     return NextResponse.json({ success: true });
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     console.error("Error unregistering from event:", error);
     return NextResponse.json(
       { error: "Failed to unregister from event" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

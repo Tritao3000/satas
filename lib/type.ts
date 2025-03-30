@@ -44,6 +44,36 @@ export interface BreadcrumbContextType {
   isLoading: boolean;
 }
 
+export interface Job {
+  id: string;
+  startupId: string;
+  title: string;
+  description: string;
+  location: string;
+  type: string;
+  salary: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  description: string | null;
+  location: string;
+  date: string;
+  startTime?: string | null;
+  endTime?: string | null;
+  eventImagePath?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  startup?: {
+    id: string;
+    name: string;
+    logo?: string;
+  };
+}
+
 export type StartupProfileFormData = {
   name: string;
   description: string | null;
