@@ -1,24 +1,18 @@
 "use client";
 
 import { formatDistanceToNow, format } from "date-fns";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   CalendarIcon,
   MapPinIcon,
-  PencilIcon,
-  Trash2Icon,
   ClockIcon,
   Users,
   UserRoundX,
+  Loader2,
+  MoreVertical,
+  Edit,
+  Trash,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -31,10 +25,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Event } from "@/lib/type";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type EventCardProps = {
   event: Event;
@@ -46,6 +44,9 @@ type EventCardProps = {
   registerButtonDisabled?: boolean;
   onUnregister?: () => void;
   onRegister?: () => void;
+  isRegistering?: boolean;
+  isUnregistering?: boolean;
+  isRegistered?: boolean;
 };
 
 export function EventCard({
@@ -58,14 +59,18 @@ export function EventCard({
   registerButtonDisabled = false,
   onUnregister,
   onRegister,
+  isRegistering = false,
+  isUnregistering = false,
+  isRegistered = false,
 }: EventCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // Format the event date
   const eventDate = format(new Date(event.date), "MMMM d, yyyy");
+  const eventMonth = format(new Date(event.date), "MMM");
+  const eventDay = format(new Date(event.date), "d");
+  const eventYear = format(new Date(event.date), "yyyy");
 
-  // Format the times if available
   const formattedStartTime = event.startTime
     ? format(new Date(event.startTime), "h:mm a")
     : null;
@@ -101,150 +106,226 @@ export function EventCard({
 
   const cardContent = (
     <>
-      {event.eventImagePath && (
-        <div className="h-48 w-full relative">
-          <Image
-            src={event.eventImagePath}
-            alt={event.title}
-            fill
-            className="object-cover"
-          />
-        </div>
-      )}
-      <CardHeader className={event.eventImagePath ? "pt-4" : "pt-6"}>
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="line-clamp-1">{event.title}</CardTitle>
-            {event.startup?.name && isPublic && (
-              <CardDescription className="mt-1">
-                Hosted by {event.startup.name}
-              </CardDescription>
-            )}
+      <div className="relative w-full overflow-hidden">
+        {allowEdit && (
+          <div className="absolute top-2 right-2 z-10">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 bg-background/80 hover:bg-background dark:bg-gray-800/80 dark:hover:bg-gray-800 rounded-full shadow-sm"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`/menu/events/${event.id}/edit`}
+                    className="cursor-pointer flex items-center"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive cursor-pointer flex items-center"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <Badge variant={isUpcoming ? "default" : "secondary"}>
-            {isUpcoming ? "Upcoming" : "Past"}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="pb-2 space-y-3">
-        <div className="flex items-start">
-          <CalendarIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
-          <span>{eventDate}</span>
-        </div>
+        )}
 
-        {(formattedStartTime || formattedEndTime) && (
+        {event.eventImagePath ? (
+          <div className="h-48 w-full relative">
+            <Image
+              src={event.eventImagePath}
+              alt={event.title}
+              fill
+              className="object-cover"
+            />
+            {isRegistered && (
+              <div className="absolute top-3 right-3">
+                <Badge
+                  variant="default"
+                  className="px-3 py-1 text-xs font-medium"
+                >
+                  Registered
+                </Badge>
+              </div>
+            )}
+
+            <div className="absolute top-0 left-0 m-4 bg-background/90 dark:bg-gray-800/90 py-1 px-2 rounded text-center shadow-sm border border-border">
+              <div className="text-sm font-semibold">
+                {eventMonth.toUpperCase()}
+              </div>
+              <div className="text-2xl font-bold">{eventDay}</div>
+              <div className="text-xs">{eventYear}</div>
+            </div>
+          </div>
+        ) : (
+          <div className="h-48 w-full bg-gradient-to-br from-muted/60 to-muted flex items-center justify-center relative">
+            <CalendarIcon className="h-12 w-12 text-muted-foreground/50" />
+            {isRegistered && (
+              <div className="absolute top-3 right-3">
+                <Badge
+                  variant="default"
+                  className="px-3 py-1 text-xs font-medium"
+                >
+                  Registered
+                </Badge>
+              </div>
+            )}
+
+            <div className="absolute top-0 left-0 m-4 bg-background/90 dark:bg-gray-800/90 py-1 px-2 rounded text-center shadow-sm border border-border">
+              <div className="text-sm font-semibold">
+                {eventMonth.toUpperCase()}
+              </div>
+              <div className="text-2xl font-bold">{eventDay}</div>
+              <div className="text-xs">{eventYear}</div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="p-4 flex flex-col gap-2 flex-grow">
+        <Badge
+          variant={isUpcoming ? "default" : "secondary"}
+          className="self-start"
+        >
+          {isUpcoming ? "Upcoming" : "Past"}
+        </Badge>
+
+        <h3 className="font-extrabold text-lg line-clamp-2 mt-1">
+          {event.title}
+        </h3>
+
+        {event.startup?.name && isPublic && (
+          <p className="text-sm text-muted-foreground">
+            Hosted by {event.startup.name}
+          </p>
+        )}
+
+        <div className="space-y-2 text-sm flex-grow">
           <div className="flex items-start">
             <ClockIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
             <span>
               {formattedStartTime && formattedEndTime
                 ? `${formattedStartTime} - ${formattedEndTime}`
-                : formattedStartTime || formattedEndTime}
+                : formattedStartTime || "Time not specified"}
             </span>
           </div>
-        )}
 
-        <div className="flex items-start">
-          <MapPinIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
-          <span className="line-clamp-1">{event.location}</span>
-        </div>
+          <div className="flex items-start">
+            <MapPinIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
+            <span className="line-clamp-1">{event.location}</span>
+          </div>
 
-        {event.description && (
-          <div className="mt-2">
-            <p className="text-sm text-muted-foreground line-clamp-2">
+          {event.description && (
+            <p className="text-sm text-muted-foreground line-clamp-2 pt-1">
               {event.description}
             </p>
-          </div>
-        )}
-      </CardContent>
-
-      <CardFooter className="flex-col space-y-2 pt-2">
-        {isPublic ? (
-          link ? (
-            <Button className="w-full">View Details</Button>
-          ) : (
-            <Button asChild className="w-full">
-              <Link href={`/events/${event.id}`}>View Details</Link>
-            </Button>
-          )
-        ) : (
-          <div className="flex space-x-2 w-full">
-            <Button asChild variant="outline" className="flex-1">
-              <Link href={`/events/${event.id}`}>See details</Link>
-            </Button>
-            <Button asChild variant="outline" size="icon">
-              <Link href={`/menu/events/${event.id}/edit`}>
-                <PencilIcon className="h-4 w-4" />
-              </Link>
-            </Button>
-
-            <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-              <DialogTrigger asChild>
-                <Button variant="destructive" size="icon">
-                  <Trash2Icon className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Delete Event</DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to delete this event? This action
-                    cannot be undone.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowDeleteDialog(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                  >
-                    {isDeleting ? "Deleting..." : "Delete"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        )}
-      </CardFooter>
+          )}
+        </div>
+      </div>
     </>
   );
 
   return (
-    <Card className="overflow-hidden h-full flex flex-col">
-      {link ? (
+    <div className="group overflow-hidden h-full flex flex-col border rounded-lg shadow-sm hover:shadow-md transition-all bg-card text-card-foreground">
+      {link && !allowEdit ? (
         <Link href={link} className="flex flex-col flex-grow">
           {cardContent}
         </Link>
       ) : (
-        cardContent
+        <Link href={`/events/${event.id}`} className="flex flex-col flex-grow">
+          {cardContent}
+        </Link>
       )}
-      <CardFooter>
-        <Button
-          variant="outline"
-          className="w-full"
-          disabled={registerButtonDisabled || !isPublic || !isUpcoming}
-          onClick={
-            showUnRegisterButton && onUnregister ? onUnregister : onRegister
-          }
-        >
-          {showUnRegisterButton ? (
-            <>
-              <UserRoundX className="h-4 w-4 mr-2" />
-              Unregister
-            </>
-          ) : (
-            <>
-              <Users className="h-4 w-4 mr-2" />
-              Register
-            </>
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
+
+      <div className="p-4 pt-0 mt-auto">
+        {isPublic ? (
+          <Button
+            variant={showUnRegisterButton ? "outline" : "default"}
+            className="w-full"
+            disabled={
+              registerButtonDisabled ||
+              !isPublic ||
+              !isUpcoming ||
+              isRegistering ||
+              isUnregistering
+            }
+            onClick={
+              showUnRegisterButton && onUnregister ? onUnregister : onRegister
+            }
+          >
+            {showUnRegisterButton ? (
+              <>
+                {isUnregistering && (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                )}
+                {!isUnregistering && <UserRoundX className="h-4 w-4 mr-2" />}
+                Unregister
+              </>
+            ) : (
+              <>
+                {isRegistering && (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                )}
+                {!isRegistering && <Users className="h-4 w-4 mr-2" />}
+                Register
+              </>
+            )}
+          </Button>
+        ) : (
+          <div className="flex w-full">
+            {link ? (
+              <Button asChild variant="default" className="w-full">
+                <Link href={link}>View Details</Link>
+              </Button>
+            ) : (
+              <Button asChild variant="default" className="w-full">
+                <Link href={`/events/${event.id}`}>View Details</Link>
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {allowEdit && (
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Event</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this event? This action cannot
+                be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                isLoading={isDeleting}
+              >
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
   );
 }

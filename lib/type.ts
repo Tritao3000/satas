@@ -56,8 +56,9 @@ export interface Job {
   updatedAt: string;
 }
 
-export interface Event {
+export type Event = {
   id: string;
+  startupId: string;
   title: string;
   description: string | null;
   location: string;
@@ -72,7 +73,7 @@ export interface Event {
     name: string;
     logo?: string;
   };
-}
+};
 
 export type StartupProfileFormData = {
   name: string;
@@ -157,3 +158,29 @@ export interface IndividualProfileFormProps {
     }
   ) => Promise<void>;
 }
+
+export type EventFormProps = {
+  defaultValues?: {
+    id?: string;
+    title?: string;
+    description?: string | null;
+    location?: string;
+    date?: string;
+    startTime?: string | null;
+    endTime?: string | null;
+    eventImagePath?: string | null;
+  };
+  onSuccess?: () => void;
+};
+
+export type EventRegistration = {
+  id: string;
+  eventId: string;
+  userId: string;
+  createdAt: string;
+  user?: {
+    name: string;
+    email: string;
+    profilePicture?: string;
+  };
+};

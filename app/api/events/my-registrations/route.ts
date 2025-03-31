@@ -21,7 +21,7 @@ export async function GET() {
     if (authError || !user) {
       return NextResponse.json(
         { error: "Authentication required" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -39,11 +39,10 @@ export async function GET() {
     if (userData[0].userType !== "individual") {
       return NextResponse.json(
         { error: "Only individuals can view their event registrations" },
-        { status: 403 },
+        { status: 403 }
       );
     }
 
-    // Step 1: Get the user's event registrations
     const registrations = await db
       .select({
         id: eventRegistrations.id,
@@ -58,9 +57,6 @@ export async function GET() {
       return NextResponse.json([]);
     }
 
-    console.log("registrations", registrations);
-
-    // Step 2: Get all the event details for these registrations
     const eventIds = registrations.map((reg) => reg.eventId);
     const eventsData = await db
       .select({
@@ -77,8 +73,6 @@ export async function GET() {
       .from(events)
       .where(inArray(events.id, eventIds));
 
-    console.log("envets data", eventsData);
-
     const responseData = {
       registrations,
       eventsData,
@@ -89,7 +83,7 @@ export async function GET() {
     console.error("Error fetching registrations:", error);
     return NextResponse.json(
       { error: "Failed to load registrations" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

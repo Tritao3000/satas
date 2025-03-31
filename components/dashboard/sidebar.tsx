@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   HomeIcon,
   UserIcon,
-  CalendarIcon,
   SettingsIcon,
   BriefcaseBusiness,
   UserCog,
-  Contact,
   LogOutIcon,
   PaletteIcon,
   ChevronsUpDown,
+  CalendarDays,
 } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -87,22 +86,8 @@ const navItems: NavItem[] = [
   {
     name: "Events",
     href: "/events",
-    icon: CalendarIcon,
-    description: "Browse upcoming events",
-  },
-  {
-    name: "My Events",
-    href: "/menu/my-events",
-    icon: Contact,
-    description: "View events you're registered for",
-    role: "individual",
-  },
-  {
-    name: "Manage Events",
-    href: "/menu/events",
-    icon: Contact,
-    description: "Create and manage your events",
-    role: "startup",
+    icon: CalendarDays,
+    description: "Discover community events",
   },
   {
     name: "Settings",

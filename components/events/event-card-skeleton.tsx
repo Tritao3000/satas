@@ -1,36 +1,35 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export function EventCardSkeleton() {
   return (
-    <Card className="overflow-hidden h-full flex flex-col">
-      {/* Image skeleton */}
-      <div className="h-48 w-full">
+    <Card className="h-full flex flex-col">
+      <div className="h-48 w-full relative">
         <Skeleton className="h-full w-full" />
+        <div className="absolute top-0 left-0 m-4">
+          <Skeleton className="h-16 w-14 rounded-md" />
+        </div>
+        <div className="absolute top-3 right-3">
+          <Skeleton className="h-6 w-16 rounded-full" />
+        </div>
       </div>
 
-      {/* Header skeleton */}
-      <CardHeader className="pt-4">
-        <div className="flex justify-between items-start">
-          <div className="w-3/4">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between">
+          <div>
+            <Skeleton className="h-5 w-20 mb-2" />
             <Skeleton className="h-6 w-full mb-2" />
-            <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-4 w-32" />
           </div>
-          <Skeleton className="h-6 w-20" />
         </div>
       </CardHeader>
 
-      {/* Content skeleton */}
-      <CardContent className="pb-2 space-y-3">
-        <div className="flex items-start">
-          <Skeleton className="h-4 w-4 mr-2 mt-0.5" />
-          <Skeleton className="h-4 w-28" />
-        </div>
+      <CardContent className="space-y-3 pt-0 flex-grow">
         <div className="flex items-start">
           <Skeleton className="h-4 w-4 mr-2 mt-0.5" />
           <Skeleton className="h-4 w-36" />
@@ -39,15 +38,13 @@ export function EventCardSkeleton() {
           <Skeleton className="h-4 w-4 mr-2 mt-0.5" />
           <Skeleton className="h-4 w-40" />
         </div>
-        <div className="mt-2">
+        <div className="mt-3">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-11/12 mt-1" />
         </div>
       </CardContent>
 
-      {/* Footer skeleton */}
-      <CardFooter className="flex-col space-y-2 pt-2 mt-auto">
-        <Skeleton className="h-10 w-full" />
+      <CardFooter className="mt-auto">
         <Skeleton className="h-10 w-full" />
       </CardFooter>
     </Card>

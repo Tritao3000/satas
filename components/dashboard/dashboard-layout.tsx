@@ -30,7 +30,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
           <MobileTrigger />
 
-          <main className="flex-1 overflow-auto p-6 pt-20 md:pt-6 md:p-8">
+          <main className="flex-1 overflow-auto p-6 pt-20 md:pt-6 md:p-8 max-w-7xl mx-auto">
             <BreadcrumbNavigation />
             {children}
           </main>

@@ -7,8 +7,16 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { BreadcrumbContextType, BreadcrumbItem } from "../type";
+import { useEvent } from "../hooks/use-events";
+
+const truncateTitle = (title: string, maxWords = 3): string => {
+  if (!title) return "";
+  const words = title.split(" ");
+  if (words.length <= maxWords) return title;
+  return `${words.slice(0, maxWords).join(" ")}...`;
+};
 
 const BreadcrumbContext = createContext<BreadcrumbContextType>({
   items: [],
@@ -26,6 +34,20 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
   const pathname = usePathname();
   const [items, setItems] = useState<BreadcrumbItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const eventId = params?.id
+    ? Array.isArray(params.id)
+      ? params.id[0]
+      : params.id
+    : undefined;
+
+  const shouldFetchEvent =
+    !!eventId &&
+    (pathname.includes("/events/") || pathname.includes("/menu/events/"));
+
+  const { event, isLoading: isEventLoading } = useEvent(
+    shouldFetchEvent ? eventId : ""
+  );
 
   useEffect(() => {
     const generateBreadcrumbs = async () => {
@@ -61,7 +83,6 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
           isCurrentPage: pathname === "/jobs",
         });
 
-        // Add "Create Job" if on the create page
         if (pathname.includes("/jobs/create")) {
           breadcrumbs.push({
             label: "Create Job",
@@ -138,18 +159,33 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
       } else if (pathname.includes("/menu/events")) {
         breadcrumbs.push({
           label: "Events",
+          href: "/events",
+          isCurrentPage: false,
+        });
+
+        breadcrumbs.push({
+          label: "Manage Events",
           href: "/menu/events",
           isCurrentPage: pathname === "/menu/events",
         });
 
-        if (pathname === "/menu/events/new") {
+        if (
+          pathname === "/menu/events/new" ||
+          pathname === "/menu/events/create"
+        ) {
           breadcrumbs.push({
             label: "Create Event",
-            href: "/menu/events/new",
+            href: pathname,
             isCurrentPage: true,
           });
         }
       } else if (pathname.includes("/menu/my-events")) {
+        breadcrumbs.push({
+          label: "Events",
+          href: "/events",
+          isCurrentPage: false,
+        });
+
         breadcrumbs.push({
           label: "My Events",
           href: "/menu/my-events",
@@ -180,17 +216,22 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
           pathname !== "/events/create"
         ) {
           breadcrumbs.push({
-            label: "Event Details",
+            label: event?.title ? truncateTitle(event.title) : "Event Details",
             href: `/events/${id}`,
             isCurrentPage: true,
           });
         } else if (
           pathname.includes("/menu/events/") &&
-          pathname !== "/menu/events/create"
+          pathname !== "/menu/events/create" &&
+          pathname.includes("/edit")
         ) {
           breadcrumbs.push({
-            label: "Event Details",
-            href: `/menu/events/${id}`,
+            label: event?.title ? truncateTitle(event.title) : "Event Details",
+            href: `/events/${id}`,
+          });
+          breadcrumbs.push({
+            label: "Edit Event",
+            href: `/menu/events/${id}/edit`,
             isCurrentPage: true,
           });
         } else if (
@@ -202,6 +243,16 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
             href: `/menu/jobs/${id}`,
             isCurrentPage: true,
           });
+        } else if (
+          pathname.includes("/menu/events/") &&
+          pathname !== "/menu/events/create" &&
+          !pathname.includes("/edit")
+        ) {
+          breadcrumbs.push({
+            label: event?.title ? truncateTitle(event.title) : "Event",
+            href: `/events/${id}`,
+            isCurrentPage: true,
+          });
         }
       }
 
@@ -209,11 +260,18 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
       setIsLoading(false);
     };
 
-    generateBreadcrumbs();
-  }, [params, pathname]);
+    if (!shouldFetchEvent || (shouldFetchEvent && !isEventLoading)) {
+      generateBreadcrumbs();
+    }
+  }, [params, pathname, event, isEventLoading, shouldFetchEvent]);
 
   return (
-    <BreadcrumbContext.Provider value={{ items, isLoading }}>
+    <BreadcrumbContext.Provider
+      value={{
+        items,
+        isLoading: isLoading || (shouldFetchEvent && isEventLoading),
+      }}
+    >
       {children}
     </BreadcrumbContext.Provider>
   );

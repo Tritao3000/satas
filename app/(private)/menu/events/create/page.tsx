@@ -1,40 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { EventForm } from "@/components/events/event-form";
 import { Loader2 } from "lucide-react";
 import { useProfile } from "@/lib/hooks/use-profile-content";
 import { toast } from "sonner";
-export default function NewEventPage() {
+
+export default function CreateEventPage() {
   const router = useRouter();
   const { userType, isLoading: isProfileLoading } = useProfile();
 
   useEffect(() => {
     if (!isProfileLoading && userType !== "startup") {
-      // Redirect non-startup users to events browsing
       toast("Only startups can create events");
-      router.push("/events");
+      router.push("/menu/events");
     }
   }, [userType, isProfileLoading, router]);
 
-  // Show loading state while checking user type
   if (isProfileLoading || userType !== "startup") {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2 text-lg">Loading...</span>
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin     text-primary" />
       </div>
     );
   }
 
   return (
     <div>
-      <div className=" mx-auto">
-        <h1 className="text-3xl font-bold tracking-tight mb-6">
-          Create New Event
-        </h1>
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Create Event</h1>
+          <p className="text-muted-foreground text-sm">
+            Add a new event to promote your startup and engage with the
+            community
+          </p>
+        </div>
+
         <EventForm onSuccess={() => router.push("/menu/events")} />
       </div>
     </div>

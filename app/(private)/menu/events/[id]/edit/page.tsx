@@ -1,20 +1,13 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { EventForm } from "@/components/events/event-form";
-import { Loader2 } from "lucide-react";
-import { useEvent } from "@/lib/hooks/use-events";
-import { useProfile } from "@/lib/hooks/use-profile-content";
+import { Loader2, AlertTriangle } from "lucide-react";
+import { useEventOwnership } from "@/lib/hooks/use-events";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 export default function EditEventPage({
   params,
@@ -22,142 +15,122 @@ export default function EditEventPage({
   params: Promise<{ id: string }> | { id: string };
 }) {
   const eventId = params instanceof Promise ? use(params).id : params.id;
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const router = useRouter();
-  const { event, isLoading: isEventLoading, isError } = useEvent(eventId);
-  const { userId, userType, isLoading: isProfileLoading } = useProfile();
+  const { event, canEdit, isLoading, isError } = useEventOwnership(eventId);
 
-  useEffect(() => {
-    // Only run this effect when both profile and event are loaded
-    if (!isProfileLoading && !isEventLoading && event) {
-      if (!userType) {
-        // Redirect unauthenticated users
-        router.push("/login");
-        return;
-      }
-
-      if (userType !== "startup") {
-        // Redirect non-startup users
-        router.push("/events");
-        return;
-      }
-
-      // Check if user owns the event
-      const checkOwnership = async () => {
-        if (userId && event.startupId === userId) {
-          setIsAuthorized(true);
-        } else {
-          setIsAuthorized(false);
-          router.push("/menu/events");
-        }
-      };
-
-      checkOwnership();
-    }
-  }, [isProfileLoading, isEventLoading, userId, event, router]);
-
-  // Show loading state while checking authorization or loading event
-  if (isEventLoading || isProfileLoading || isAuthorized === null) {
+  if (isLoading) {
     return (
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight mb-6">Edit Event</h1>
-        <Card>
-          <CardHeader>
-            <CardTitle>Edit Event</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <div className="space-y-8">
+        <div>
+          <Skeleton className="h-8 w-48 mb-2" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+
+        <div className="space-y-6">
+          <div className="w-full">
+            <Skeleton className="h-64 w-full rounded-lg" />
+            <Skeleton className="h-4 w-64 ml-auto mt-2" />
+          </div>
+
+          <Skeleton className="h-10 w-full" />
+
+          <div>
+            <Skeleton className="h-6 w-48 mb-2" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-6 w-32" />
               <Skeleton className="h-10 w-full" />
             </div>
-
             <div className="space-y-2">
-              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-6 w-32" />
               <Skeleton className="h-10 w-full" />
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-16" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-            </div>
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-32 w-full" />
+          </div>
 
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-32 w-full" />
-            </div>
-
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-24" />
-              <div className="flex items-center gap-4">
-                <Skeleton className="h-10 w-32" />
-                <Skeleton className="h-4 w-48" />
-              </div>
-              <div className="mt-4">
-                <Skeleton className="h-40 w-full md:w-1/2 rounded-md" />
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
+          <div className="flex justify-end gap-4">
             <Skeleton className="h-10 w-24" />
-          </CardFooter>
-        </Card>
+            <Skeleton className="h-10 w-28" />
+          </div>
+        </div>
       </div>
     );
   }
 
-  // Show error state if event couldn't be loaded
   if (isError || !event) {
     return (
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4">Event Not Found</h1>
-        <p className="text-muted-foreground mb-4">
-          The event you're trying to edit doesn't exist or has been removed.
-        </p>
-        <button
-          className="text-primary hover:underline"
-          onClick={() => router.push("/menu/events")}
-        >
-          Back to Events
-        </button>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Edit Event</h1>
+          <p className="text-muted-foreground text-sm">
+            Update your event details
+          </p>
+        </div>
+
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Event Not Found</AlertTitle>
+          <AlertDescription>
+            The event you're trying to edit doesn't exist or has been removed.
+          </AlertDescription>
+        </Alert>
+
+        <div className="flex justify-center">
+          <Button onClick={() => router.push("/menu/events")} variant="outline">
+            Back to Events
+          </Button>
+        </div>
       </div>
     );
   }
 
-  // Show unauthorized state if user doesn't own the event
-  if (isAuthorized === false) {
+  if (!canEdit) {
     return (
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4">Unauthorized</h1>
-        <p className="text-muted-foreground mb-4">
-          You don't have permission to edit this event.
-        </p>
-        <button
-          className="text-primary hover:underline"
-          onClick={() => router.push("/menu/events")}
-        >
-          Back to Events
-        </button>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Edit Event</h1>
+          <p className="text-muted-foreground text-sm">
+            Update your event details
+          </p>
+        </div>
+
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Unauthorized</AlertTitle>
+          <AlertDescription>
+            You don't have permission to edit this event.
+          </AlertDescription>
+        </Alert>
+
+        <div className="flex justify-center">
+          <Button onClick={() => router.push("/menu/events")} variant="outline">
+            Back to Events
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div>
-      <div className=" mx-auto">
-        <h1 className="text-3xl font-bold tracking-tight mb-6">Edit Event</h1>
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Edit Event</h1>
+          <p className="text-muted-foreground text-sm">
+            Update your event details and information
+          </p>
+        </div>
+
         <EventForm
           defaultValues={event}
-          onSuccess={() => router.push("/menu/events")}
+          onSuccess={() => router.push(`/events/${eventId}`)}
         />
       </div>
     </div>
