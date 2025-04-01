@@ -1,11 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useEvents } from "@/lib/hooks/use-events";
 import { useMyEventRegistrations } from "@/lib/hooks/use-events";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Calendar, CalendarPlus, Filter, X } from "lucide-react";
+import {
+  Search,
+  Calendar,
+  CalendarPlus,
+  Filter,
+  Clock,
+  CalendarDays,
+} from "lucide-react";
 import { EventCard } from "@/components/events/event-card";
 import { EventCardSkeleton } from "@/components/events/event-card-skeleton";
 import Link from "next/link";
@@ -18,6 +25,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import React from "react";
 
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,6 +34,8 @@ export default function EventsPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [filterOpen, setFilterOpen] = useState(false);
   const { userId, userType, isLoading: isProfileLoading } = useProfile();
+
+  const isComponentMounted = useRef(true);
 
   const isStartup = userType === "startup";
 
@@ -51,39 +62,66 @@ export default function EventsPage() {
   const events = isStartup ? startupEvents : individualEvents;
   const mutate = isStartup ? mutateStartupEvents : mutateIndividualEvents;
 
+  const memoizedEvents = React.useMemo(() => events || [], [events]);
+
   useEffect(() => {
-    if (!events) return;
+    isComponentMounted.current = true;
 
-    let filtered = [...events];
+    return () => {
+      isComponentMounted.current = false;
+    };
+  }, []);
 
-    if (searchTerm) {
-      const search = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (event) =>
-          event.title.toLowerCase().includes(search) ||
-          (event.description &&
-            event.description.toLowerCase().includes(search)) ||
-          event.location.toLowerCase().includes(search)
-      );
+  useEffect(() => {
+    if (isEventsLoading || !memoizedEvents) return;
+
+    try {
+      let filtered = [...memoizedEvents];
+
+      if (searchTerm) {
+        const search = searchTerm.toLowerCase();
+        filtered = filtered.filter((event) => {
+          if (!event) return false;
+          return (
+            (event.title && event.title.toLowerCase().includes(search)) ||
+            (event.description &&
+              event.description.toLowerCase().includes(search)) ||
+            (event.location && event.location.toLowerCase().includes(search))
+          );
+        });
+      }
+
+      const now = new Date();
+      if (activeTab === "upcoming") {
+        filtered = filtered.filter(
+          (event) => event && event.date && new Date(event.date) >= now
+        );
+      } else if (activeTab === "past") {
+        filtered = filtered.filter(
+          (event) => event && event.date && new Date(event.date) < now
+        );
+      }
+
+      filtered.sort((a, b) => {
+        if (!a.date || !b.date) return 0;
+
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return activeTab === "past"
+          ? dateB.getTime() - dateA.getTime()
+          : dateA.getTime() - dateB.getTime();
+      });
+
+      if (isComponentMounted.current) {
+        setFilteredEvents(filtered);
+      }
+    } catch (error) {
+      console.error("Error filtering events:", error);
+      if (isComponentMounted.current) {
+        setFilteredEvents([]);
+      }
     }
-
-    const now = new Date();
-    if (activeTab === "upcoming") {
-      filtered = filtered.filter((event) => new Date(event.date) >= now);
-    } else if (activeTab === "past") {
-      filtered = filtered.filter((event) => new Date(event.date) < now);
-    }
-
-    filtered.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return activeTab === "past"
-        ? dateB.getTime() - dateA.getTime()
-        : dateA.getTime() - dateB.getTime();
-    });
-
-    setFilteredEvents(filtered);
-  }, [events, searchTerm, activeTab]);
+  }, [memoizedEvents, searchTerm, activeTab, isEventsLoading]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -233,42 +271,73 @@ export default function EventsPage() {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-72">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-sm">Filter by status</h4>
+              <PopoverContent className="w-80 p-0 shadow-lg border border-border/40">
+                <div className="p-4 border-b border-border/40">
+                  <h4 className="font-medium">Filter Events</h4>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Browse events by timeframe
+                  </p>
+                </div>
+
+                <div className="p-4 space-y-6">
+                  <div className="grid gap-2">
+                    <RadioGroupItem
+                      id="all-events"
+                      checked={activeTab === "all"}
+                      onChange={() => {
+                        setActiveTab("all");
+                        setFilterOpen(false);
+                      }}
+                      label="All Events"
+                      description="View all upcoming and past events"
+                      icon={<Calendar className="h-4 w-4 text-primary" />}
+                    />
+
+                    <RadioGroupItem
+                      id="upcoming-events"
+                      checked={activeTab === "upcoming"}
+                      onChange={() => {
+                        setActiveTab("upcoming");
+                        setFilterOpen(false);
+                      }}
+                      label="Upcoming Events"
+                      description="Events that haven't happened yet"
+                      icon={<Clock className="h-4 w-4 text-green-500" />}
+                      indicator={
+                        <div className="flex items-center">
+                          <span className="h-2 w-2 rounded-full bg-green-500" />
+                        </div>
+                      }
+                    />
+
+                    <RadioGroupItem
+                      id="past-events"
+                      checked={activeTab === "past"}
+                      onChange={() => {
+                        setActiveTab("past");
+                        setFilterOpen(false);
+                      }}
+                      label="Past Events"
+                      description="Events that have already occurred"
+                      icon={<CalendarDays className="h-4 w-4 text-gray-400" />}
+                      indicator={
+                        <div className="flex items-center">
+                          <span className="h-2 w-2 rounded-full bg-gray-400" />
+                        </div>
+                      }
+                    />
                   </div>
 
-                  <div className="flex w-full gap-2">
+                  <div className="flex items-center justify-end">
                     <Button
-                      variant={activeTab === "all" ? "default" : "outline"}
+                      variant="outline"
                       size="sm"
-                      className="flex-1"
-                      onClick={() => setActiveTab("all")}
+                      onClick={() => {
+                        setActiveTab("all");
+                        setFilterOpen(false);
+                      }}
                     >
-                      All
-                    </Button>
-                    <Button
-                      variant={activeTab === "upcoming" ? "default" : "outline"}
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => setActiveTab("upcoming")}
-                    >
-                      Upcoming
-                    </Button>
-                    <Button
-                      variant={activeTab === "past" ? "default" : "outline"}
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => setActiveTab("past")}
-                    >
-                      Past
-                    </Button>
-                  </div>
-
-                  <div className="pt-2 flex justify-end">
-                    <Button size="sm" onClick={() => setFilterOpen(false)}>
-                      Apply Filters
+                      Reset
                     </Button>
                   </div>
                 </div>
@@ -338,6 +407,86 @@ export default function EventsPage() {
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+interface RadioGroupItemProps {
+  id: string;
+  checked: boolean;
+  onChange: () => void;
+  label: string;
+  description?: string;
+  icon?: React.ReactNode;
+  indicator?: React.ReactNode;
+}
+
+function RadioGroupItem({
+  id,
+  checked,
+  onChange,
+  label,
+  description,
+  icon,
+  indicator,
+}: RadioGroupItemProps) {
+  return (
+    <div
+      className={cn(
+        "relative flex items-start p-3 rounded-md transition-all cursor-pointer",
+        checked
+          ? "bg-primary/5 border-primary/10 border"
+          : "border border-transparent hover:bg-accent/50"
+      )}
+      onClick={onChange}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onChange();
+        }
+      }}
+      tabIndex={0}
+      role="radio"
+      aria-checked={checked}
+    >
+      <input
+        type="radio"
+        id={id}
+        name="event-filter"
+        checked={checked}
+        onChange={(e) => {
+          e.stopPropagation();
+          onChange();
+        }}
+        className="absolute opacity-0 inset-0 w-full h-full cursor-pointer z-10"
+        aria-labelledby={`${id}-label`}
+      />
+      <div className="flex w-full gap-3">
+        {icon && <div className="flex-shrink-0 mt-0.5">{icon}</div>}
+        <div className="flex-1 space-y-1">
+          <label
+            id={`${id}-label`}
+            htmlFor={id}
+            className="font-medium text-sm flex items-center gap-2 cursor-pointer"
+          >
+            {label}
+            {indicator && <div className="ml-1.5">{indicator}</div>}
+          </label>
+          {description && (
+            <p className="text-xs text-muted-foreground">{description}</p>
+          )}
+        </div>
+        <div className="flex-shrink-0 flex h-5 items-center">
+          <div
+            className={cn(
+              "h-4 w-4 rounded-full border transition-all flex items-center justify-center",
+              checked
+                ? "border-primary border-[5px]"
+                : "border-muted-foreground/30"
+            )}
+          />
+        </div>
       </div>
     </div>
   );

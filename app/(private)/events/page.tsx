@@ -3,8 +3,14 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, CalendarDays, CalendarRange, Filter } from "lucide-react";
+import {
+  Search,
+  CalendarDays,
+  CalendarRange,
+  Filter,
+  Calendar,
+  Clock,
+} from "lucide-react";
 import {
   useEvents,
   useMyEventRegistrations,
@@ -24,6 +30,7 @@ import {
   useRegisterForEvent,
   useUnregisterFromEvent,
 } from "@/lib/hooks/use-event-registration";
+import { cn } from "@/lib/utils";
 
 export default function EventsPage() {
   const { events, isLoading, isError, mutate } = useEvents();
@@ -250,35 +257,73 @@ export default function EventsPage() {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-72">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-sm">Filter</h4>
-                  </div>
-                  <Tabs
-                    defaultValue="all"
-                    value={activeTab}
-                    onValueChange={(value) => {
-                      setActiveTab(value);
-                    }}
-                    className="w-full"
-                  >
-                    <TabsList className="flex w-full">
-                      <TabsTrigger value="all" className="flex-1">
-                        All
-                      </TabsTrigger>
-                      <TabsTrigger value="upcoming" className="flex-1">
-                        Upcoming
-                      </TabsTrigger>
-                      <TabsTrigger value="past" className="flex-1">
-                        Past
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
+              <PopoverContent className="w-80 p-0 shadow-lg border border-border/40">
+                <div className="p-4 border-b border-border/40">
+                  <h4 className="font-medium">Filter Events</h4>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Browse events by timeframe
+                  </p>
+                </div>
 
-                  <div className="pt-2 flex justify-end">
-                    <Button size="sm" onClick={() => setFilterOpen(false)}>
-                      Apply
+                <div className="p-4 space-y-6">
+                  <div className="grid gap-2">
+                    <RadioGroupItem
+                      id="all-events"
+                      checked={activeTab === "all"}
+                      onChange={() => {
+                        setActiveTab("all");
+                        setFilterOpen(false);
+                      }}
+                      label="All Events"
+                      description="View all upcoming and past events"
+                      icon={<Calendar className="h-4 w-4 text-primary" />}
+                    />
+
+                    <RadioGroupItem
+                      id="upcoming-events"
+                      checked={activeTab === "upcoming"}
+                      onChange={() => {
+                        setActiveTab("upcoming");
+                        setFilterOpen(false);
+                      }}
+                      label="Upcoming Events"
+                      description="Events that haven't happened yet"
+                      icon={<Clock className="h-4 w-4 text-green-500" />}
+                      indicator={
+                        <div className="flex items-center">
+                          <span className="h-2 w-2 rounded-full bg-green-500" />
+                        </div>
+                      }
+                    />
+
+                    <RadioGroupItem
+                      id="past-events"
+                      checked={activeTab === "past"}
+                      onChange={() => {
+                        setActiveTab("past");
+                        setFilterOpen(false);
+                      }}
+                      label="Past Events"
+                      description="Events that have already occurred"
+                      icon={<CalendarDays className="h-4 w-4 text-gray-400" />}
+                      indicator={
+                        <div className="flex items-center">
+                          <span className="h-2 w-2 rounded-full bg-gray-400" />
+                        </div>
+                      }
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setActiveTab("all");
+                        setFilterOpen(false);
+                      }}
+                    >
+                      Reset
                     </Button>
                   </div>
                 </div>
@@ -288,6 +333,86 @@ export default function EventsPage() {
         </div>
 
         {renderEventCards()}
+      </div>
+    </div>
+  );
+}
+
+interface RadioGroupItemProps {
+  id: string;
+  checked: boolean;
+  onChange: () => void;
+  label: string;
+  description?: string;
+  icon?: React.ReactNode;
+  indicator?: React.ReactNode;
+}
+
+function RadioGroupItem({
+  id,
+  checked,
+  onChange,
+  label,
+  description,
+  icon,
+  indicator,
+}: RadioGroupItemProps) {
+  return (
+    <div
+      className={cn(
+        "relative flex items-start p-3 rounded-md transition-all cursor-pointer",
+        checked
+          ? "bg-primary/5 border-primary/10 border"
+          : "border border-transparent hover:bg-accent/50"
+      )}
+      onClick={onChange}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onChange();
+        }
+      }}
+      tabIndex={0}
+      role="radio"
+      aria-checked={checked}
+    >
+      <input
+        type="radio"
+        id={id}
+        name="event-filter"
+        checked={checked}
+        onChange={(e) => {
+          e.stopPropagation();
+          onChange();
+        }}
+        className="absolute opacity-0 inset-0 w-full h-full cursor-pointer z-10"
+        aria-labelledby={`${id}-label`}
+      />
+      <div className="flex w-full gap-3">
+        {icon && <div className="flex-shrink-0 mt-0.5">{icon}</div>}
+        <div className="flex-1 space-y-1">
+          <label
+            id={`${id}-label`}
+            htmlFor={id}
+            className="font-medium text-sm flex items-center gap-2 cursor-pointer"
+          >
+            {label}
+            {indicator && <div className="ml-1.5">{indicator}</div>}
+          </label>
+          {description && (
+            <p className="text-xs text-muted-foreground">{description}</p>
+          )}
+        </div>
+        <div className="flex-shrink-0 flex h-5 items-center">
+          <div
+            className={cn(
+              "h-4 w-4 rounded-full border transition-all flex items-center justify-center",
+              checked
+                ? "border-primary border-[5px]"
+                : "border-muted-foreground/30"
+            )}
+          />
+        </div>
       </div>
     </div>
   );
