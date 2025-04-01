@@ -555,25 +555,6 @@ export default function EventPage({
                         Show all attendees
                       </Button>
                     )}
-
-                    {userType === "individual" &&
-                      isUpcoming &&
-                      !isRegistered && (
-                        <Button
-                          className="w-full mt-4"
-                          onClick={handleRegister}
-                          disabled={
-                            isRegistering || isRegistrationStatusLoading
-                          }
-                        >
-                          {isRegistering || isRegistrationStatusLoading ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : (
-                            <Users className="mr-2 h-4 w-4" />
-                          )}
-                          Join this Event
-                        </Button>
-                      )}
                   </div>
                 ) : (
                   <div className="space-y-4">
