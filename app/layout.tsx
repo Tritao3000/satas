@@ -57,16 +57,14 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       {/* <ReactScan /> */}
-      <body className="bg-background text-foreground">
+      <body className="bg-background text-foreground" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {/* <NuqsAdapter> */}
-          {children}
-          {/* </NuqsAdapter> */}
+          <NuqsAdapter>{children}</NuqsAdapter>
           <Toaster />
         </ThemeProvider>
       </body>
