@@ -191,6 +191,12 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
           href: "/menu/my-events",
           isCurrentPage: pathname === "/menu/my-events",
         });
+      } else if (pathname.includes("/menu/reset-password")) {
+        breadcrumbs.push({
+          label: "Reset Password",
+          href: "/menu/reset-password",
+          isCurrentPage: true,
+        });
       }
 
       if (pathname === "/menu") {

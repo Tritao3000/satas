@@ -29,20 +29,14 @@ export function BreadcrumbNavigation() {
                 <Home className="w-4 h-4" />
               </Link>
             </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
             <BreadcrumbSeparator />
           </BreadcrumbItem>
           <BreadcrumbItem>
             <Skeleton className="h-4 w-32" />
             {params.id && (
               <>
-                <BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                </BreadcrumbItem>
-                <BreadcrumbItem>
-                  <Skeleton className="h-4 w-24" />
-                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <Skeleton className="h-4 w-24" />
               </>
             )}
           </BreadcrumbItem>
@@ -55,26 +49,20 @@ export function BreadcrumbNavigation() {
     <Breadcrumb className="mb-4">
       <BreadcrumbList>
         {items.map((item, index) => (
-          <React.Fragment key={index}>
-            <BreadcrumbItem>
-              {item.isCurrentPage ? (
-                <BreadcrumbPage>
+          <BreadcrumbItem key={index}>
+            {item.isCurrentPage ? (
+              <BreadcrumbPage>
+                {index === 0 ? <Home className="w-4 h-4" /> : item.label}
+              </BreadcrumbPage>
+            ) : (
+              <BreadcrumbLink asChild>
+                <Link href={item.href}>
                   {index === 0 ? <Home className="w-4 h-4" /> : item.label}
-                </BreadcrumbPage>
-              ) : (
-                <BreadcrumbLink asChild>
-                  <Link href={item.href}>
-                    {index === 0 ? <Home className="w-4 h-4" /> : item.label}
-                  </Link>
-                </BreadcrumbLink>
-              )}
-            </BreadcrumbItem>
-            {index < items.length - 1 && (
-              <BreadcrumbItem>
-                <BreadcrumbSeparator />
-              </BreadcrumbItem>
+                </Link>
+              </BreadcrumbLink>
             )}
-          </React.Fragment>
+            {index < items.length - 1 && <BreadcrumbSeparator />}
+          </BreadcrumbItem>
         ))}
       </BreadcrumbList>
     </Breadcrumb>
