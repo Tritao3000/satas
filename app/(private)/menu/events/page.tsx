@@ -187,31 +187,6 @@ export default function EventsPage() {
     }
   };
 
-  const isLoading = isProfileLoading || isEventsLoading;
-
-  if (isLoading) {
-    return (
-      <div className="md:container py-4 md:py-8">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Events</h1>
-            <p className="text-muted-foreground text-sm">
-              {isStartup
-                ? "Create and manage events for your startup"
-                : "View and manage your event registrations"}
-            </p>
-          </div>
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <EventCardSkeleton key={index} />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="md:container py-4 md:py-8">
       <div className="space-y-8">
@@ -228,7 +203,9 @@ export default function EventsPage() {
           </div>
 
           <div className="flex gap-2">
-            {isStartup ? (
+            {isEventsLoading || isProfileLoading ? (
+              <Skeleton className="h-10 w-32" />
+            ) : isStartup ? (
               <Button asChild>
                 <Link href="/menu/events/create">
                   <CalendarPlus className="h-4 w-4" />
@@ -259,94 +236,100 @@ export default function EventsPage() {
           </div>
 
           <div className="flex gap-2">
-            <Popover open={filterOpen} onOpenChange={setFilterOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
-                  Filters
-                  {filtersActive && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1">
-                      {activeTab !== "all" ? 1 : 0}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-0 shadow-lg border border-border/40">
-                <div className="p-4 border-b border-border/40">
-                  <h4 className="font-medium">Filter Events</h4>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Browse events by timeframe
-                  </p>
-                </div>
-
-                <div className="p-4 space-y-6">
-                  <div className="grid gap-2">
-                    <RadioGroupItem
-                      id="all-events"
-                      checked={activeTab === "all"}
-                      onChange={() => {
-                        setActiveTab("all");
-                        setFilterOpen(false);
-                      }}
-                      label="All Events"
-                      description="View all upcoming and past events"
-                      icon={<Calendar className="h-4 w-4 text-primary" />}
-                    />
-
-                    <RadioGroupItem
-                      id="upcoming-events"
-                      checked={activeTab === "upcoming"}
-                      onChange={() => {
-                        setActiveTab("upcoming");
-                        setFilterOpen(false);
-                      }}
-                      label="Upcoming Events"
-                      description="Events that haven't happened yet"
-                      icon={<Clock className="h-4 w-4 text-green-500" />}
-                      indicator={
-                        <div className="flex items-center">
-                          <span className="h-2 w-2 rounded-full bg-green-500" />
-                        </div>
-                      }
-                    />
-
-                    <RadioGroupItem
-                      id="past-events"
-                      checked={activeTab === "past"}
-                      onChange={() => {
-                        setActiveTab("past");
-                        setFilterOpen(false);
-                      }}
-                      label="Past Events"
-                      description="Events that have already occurred"
-                      icon={<CalendarDays className="h-4 w-4 text-gray-400" />}
-                      indicator={
-                        <div className="flex items-center">
-                          <span className="h-2 w-2 rounded-full bg-gray-400" />
-                        </div>
-                      }
-                    />
+            {isEventsLoading || isProfileLoading ? (
+              <Skeleton className="h-10 w-28" />
+            ) : (
+              <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Filter className="h-4 w-4" />
+                    Filters
+                    {filtersActive && (
+                      <Badge variant="secondary" className="ml-1 h-5 px-1">
+                        {activeTab !== "all" ? 1 : 0}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-0 shadow-lg border border-border/40">
+                  <div className="p-4 border-b border-border/40">
+                    <h4 className="font-medium">Filter Events</h4>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Browse events by timeframe
+                    </p>
                   </div>
 
-                  <div className="flex items-center justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setActiveTab("all");
-                        setFilterOpen(false);
-                      }}
-                    >
-                      Reset
-                    </Button>
+                  <div className="p-4 space-y-6">
+                    <div className="grid gap-2">
+                      <RadioGroupItem
+                        id="all-events"
+                        checked={activeTab === "all"}
+                        onChange={() => {
+                          setActiveTab("all");
+                          setFilterOpen(false);
+                        }}
+                        label="All Events"
+                        description="View all upcoming and past events"
+                        icon={<Calendar className="h-4 w-4 text-primary" />}
+                      />
+
+                      <RadioGroupItem
+                        id="upcoming-events"
+                        checked={activeTab === "upcoming"}
+                        onChange={() => {
+                          setActiveTab("upcoming");
+                          setFilterOpen(false);
+                        }}
+                        label="Upcoming Events"
+                        description="Events that haven't happened yet"
+                        icon={<Clock className="h-4 w-4 text-green-500" />}
+                        indicator={
+                          <div className="flex items-center">
+                            <span className="h-2 w-2 rounded-full bg-green-500" />
+                          </div>
+                        }
+                      />
+
+                      <RadioGroupItem
+                        id="past-events"
+                        checked={activeTab === "past"}
+                        onChange={() => {
+                          setActiveTab("past");
+                          setFilterOpen(false);
+                        }}
+                        label="Past Events"
+                        description="Events that have already occurred"
+                        icon={
+                          <CalendarDays className="h-4 w-4 text-gray-400" />
+                        }
+                        indicator={
+                          <div className="flex items-center">
+                            <span className="h-2 w-2 rounded-full bg-gray-400" />
+                          </div>
+                        }
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setActiveTab("all");
+                          setFilterOpen(false);
+                        }}
+                      >
+                        Reset
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
         </div>
 
-        {isEventsLoading ? (
+        {isEventsLoading || isProfileLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, index) => (
               <EventCardSkeleton key={index} />
