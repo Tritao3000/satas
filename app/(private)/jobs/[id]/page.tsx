@@ -47,12 +47,9 @@ export default async function JobDetailPage({
 
   const startupData = startup[0];
 
-  // Format job date
-
   const formattedDate = format(new Date(job.createdAt), "MMMM d, yyyy");
   const userType = user?.user_metadata?.user_type;
 
-  // Format salary
   const formattedSalary = job.salary
     ? new Intl.NumberFormat("en-US", {
         style: "currency",
