@@ -54,6 +54,14 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import React from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 const getInitial = (name?: string) => {
   if (!name) return "?";
@@ -90,6 +98,7 @@ export default function EventPage({
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showAllAttendeesDialog, setShowAllAttendeesDialog] = useState(false);
 
   const handleRegister = async () => {
     if (!userId) {
@@ -505,18 +514,24 @@ export default function EventPage({
                           <Tooltip key={attendee.id}>
                             <TooltipTrigger asChild>
                               <div className="relative group">
-                                <Avatar className="h-11 w-11 border-2 border-background shadow-sm cursor-pointer group-hover:ring-2 group-hover:ring-primary/30 group-hover:scale-105 transition-all duration-200">
-                                  {attendee.profilePicture ? (
-                                    <AvatarImage
-                                      src={attendee.profilePicture}
-                                      alt={attendee.username}
-                                      className="object-cover"
-                                    />
-                                  ) : null}
-                                  <AvatarFallback className="bg-primary/10 text-primary font-medium">
-                                    {getInitial(attendee.username)}
-                                  </AvatarFallback>
-                                </Avatar>
+                                <Link
+                                  href={`/user/${attendee.userId}`}
+                                  className="block relative"
+                                >
+                                  <Avatar className="h-11 w-11 border-2 border-background shadow-sm cursor-pointer group-hover:ring-2 group-hover:ring-primary/30 group-hover:scale-105 transition-all duration-200">
+                                    {attendee.profilePicture ? (
+                                      <AvatarImage
+                                        src={attendee.profilePicture}
+                                        alt={attendee.username}
+                                        className="object-cover"
+                                      />
+                                    ) : null}
+                                    <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                                      {getInitial(attendee.username)}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-primary rounded-full border-2 border-background opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </Link>
                                 {attendee.userId === userId && (
                                   <div className="absolute -top-1 -right-1">
                                     <Badge
@@ -535,6 +550,9 @@ export default function EventPage({
                               className="font-medium"
                             >
                               <p>{attendee.username}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Click to view profile
+                              </p>
                             </TooltipContent>
                           </Tooltip>
                         ))}
@@ -551,6 +569,7 @@ export default function EventPage({
                       <Button
                         variant="link"
                         className="text-xs h-auto p-0 text-muted-foreground hover:text-primary"
+                        onClick={() => setShowAllAttendeesDialog(true)}
                       >
                         Show all attendees
                       </Button>
@@ -597,6 +616,68 @@ export default function EventPage({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog
+        open={showAllAttendeesDialog}
+        onOpenChange={setShowAllAttendeesDialog}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Event Attendees</DialogTitle>
+            <DialogDescription>
+              {attendees.length} {attendees.length === 1 ? "person" : "people"}{" "}
+              registered for this event
+            </DialogDescription>
+          </DialogHeader>
+          {attendees.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 py-4 max-h-[60vh] overflow-y-auto">
+              {attendees.map((attendee) => (
+                <Link
+                  href={`/user/${attendee.userId}`}
+                  key={attendee.id}
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors"
+                >
+                  <Avatar className="h-10 w-10 border border-border">
+                    {attendee.profilePicture ? (
+                      <AvatarImage
+                        src={attendee.profilePicture}
+                        alt={attendee.username}
+                        className="object-cover"
+                      />
+                    ) : null}
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {getInitial(attendee.username)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="truncate">
+                    <p className="font-medium text-sm truncate">
+                      {attendee.username}
+                    </p>
+                    {attendee.userId === userId && (
+                      <Badge variant="outline" className="text-[10px] h-4 px-1">
+                        You
+                      </Badge>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center">
+              <p className="text-muted-foreground">
+                No one has registered for this event yet.
+              </p>
+            </div>
+          )}
+          <div className="flex justify-end">
+            <DialogClose asChild>
+              <Button variant="outline" size="sm">
+                Close
+              </Button>
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

@@ -1,8 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { db } from "@/src/db";
-import { eventRegistrations, users } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
+import { eventRegistrations, users, individualProfiles } from "@/src/db/schema";
+import { eq, and } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 export async function GET(
@@ -20,7 +20,6 @@ export async function GET(
   }
 
   try {
-    // Check authentication
     const cookieStore = cookies();
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
@@ -32,7 +31,6 @@ export async function GET(
       );
     }
 
-    // Query registrations for this event
     const registrationsData = await db
       .select({
         id: eventRegistrations.id,
@@ -40,23 +38,31 @@ export async function GET(
         registrantId: eventRegistrations.registrantId,
         createdAt: eventRegistrations.createdAt,
         userEmail: users.email,
+        userName: users.name,
+        profilePicture: individualProfiles.profilePicture,
       })
       .from(eventRegistrations)
       .leftJoin(users, eq(eventRegistrations.registrantId, users.id))
+      .leftJoin(
+        individualProfiles,
+        eq(eventRegistrations.registrantId, individualProfiles.userId)
+      )
       .where(eq(eventRegistrations.eventId, eventId));
 
-    // Format the data to match the expected structure
     const formattedRegistrations = registrationsData.map((registration) => {
       return {
         id: registration.id,
         eventId: registration.eventId,
-        registrantId: registration.registrantId,
+        userId: registration.registrantId,
         createdAt:
           registration.createdAt?.toISOString() || new Date().toISOString(),
         user: {
-          name: registration.userEmail?.split("@")[0] || "Unknown", // Use email username as name for now
+          name:
+            registration.userName ||
+            registration.userEmail?.split("@")[0] ||
+            "Unknown",
           email: registration.userEmail || "",
-          // profilePicture will be undefined since we don't have it in the schema yet
+          profilePicture: registration.profilePicture || null,
         },
       };
     });
