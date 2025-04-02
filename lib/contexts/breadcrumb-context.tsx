@@ -10,6 +10,7 @@ import React, {
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { BreadcrumbContextType, BreadcrumbItem } from "../type";
 import { useEvent } from "../hooks/use-events";
+import { useJob } from "../hooks/use-jobs";
 
 const truncateTitle = (title: string, maxWords = 3): string => {
   if (!title) return "";
@@ -35,19 +36,24 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
   const [items, setItems] = useState<BreadcrumbItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const eventId = params?.id
+  const id = params?.id
     ? Array.isArray(params.id)
       ? params.id[0]
       : params.id
     : undefined;
 
   const shouldFetchEvent =
-    !!eventId &&
+    !!id &&
     (pathname.includes("/events/") || pathname.includes("/menu/events/"));
 
+  const shouldFetchJob =
+    !!id && (pathname.includes("/jobs/") || pathname.includes("/menu/jobs/"));
+
   const { event, isLoading: isEventLoading } = useEvent(
-    shouldFetchEvent ? eventId : ""
+    shouldFetchEvent ? id : ""
   );
+
+  const { job, isLoading: isJobLoading } = useJob(shouldFetchJob ? id : "");
 
   useEffect(() => {
     const generateBreadcrumbs = async () => {
@@ -145,6 +151,12 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
       } else if (pathname.includes("/menu/jobs")) {
         breadcrumbs.push({
           label: "Jobs",
+          href: "/jobs",
+          isCurrentPage: false,
+        });
+
+        breadcrumbs.push({
+          label: "Manage Jobs",
           href: "/menu/jobs",
           isCurrentPage: pathname === "/menu/jobs",
         });
@@ -153,6 +165,20 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
           breadcrumbs.push({
             label: "Create Job",
             href: "/menu/jobs/create",
+            isCurrentPage: true,
+          });
+        }
+
+        if (pathname.includes("/menu/jobs/edit/")) {
+          if (job?.title) {
+            breadcrumbs.push({
+              label: truncateTitle(job.title),
+              href: `/jobs/${id}`,
+            });
+          }
+          breadcrumbs.push({
+            label: "Edit Job",
+            href: pathname,
             isCurrentPage: true,
           });
         }
@@ -212,7 +238,7 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
           pathname !== "/jobs/create"
         ) {
           breadcrumbs.push({
-            label: "Job Details",
+            label: job?.title ? truncateTitle(job.title) : "Job Details",
             href: `/jobs/${id}`,
             isCurrentPage: true,
           });
@@ -242,10 +268,11 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
           });
         } else if (
           pathname.includes("/menu/jobs/") &&
-          pathname !== "/menu/jobs/create"
+          pathname !== "/menu/jobs/create" &&
+          !pathname.includes("/edit")
         ) {
           breadcrumbs.push({
-            label: "Job Details",
+            label: job?.title ? truncateTitle(job.title) : "Job Details",
             href: `/menu/jobs/${id}`,
             isCurrentPage: true,
           });
@@ -266,16 +293,33 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
       setIsLoading(false);
     };
 
-    if (!shouldFetchEvent || (shouldFetchEvent && !isEventLoading)) {
+    if (
+      (!shouldFetchEvent && !shouldFetchJob) ||
+      (shouldFetchEvent && !isEventLoading) ||
+      (shouldFetchJob && !isJobLoading)
+    ) {
       generateBreadcrumbs();
     }
-  }, [params, pathname, event, isEventLoading, shouldFetchEvent]);
+  }, [
+    params,
+    pathname,
+    event,
+    isEventLoading,
+    shouldFetchEvent,
+    job,
+    isJobLoading,
+    shouldFetchJob,
+    id,
+  ]);
 
   return (
     <BreadcrumbContext.Provider
       value={{
         items,
-        isLoading: isLoading || (shouldFetchEvent && isEventLoading),
+        isLoading:
+          isLoading ||
+          (shouldFetchEvent && isEventLoading) ||
+          (shouldFetchJob && isJobLoading),
       }}
     >
       {children}
