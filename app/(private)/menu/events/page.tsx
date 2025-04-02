@@ -191,7 +191,7 @@ export default function EventsPage() {
 
   if (isLoading) {
     return (
-      <div className="container py-8">
+      <div className="md:container py-4 md:py-8">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Events</h1>
@@ -213,7 +213,7 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="container py-8">
+    <div className="md:container py-4 md:py-8">
       <div className="space-y-8">
         <div className="flex justify-between items-center">
           <div>

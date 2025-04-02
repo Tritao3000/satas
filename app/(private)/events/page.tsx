@@ -10,6 +10,7 @@ import {
   Filter,
   Calendar,
   Clock,
+  Settings2,
 } from "lucide-react";
 import {
   useEvents,
@@ -89,12 +90,6 @@ export default function EventsPage() {
   };
 
   const filtersActive = activeTab !== "all" || searchTerm.trim() !== "";
-
-  const handleReset = () => {
-    setSearchTerm("");
-    setActiveTab("all");
-    setFilterOpen(false);
-  };
 
   const handleRegister = async (eventId: string) => {
     if (!userId) {
@@ -198,7 +193,7 @@ export default function EventsPage() {
   };
 
   return (
-    <div className="container py-8">
+    <div className="md:container py-4 md:py-8">
       <div className="space-y-8">
         <div className="flex justify-between items-center">
           <div>
@@ -215,8 +210,8 @@ export default function EventsPage() {
               {userType === "startup" && (
                 <Button asChild>
                   <Link href="/menu/events">
-                    <CalendarDays className="h-4 w-4 mr-2" />
-                    Manage Events
+                    <Settings2 className="h-4 w-4 mr-2" />
+                    Create Event
                   </Link>
                 </Button>
               )}

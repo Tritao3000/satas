@@ -13,6 +13,7 @@ import {
   MoreVertical,
   Edit,
   Trash,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -286,11 +287,21 @@ export function EventCard({
           <div className="flex w-full">
             {link ? (
               <Button asChild variant="default" className="w-full">
-                <Link href={link}>View Details</Link>
+                <Link href={link}>
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  View Details
+                </Link>
               </Button>
             ) : (
-              <Button asChild variant="default" className="w-full">
-                <Link href={`/events/${event.id}`}>View Details</Link>
+              <Button
+                asChild
+                variant="default"
+                className="w-full flex items-center justify-center"
+              >
+                <Link href={`/events/${event.id}`}>
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  View Details
+                </Link>
               </Button>
             )}
           </div>

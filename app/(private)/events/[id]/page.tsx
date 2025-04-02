@@ -149,7 +149,7 @@ export default function EventPage({
 
   if (eventLoading || isProfileLoading || isRegistrationStatusLoading) {
     return (
-      <main className="container py-6 max-w-6xl">
+      <main className="md:container py-4 md:py-6">
         <div className="flex flex-col gap-6">
           <div className="relative overflow-hidden rounded-xl aspect-[21/9] bg-gradient-to-br from-primary/5 to-primary/10">
             <div className="absolute inset-0 flex items-center justify-center">
@@ -300,7 +300,7 @@ export default function EventPage({
     })) || [];
 
   return (
-    <main className="container py-6 max-w-6xl">
+    <main className="md:container py-4 md:py-6">
       <div className="flex flex-col gap-6">
         <div className="relative overflow-hidden rounded-xl aspect-[21/9] bg-gradient-to-br from-primary/5 to-primary/10">
           {event.eventImagePath ? (
