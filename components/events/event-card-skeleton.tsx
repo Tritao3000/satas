@@ -47,6 +47,8 @@ export function EventCardSkeleton() {
       <CardFooter className="mt-auto">
         <Skeleton className="h-10 w-full" />
       </CardFooter>
+
+      <div className="h-1.5 w-full mt-auto bg-gray-200 dark:bg-gray-700" />
     </Card>
   );
 }

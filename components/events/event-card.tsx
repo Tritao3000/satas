@@ -34,6 +34,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 type EventCardProps = {
   event: Event;
@@ -307,6 +308,13 @@ export function EventCard({
           </div>
         )}
       </div>
+
+      <div
+        className={cn(
+          "h-1.5 w-full mt-auto",
+          isUpcoming ? "bg-green-600" : "bg-gray-400"
+        )}
+      />
 
       {allowEdit && (
         <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
