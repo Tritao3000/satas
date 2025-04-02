@@ -65,6 +65,41 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
         },
       ];
 
+      const applicationsPathRegex = /\/menu\/jobs\/([^/]+)\/applications/;
+      const isApplicationsPage = applicationsPathRegex.test(pathname);
+
+      if (isApplicationsPage) {
+        breadcrumbs.length = 1;
+
+        breadcrumbs.push({
+          label: "Jobs",
+          href: "/jobs",
+          isCurrentPage: false,
+        });
+
+        breadcrumbs.push({
+          label: "Manage Jobs",
+          href: "/menu/jobs",
+          isCurrentPage: false,
+        });
+
+        breadcrumbs.push({
+          label: job?.title ? truncateTitle(job.title) : "Job Details",
+          href: `/jobs/${id}`,
+          isCurrentPage: false,
+        });
+
+        breadcrumbs.push({
+          label: "Applications",
+          href: `/menu/jobs/${id}/applications`,
+          isCurrentPage: true,
+        });
+
+        setItems(breadcrumbs);
+        setIsLoading(false);
+        return;
+      }
+
       if (pathname.includes("/events") && !pathname.includes("/menu/events")) {
         breadcrumbs.push({
           label: "Events",
