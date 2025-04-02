@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -94,6 +94,8 @@ export default function JobDetails({
 }: JobDetailsProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
 
   const getBadgeVariant = (type: string) => {
     switch (type) {
@@ -136,6 +138,63 @@ export default function JobDetails({
       setShowDeleteDialog(false);
     }
   };
+
+  const applyForJob = async () => {
+    if (userType === "startup") return;
+
+    setIsApplying(true);
+    try {
+      const response = await fetch("/api/jobs/apply", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ jobId: job.id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to apply for this job");
+      }
+
+      toast.success("Application submitted successfully", {
+        description: "Your application has been sent to the company.",
+      });
+      setHasApplied(true);
+    } catch (error: any) {
+      if (error.message === "You have already applied for this job") {
+        toast.info("You have already applied for this job");
+        setHasApplied(true);
+      } else {
+        toast.error(error.message || "Error applying for job", {
+          description: "Please try again later.",
+        });
+      }
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userType === "individual") {
+      const checkApplicationStatus = async () => {
+        try {
+          const response = await fetch("/api/jobs/applications");
+          if (response.ok) {
+            const applications = await response.json();
+            const alreadyApplied = applications.some(
+              (app: any) => app.jobId === job.id
+            );
+            setHasApplied(alreadyApplied);
+          }
+        } catch (error) {
+          console.error("Error checking application status:", error);
+        }
+      };
+
+      checkApplicationStatus();
+    }
+  }, [job.id, userType]);
 
   return (
     <div className="w-full">
@@ -185,19 +244,26 @@ export default function JobDetails({
 
               <div className="flex flex-col gap-3 mt-2 md:mt-0">
                 <Button
-                  disabled={userType === "startup"}
+                  onClick={applyForJob}
+                  disabled={userType === "startup" || hasApplied || isApplying}
                   size="lg"
                   className={cn(
                     "font-medium",
-                    userType === "startup"
+                    userType === "startup" || hasApplied
                       ? "opacity-50 cursor-not-allowed"
                       : ""
                   )}
                 >
-                  <Send className="h-4 w-4 mr-2" />
+                  {isApplying ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4 mr-2" />
+                  )}
                   {userType === "startup"
                     ? "You own this posting"
-                    : "Apply Now"}
+                    : hasApplied
+                      ? "Already Applied"
+                      : "Apply Now"}
                 </Button>
 
                 <div className="flex justify-end gap-2">
@@ -309,11 +375,21 @@ export default function JobDetails({
                 </div>
               </CardContent>
               <CardFooter className="pt-2 border-t flex justify-end">
-                <Button disabled={userType === "startup"} className="mt-4">
-                  <Send className="mr-2 h-4 w-4" />
+                <Button
+                  onClick={applyForJob}
+                  disabled={userType === "startup" || hasApplied || isApplying}
+                  className="mt-4"
+                >
+                  {isApplying ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="mr-2 h-4 w-4" />
+                  )}
                   {userType === "startup"
                     ? "You own this posting"
-                    : "Apply Now"}
+                    : hasApplied
+                      ? "Already Applied"
+                      : "Apply Now"}
                 </Button>
               </CardFooter>
             </Card>
