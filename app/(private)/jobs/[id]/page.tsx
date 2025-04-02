@@ -65,6 +65,7 @@ export default async function JobDetailPage({
       formattedDate={formattedDate}
       formattedSalary={formattedSalary}
       userType={userType}
+      userId={user.id}
     />
   );
 }

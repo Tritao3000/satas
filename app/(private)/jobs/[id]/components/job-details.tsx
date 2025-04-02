@@ -21,9 +21,16 @@ import {
   ExternalLink,
   FileText,
   Info,
+  MoreVertical,
+  Edit,
+  Trash,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 import {
@@ -32,6 +39,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Job {
   id: string;
@@ -60,6 +81,7 @@ interface JobDetailsProps {
   formattedDate: string;
   formattedSalary: string;
   userType?: string | null;
+  userId: string;
 }
 
 export default function JobDetails({
@@ -68,7 +90,11 @@ export default function JobDetails({
   formattedDate,
   formattedSalary,
   userType,
+  userId,
 }: JobDetailsProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   const getBadgeVariant = (type: string) => {
     switch (type) {
       case "Full-time":
@@ -83,6 +109,31 @@ export default function JobDetails({
         return "default";
       default:
         return "outline";
+    }
+  };
+
+  const handleDeleteJob = async () => {
+    setIsDeleting(true);
+
+    try {
+      const response = await fetch(`/api/jobs/${job.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to delete job");
+      }
+
+      toast.success("Job deleted successfully");
+      window.location.href = "/menu/jobs";
+    } catch (error: any) {
+      toast.error(error.message || "Error deleting job", {
+        description: "Please try again.",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -157,7 +208,7 @@ export default function JobDetails({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-9 w-9"
+                            className="h-9 w-9 hover:cursor-pointer"
                             asChild
                           >
                             <Link href={`/startup/${job.startupId}`}>
@@ -171,6 +222,35 @@ export default function JobDetails({
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
+                  )}
+
+                  {userType === "startup" && job.startupId === userId && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">More options</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/menu/jobs/edit/${job.id}`}
+                            className="cursor-pointer flex items-center"
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Job
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive cursor-pointer flex items-center"
+                          onClick={() => setShowDeleteDialog(true)}
+                        >
+                          <Trash className="h-4 w-4 mr-2" />
+                          Delete Job
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
                 </div>
               </div>
@@ -336,6 +416,37 @@ export default function JobDetails({
           </div>
         </div>
       </div>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-destructive" />
+              Delete Job
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this job listing? This action
+              cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteJob}
+              disabled={isDeleting}
+            >
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
