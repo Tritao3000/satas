@@ -44,8 +44,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import LogoDark from "@/public/images/logo-dark.png";
-import LogoLight from "@/public/images/logo-light.png";
+import LogoDark from "@/public/images/logo-black.png";
+import LogoLight from "@/public/images/logo-white.png";
 
 import { useTheme } from "next-themes";
 
@@ -91,7 +91,7 @@ const navItems: NavItem[] = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const isExpanded = state === "expanded";
   const { userType, isLoading, email } = useProfile();
   const { name: userName, isLoading: isNameLoading } = useUserName();
@@ -99,6 +99,12 @@ export function DashboardSidebar() {
     useUserProfilePicture();
   const { theme } = useTheme();
   const [open, setOpen] = useState(false);
+
+  const closeMobileSidebar = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   const renderNavItems = () => {
     if (isLoading) {
@@ -254,6 +260,7 @@ export function DashboardSidebar() {
             <Link
               href="/menu/profile"
               className="flex items-center w-full cursor-pointer"
+              onClick={closeMobileSidebar}
             >
               <UserIcon className="mr-2 h-4 w-4" />
               <span className="text-sm">Profile</span>
@@ -275,6 +282,7 @@ export function DashboardSidebar() {
               type="submit"
               variant="ghost"
               className="flex items-center w-full justify-start font-normal text-current py-1.5 h-auto hover:bg-destructive/10 hover:text-destructive rounded-md px-2 transition-colors duration-200"
+              onClick={closeMobileSidebar}
             >
               <LogOutIcon className="mr-2 h-4 w-4" />
               <span className="text-sm">Sign out</span>
@@ -298,7 +306,7 @@ export function DashboardSidebar() {
                 loading="eager"
                 priority
                 src={LogoLight}
-                width={140}
+                width={160}
                 height={30}
                 alt="logo"
               />
@@ -308,7 +316,7 @@ export function DashboardSidebar() {
                 loading="eager"
                 priority
                 src={LogoDark}
-                width={140}
+                width={160}
                 height={30}
                 alt="logo"
               />
