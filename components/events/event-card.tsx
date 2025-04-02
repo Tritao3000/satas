@@ -106,149 +106,247 @@ export function EventCard({
     }
   };
 
-  const cardContent = (
-    <>
-      <div className="relative w-full overflow-hidden">
-        {allowEdit && (
-          <div className="absolute top-2 right-2 z-10">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 bg-background/80 hover:bg-background dark:bg-gray-800/80 dark:hover:bg-gray-800 rounded-full shadow-sm"
-                >
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link
-                    href={`/menu/events/${event.id}/edit`}
-                    className="cursor-pointer flex items-center"
+  return (
+    <div className="group overflow-hidden h-full flex flex-col border rounded-lg shadow-sm hover:shadow-md transition-all bg-card text-card-foreground">
+      <div className="flex flex-col flex-grow">
+        <div className="relative w-full overflow-hidden">
+          {allowEdit && (
+            <div
+              className="absolute top-2 right-2 z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 bg-background/80 hover:bg-background dark:bg-gray-800/80 dark:hover:bg-gray-800 rounded-full shadow-sm"
                   >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-destructive focus:text-destructive cursor-pointer flex items-center"
-                  onClick={() => setShowDeleteDialog(true)}
-                >
-                  <Trash className="h-4 w-4 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        )}
-
-        {event.eventImagePath ? (
-          <div className="h-48 w-full relative">
-            <Image
-              src={event.eventImagePath}
-              alt={event.title}
-              fill
-              className="object-cover"
-            />
-            {isRegistered && (
-              <div className="absolute top-3 right-3">
-                <Badge
-                  variant="default"
-                  className="px-3 py-1 text-xs font-medium"
-                >
-                  Registered
-                </Badge>
-              </div>
-            )}
-
-            <div className="absolute top-0 left-0 m-4 bg-background/90 dark:bg-gray-800/90 py-1 px-2 rounded text-center shadow-sm border border-border">
-              <div className="text-sm font-semibold">
-                {eventMonth.toUpperCase()}
-              </div>
-              <div className="text-2xl font-bold">{eventDay}</div>
-              <div className="text-xs">{eventYear}</div>
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href={`/menu/events/${event.id}/edit`}
+                      className="cursor-pointer flex items-center"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="text-destructive focus:text-destructive cursor-pointer flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setShowDeleteDialog(true);
+                    }}
+                  >
+                    <Trash className="h-4 w-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          </div>
-        ) : (
-          <div className="h-48 w-full bg-gradient-to-br from-muted/60 to-muted flex items-center justify-center relative">
-            <CalendarIcon className="h-12 w-12 text-muted-foreground/50" />
-            {isRegistered && (
-              <div className="absolute top-3 right-3">
-                <Badge
-                  variant="default"
-                  className="px-3 py-1 text-xs font-medium"
-                >
-                  Registered
-                </Badge>
+          )}
+
+          {link && !allowEdit ? (
+            <Link href={link} className="block">
+              {event.eventImagePath ? (
+                <div className="h-48 w-full relative">
+                  <Image
+                    src={event.eventImagePath}
+                    alt={event.title}
+                    fill
+                    className="object-cover"
+                  />
+                  {isRegistered && (
+                    <div className="absolute top-3 right-3">
+                      <Badge
+                        variant="default"
+                        className="px-3 py-1 text-xs font-medium"
+                      >
+                        Registered
+                      </Badge>
+                    </div>
+                  )}
+
+                  <div className="absolute top-0 left-0 m-4 bg-background/90 dark:bg-gray-800/90 py-1 px-2 rounded text-center shadow-sm border border-border">
+                    <div className="text-sm font-semibold">
+                      {eventMonth.toUpperCase()}
+                    </div>
+                    <div className="text-2xl font-bold">{eventDay}</div>
+                    <div className="text-xs">{eventYear}</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-48 w-full bg-gradient-to-br from-muted/60 to-muted flex items-center justify-center relative">
+                  <CalendarIcon className="h-12 w-12 text-muted-foreground/50" />
+                  {isRegistered && (
+                    <div className="absolute top-3 right-3">
+                      <Badge
+                        variant="default"
+                        className="px-3 py-1 text-xs font-medium"
+                      >
+                        Registered
+                      </Badge>
+                    </div>
+                  )}
+
+                  <div className="absolute top-0 left-0 m-4 bg-background/90 dark:bg-gray-800/90 py-1 px-2 rounded text-center shadow-sm border border-border">
+                    <div className="text-sm font-semibold">
+                      {eventMonth.toUpperCase()}
+                    </div>
+                    <div className="text-2xl font-bold">{eventDay}</div>
+                    <div className="text-xs">{eventYear}</div>
+                  </div>
+                </div>
+              )}
+            </Link>
+          ) : (
+            <Link href={`/events/${event.id}`} className="block">
+              {event.eventImagePath ? (
+                <div className="h-48 w-full relative">
+                  <Image
+                    src={event.eventImagePath}
+                    alt={event.title}
+                    fill
+                    className="object-cover"
+                  />
+                  {isRegistered && (
+                    <div className="absolute top-3 right-3">
+                      <Badge
+                        variant="default"
+                        className="px-3 py-1 text-xs font-medium"
+                      >
+                        Registered
+                      </Badge>
+                    </div>
+                  )}
+
+                  <div className="absolute top-0 left-0 m-4 bg-background/90 dark:bg-gray-800/90 py-1 px-2 rounded text-center shadow-sm border border-border">
+                    <div className="text-sm font-semibold">
+                      {eventMonth.toUpperCase()}
+                    </div>
+                    <div className="text-2xl font-bold">{eventDay}</div>
+                    <div className="text-xs">{eventYear}</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-48 w-full bg-gradient-to-br from-muted/60 to-muted flex items-center justify-center relative">
+                  <CalendarIcon className="h-12 w-12 text-muted-foreground/50" />
+                  {isRegistered && (
+                    <div className="absolute top-3 right-3">
+                      <Badge
+                        variant="default"
+                        className="px-3 py-1 text-xs font-medium"
+                      >
+                        Registered
+                      </Badge>
+                    </div>
+                  )}
+
+                  <div className="absolute top-0 left-0 m-4 bg-background/90 dark:bg-gray-800/90 py-1 px-2 rounded text-center shadow-sm border border-border">
+                    <div className="text-sm font-semibold">
+                      {eventMonth.toUpperCase()}
+                    </div>
+                    <div className="text-2xl font-bold">{eventDay}</div>
+                    <div className="text-xs">{eventYear}</div>
+                  </div>
+                </div>
+              )}
+            </Link>
+          )}
+        </div>
+
+        <div className="p-4 pb-2 flex flex-col flex-grow">
+          {link && !allowEdit ? (
+            <Link href={link} className="block flex-grow">
+              <Badge
+                variant={isUpcoming ? "default" : "secondary"}
+                className="self-start"
+              >
+                {isUpcoming ? "Upcoming" : "Past"}
+              </Badge>
+
+              <h3 className="font-extrabold text-lg line-clamp-2 mt-1">
+                {event.title}
+              </h3>
+
+              {event.startup?.name && isPublic && (
+                <p className="text-sm text-muted-foreground">
+                  Hosted by {event.startup.name}
+                </p>
+              )}
+
+              <div className="space-y-2 text-sm flex-grow">
+                <div className="flex items-start">
+                  <ClockIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
+                  <span>
+                    {formattedStartTime && formattedEndTime
+                      ? `${formattedStartTime} - ${formattedEndTime}`
+                      : formattedStartTime || "Time not specified"}
+                  </span>
+                </div>
+
+                <div className="flex items-start">
+                  <MapPinIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
+                  <span className="line-clamp-1">{event.location}</span>
+                </div>
+
+                {event.description && (
+                  <p className="text-sm text-muted-foreground line-clamp-2 pt-1">
+                    {event.description}
+                  </p>
+                )}
               </div>
-            )}
+            </Link>
+          ) : (
+            <Link href={`/events/${event.id}`} className="block flex-grow">
+              <Badge
+                variant={isUpcoming ? "default" : "secondary"}
+                className="self-start"
+              >
+                {isUpcoming ? "Upcoming" : "Past"}
+              </Badge>
 
-            <div className="absolute top-0 left-0 m-4 bg-background/90 dark:bg-gray-800/90 py-1 px-2 rounded text-center shadow-sm border border-border">
-              <div className="text-sm font-semibold">
-                {eventMonth.toUpperCase()}
+              <h3 className="font-extrabold text-lg line-clamp-2 mt-1">
+                {event.title}
+              </h3>
+
+              {event.startup?.name && isPublic && (
+                <p className="text-sm text-muted-foreground">
+                  Hosted by {event.startup.name}
+                </p>
+              )}
+
+              <div className="space-y-2 text-sm flex-grow">
+                <div className="flex items-start">
+                  <ClockIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
+                  <span>
+                    {formattedStartTime && formattedEndTime
+                      ? `${formattedStartTime} - ${formattedEndTime}`
+                      : formattedStartTime || "Time not specified"}
+                  </span>
+                </div>
+
+                <div className="flex items-start">
+                  <MapPinIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
+                  <span className="line-clamp-1">{event.location}</span>
+                </div>
+
+                {event.description && (
+                  <p className="text-sm text-muted-foreground line-clamp-2 pt-1">
+                    {event.description}
+                  </p>
+                )}
               </div>
-              <div className="text-2xl font-bold">{eventDay}</div>
-              <div className="text-xs">{eventYear}</div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="p-4 flex flex-col gap-2 flex-grow">
-        <Badge
-          variant={isUpcoming ? "default" : "secondary"}
-          className="self-start"
-        >
-          {isUpcoming ? "Upcoming" : "Past"}
-        </Badge>
-
-        <h3 className="font-extrabold text-lg line-clamp-2 mt-1">
-          {event.title}
-        </h3>
-
-        {event.startup?.name && isPublic && (
-          <p className="text-sm text-muted-foreground">
-            Hosted by {event.startup.name}
-          </p>
-        )}
-
-        <div className="space-y-2 text-sm flex-grow">
-          <div className="flex items-start">
-            <ClockIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
-            <span>
-              {formattedStartTime && formattedEndTime
-                ? `${formattedStartTime} - ${formattedEndTime}`
-                : formattedStartTime || "Time not specified"}
-            </span>
-          </div>
-
-          <div className="flex items-start">
-            <MapPinIcon className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
-            <span className="line-clamp-1">{event.location}</span>
-          </div>
-
-          {event.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2 pt-1">
-              {event.description}
-            </p>
+            </Link>
           )}
         </div>
       </div>
-    </>
-  );
-
-  return (
-    <div className="group overflow-hidden h-full flex flex-col border rounded-lg shadow-sm hover:shadow-md transition-all bg-card text-card-foreground">
-      {link && !allowEdit ? (
-        <Link href={link} className="flex flex-col flex-grow">
-          {cardContent}
-        </Link>
-      ) : (
-        <Link href={`/events/${event.id}`} className="flex flex-col flex-grow">
-          {cardContent}
-        </Link>
-      )}
 
       <div className="p-4 pt-0 mt-auto">
         {isPublic ? (
@@ -262,9 +360,15 @@ export function EventCard({
               isRegistering ||
               isUnregistering
             }
-            onClick={
-              showUnRegisterButton && onUnregister ? onUnregister : onRegister
-            }
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (showUnRegisterButton && onUnregister) {
+                onUnregister();
+              } else if (onRegister) {
+                onRegister();
+              }
+            }}
           >
             {showUnRegisterButton ? (
               <>
