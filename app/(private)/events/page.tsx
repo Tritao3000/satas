@@ -210,8 +210,8 @@ export default function EventsPage() {
               {userType === "startup" && (
                 <Button asChild>
                   <Link href="/menu/events">
-                    <Settings2 className="h-4 w-4 mr-2" />
-                    Create Event
+                    <Settings2 className="h-4 w-4" />
+                    <span className="hidden sm:inline">Manage Events</span>
                   </Link>
                 </Button>
               )}

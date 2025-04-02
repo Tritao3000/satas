@@ -185,8 +185,8 @@ export default function JobsPage() {
             <div className="flex gap-2">
               <Button asChild>
                 <Link href="/menu/jobs">
-                  <Settings2 className="h-4 w-4 mr-2" />
-                  Manage Jobs
+                  <Settings2 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Manage Jobs</span>
                 </Link>
               </Button>
             </div>
@@ -198,7 +198,7 @@ export default function JobsPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search by title, description, or location..."
+              placeholder="Search jobs by title..."
               className="pl-9"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}

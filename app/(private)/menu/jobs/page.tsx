@@ -128,8 +128,8 @@ export default function JobsManagementPage() {
         </div>
         <Button asChild>
           <Link href="/menu/jobs/create">
-            <PlusIcon className="h-4 w-4 mr-2" />
-            Create Job
+            <PlusIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Create Job</span>
           </Link>
         </Button>
       </div>

@@ -231,8 +231,8 @@ export default function EventsPage() {
             {isStartup ? (
               <Button asChild>
                 <Link href="/menu/events/create">
-                  <CalendarPlus className="h-4 w-4 mr-2" />
-                  Create Event
+                  <CalendarPlus className="h-4 w-4" />
+                  <span className="hidden sm:inline">Create Event</span>
                 </Link>
               </Button>
             ) : (
