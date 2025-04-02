@@ -77,13 +77,6 @@ const navItems: NavItem[] = [
     role: "individual",
   },
   {
-    name: "Manage Jobs",
-    href: "/menu/jobs",
-    icon: UserCog,
-    description: "Create and manage job postings",
-    role: "startup",
-  },
-  {
     name: "Events",
     href: "/events",
     icon: CalendarDays,
