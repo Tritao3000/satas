@@ -118,11 +118,7 @@ export function JobCard({
           "hover:shadow-md hover:shadow-primary/10 hover:border-primary/30"
         )}
       >
-        <Link
-          href={allowEdit ? `/jobs/${job.id}` : `/jobs/${job.id}`}
-          className="absolute inset-0 z-10"
-          onClick={(e) => allowEdit && e.preventDefault()}
-        >
+        <Link href={`/jobs/${job.id}`} className="absolute inset-0 z-10">
           <span className="sr-only">View job details for {job.title}</span>
         </Link>
 
@@ -212,7 +208,6 @@ export function JobCard({
               <Link
                 href={`/jobs/${job.id}`}
                 className="flex items-center justify-center"
-                onClick={(e) => e.stopPropagation()}
               >
                 <ExternalLinkIcon className="mr-2 h-4 w-4" />
                 View Details
