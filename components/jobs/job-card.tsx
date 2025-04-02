@@ -16,6 +16,7 @@ import {
   Trash,
   AlertCircle,
   Loader2,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -203,7 +204,7 @@ export function JobCard({
         </CardContent>
 
         {allowEdit && (
-          <CardFooter className="p-5 pt-4 relative z-20">
+          <CardFooter className="p-5 pt-4 relative z-20 flex flex-col gap-2">
             <Button asChild variant="outline" className="w-full">
               <Link
                 href={`/jobs/${job.id}`}
@@ -211,6 +212,17 @@ export function JobCard({
               >
                 <ExternalLinkIcon className="mr-2 h-4 w-4" />
                 View Details
+              </Link>
+            </Button>
+
+            <Button asChild variant="secondary" className="w-full">
+              <Link
+                href={`/menu/jobs/${job.id}/applications`}
+                className="flex items-center justify-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Users className="mr-2 h-4 w-4" />
+                View Applications
               </Link>
             </Button>
           </CardFooter>
