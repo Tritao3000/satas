@@ -1,7 +1,6 @@
 import useSWR from "swr";
 import { Job } from "../type";
 
-// Fetcher function for SWR
 const fetcher = async (url: string) => {
   const res = await fetch(url);
 
@@ -16,8 +15,22 @@ const fetcher = async (url: string) => {
   return res.json();
 };
 
-export function useJobs(startupId?: string) {
-  const url = startupId ? `/api/jobs?startupId=${startupId}` : "/api/jobs";
+export function useJobs(
+  startupId?: string,
+  searchTerm?: string,
+  status?: string
+) {
+  let url = "/api/jobs";
+  const params = new URLSearchParams();
+
+  if (startupId) params.append("startupId", startupId);
+  if (searchTerm) params.append("search", searchTerm);
+  if (status === "active") params.append("status", "active");
+
+  const queryString = params.toString();
+  if (queryString) {
+    url += `?${queryString}`;
+  }
 
   const { data, error, isLoading, mutate } = useSWR<Job[]>(url, fetcher);
 
@@ -32,7 +45,7 @@ export function useJobs(startupId?: string) {
 export function useJob(jobId: string) {
   const { data, error, isLoading, mutate } = useSWR<Job>(
     jobId ? `/api/jobs/${jobId}` : null,
-    fetcher,
+    fetcher
   );
 
   return {
