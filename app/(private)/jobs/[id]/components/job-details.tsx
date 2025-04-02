@@ -336,7 +336,9 @@ export default function JobDetails({
                       </div>
                       <div>
                         <div className="text-sm font-medium">Company Name</div>
-                        <div>{startupData.name}</div>
+                        <div className="text-muted-foreground">
+                          {startupData.name}
+                        </div>
                       </div>
                     </div>
 
@@ -347,7 +349,9 @@ export default function JobDetails({
                         </div>
                         <div>
                           <div className="text-sm font-medium">Location</div>
-                          <div>{startupData.location}</div>
+                          <div className="text-muted-foreground">
+                            {startupData.location}
+                          </div>
                         </div>
                       </div>
                     )}
