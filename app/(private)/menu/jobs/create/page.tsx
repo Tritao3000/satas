@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { JobForm } from "@/components/jobs/job-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 import { useProfile } from "@/lib/hooks/use-profile-content";
+import { CreateJobSkeleton } from "@/components/jobs/create-job-skeleton";
 
 export default function CreateJobPage() {
   const router = useRouter();
@@ -19,7 +19,6 @@ export default function CreateJobPage() {
         return;
       }
 
-      // If not a startup, redirect
       if (userType !== "startup") {
         toast("Only startups can create job listings");
         router.push("/menu");
@@ -28,22 +27,23 @@ export default function CreateJobPage() {
   }, [userType, isLoading, router]);
 
   if (isLoading || userType !== "startup") {
-    return (
-      <div className="flex justify-center">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
+    return <CreateJobSkeleton />;
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight mb-6">
-        Create Job Listing
-      </h1>
-      <JobForm />
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Create Job Listing
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Publish a new job opportunity and attract talent to your startup
+          </p>
+        </div>
+
+        <JobForm onSuccess={() => router.push("/menu/jobs")} />
+      </div>
     </div>
   );
 }

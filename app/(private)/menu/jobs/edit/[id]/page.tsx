@@ -1,19 +1,15 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect } from "react";
 import { useJob } from "@/lib/hooks/use-jobs";
 import { JobForm } from "@/components/jobs/job-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { BriefcaseBusiness, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useProfile } from "@/lib/hooks/use-profile-content";
+import { EditJobSkeleton } from "@/components/jobs/edit-job-skeleton";
 
 export default function EditJobPage({
   params,
@@ -26,7 +22,6 @@ export default function EditJobPage({
   const { userId, userType, isLoading: isProfileLoading } = useProfile();
   const isCheckingAuth = isProfileLoading;
 
-  // Check if user type is valid for this page
   useEffect(() => {
     if (!isProfileLoading && userType !== "startup") {
       toast("Only startups can edit job listings");
@@ -34,7 +29,6 @@ export default function EditJobPage({
     }
   }, [userType, isProfileLoading, router]);
 
-  // Check job ownership once data is loaded
   useEffect(() => {
     if (!isJobLoading && job && userId && job.startupId !== userId) {
       toast("You don't have permission to edit this job");
@@ -43,82 +37,69 @@ export default function EditJobPage({
   }, [isJobLoading, job, userId, router]);
 
   if (isCheckingAuth || isJobLoading) {
-    return (
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight mb-6">
-          Edit Job Listing
-        </h1>
-        <Card>
-          <CardHeader>
-            <CardTitle>Edit Job</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-32 w-full" />
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Skeleton className="h-10 w-24" />
-          </CardFooter>
-        </Card>
-      </div>
-    );
+    return <EditJobSkeleton />;
   }
 
   if (isError) {
     return (
-      <div>
-        <div className="text-center p-8 text-destructive">
-          Failed to load job information. Please try again.
+      <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+        <div className="bg-destructive/10 p-3 rounded-full">
+          <AlertCircle className="h-8 w-8 text-destructive" />
         </div>
+        <h1 className="text-2xl font-bold">Error Loading Job</h1>
+        <p className="text-muted-foreground max-w-md">
+          There was an error loading the job information. Please try again or
+          contact support if the issue persists.
+        </p>
+        <Button asChild>
+          <Link href="/menu/jobs">Return to Jobs</Link>
+        </Button>
       </div>
     );
   }
 
   if (!job) {
     return (
-      <div>
-        <div className="text-center p-8">Job not found</div>
+      <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+        <div className="bg-muted p-3 rounded-full">
+          <BriefcaseBusiness className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <h1 className="text-2xl font-bold">Job Not Found</h1>
+        <p className="text-muted-foreground max-w-md">
+          The job listing you're trying to edit doesn't exist or has been
+          removed.
+        </p>
+        <Button asChild>
+          <Link href="/menu/jobs">Return to Jobs</Link>
+        </Button>
       </div>
     );
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight mb-6">
-        Edit Job Listing
-      </h1>
-      <JobForm
-        defaultValues={{
-          id: job.id,
-          title: job.title,
-          description: job.description,
-          location: job.location,
-          type: job.type,
-          salary: job.salary,
-        }}
-      />
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Edit Job Listing
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Update the details of your "{job.title}" job listing
+          </p>
+        </div>
+
+        <JobForm
+          defaultValues={{
+            id: job.id,
+            title: job.title,
+            description: job.description,
+            location: job.location,
+            type: job.type,
+            salary: job.salary,
+          }}
+          onSuccess={() => router.push(`/jobs/${job.id}`)}
+        />
+      </div>
     </div>
   );
 }
