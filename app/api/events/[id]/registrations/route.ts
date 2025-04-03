@@ -38,7 +38,7 @@ export async function GET(
         registrantId: eventRegistrations.registrantId,
         createdAt: eventRegistrations.createdAt,
         userEmail: users.email,
-        userName: users.name,
+        userName: individualProfiles.name,
         profilePicture: individualProfiles.profilePicture,
       })
       .from(eventRegistrations)
