@@ -230,10 +230,15 @@ export function JobCard({
 
         {!allowEdit && (
           <div className="absolute bottom-8 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Badge variant="secondary" className="flex items-center shadow-sm">
-              View details
-              <ArrowRightIcon className="h-3 w-3 ml-1" />
-            </Badge>
+            <Link href={`/jobs/${job.id}`}>
+              <Badge
+                variant="secondary"
+                className="flex items-center shadow-sm cursor-pointer"
+              >
+                View details
+                <ArrowRightIcon className="h-3 w-3 ml-1" />
+              </Badge>
+            </Link>
           </div>
         )}
 

@@ -15,13 +15,17 @@ import {
 } from "@/components/profile/edit/file-upload-utils";
 import { useProfileData } from "@/lib/hooks/use-profile-data";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Link, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+
+import { ProfileDeleteDialog } from "@/components/profile/edit/profile-delete-dialog";
+import { useProfileDeletion } from "@/lib/hooks/use-profile-deletion";
 
 export default function ProfileEditPage() {
   const router = useRouter();
   const supabase = createClient();
   const { userType, isLoading: isProfileContextLoading } = useProfile();
+  const { deleteProfile, isDeleting } = useProfileDeletion();
   const [fileState, setFileState] = useState<FileState>({
     profilePicture: null,
     coverPicture: null,
@@ -88,6 +92,10 @@ export default function ProfileEditPage() {
         error.message || "Failed to update profile. Please try again."
       );
     }
+  };
+
+  const handleDeleteProfile = async () => {
+    await deleteProfile();
   };
 
   const handleIndividualSubmit = async (
@@ -172,11 +180,14 @@ export default function ProfileEditPage() {
   return (
     <div className="mx-auto">
       <div className="flex flex-col space-y-8">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">Edit Profile</h1>
-          <p className="text-muted-foreground text-sm">
-            Update your profile information to help others know you better.
-          </p>
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold tracking-tight">Edit Profile</h1>
+            <p className="text-muted-foreground text-sm">
+              Update your profile information to help others know you better.
+            </p>
+          </div>
+          <ProfileDeleteDialog onDelete={handleDeleteProfile} />
         </div>
 
         {userType === "individual" ? (

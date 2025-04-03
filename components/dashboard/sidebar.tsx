@@ -83,9 +83,9 @@ const navItems: NavItem[] = [
     description: "Discover community events",
   },
   {
-    name: "Settings",
-    href: "/menu/settings",
-    icon: SettingsIcon,
+    name: "Profile",
+    href: "/menu/profile",
+    icon: UserIcon,
   },
 ];
 
