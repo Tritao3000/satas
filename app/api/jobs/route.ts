@@ -5,7 +5,6 @@ import { jobs } from "@/src/db/schema";
 import { eq, desc, or, ilike, and } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
-// GET - List all jobs
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -27,8 +26,8 @@ export async function GET(request: Request) {
       conditions.push(
         or(
           ilike(jobs.title, `%${searchValue}%`),
-          ilike(jobs.location, `%${searchValue}%`),
-        ),
+          ilike(jobs.location, `%${searchValue}%`)
+        )
       );
     }
 
@@ -49,17 +48,15 @@ export async function GET(request: Request) {
     console.error("Error fetching jobs:", error);
     return NextResponse.json(
       { error: "Failed to fetch jobs" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
-// POST - Create a new job
 export async function POST(request: Request) {
   try {
     const jobData = await request.json();
 
-    // Get current user from Supabase auth
     const supabase = await createClient();
     const {
       data: { user },
@@ -69,11 +66,24 @@ export async function POST(request: Request) {
     if (authError || !user) {
       return NextResponse.json(
         { error: "Authentication required" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
-    // Create new job in database
+    const { data: startupProfile, error: startupProfileError } = await supabase
+      .from("startup_profiles")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (startupProfileError) {
+      console.error("Error checking startup profile:", startupProfileError);
+      return NextResponse.json(
+        { error: "Failed to verify startup profile" },
+        { status: 500 }
+      );
+    }
+
     const newJob = await db
       .insert(jobs)
       .values({
@@ -94,7 +104,7 @@ export async function POST(request: Request) {
     console.error("Error creating job:", error);
     return NextResponse.json(
       { error: "Failed to create job" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
