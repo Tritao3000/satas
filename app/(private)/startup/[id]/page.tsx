@@ -1,10 +1,7 @@
 "use client";
 
-import { db } from "@/src/db";
-import { startupProfiles } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
+
 import { notFound, useParams, useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -17,16 +14,25 @@ import {
   Briefcase,
   Loader,
   Pencil,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import useSWR, { mutate } from "swr";
-import { useEffect, useState } from "react";
-
+import { JobCard } from "@/components/jobs/job-card";
+import { EventCard } from "@/components/events/event-card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { JobCardSkeleton } from "@/components/jobs/job-card-skeleton";
+import { EventCardSkeleton } from "@/components/events/event-card-skeleton";
 import { useProfile } from "@/lib/hooks/use-profile-content";
 import { ProfileSkeleton } from "@/components/profile/profile-skeleton";
-import { log } from "console";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -275,6 +281,70 @@ export default function StartupProfilePage() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Jobs Section */}
+      <div className="w-full px-4 md:px-6 lg:px-8 mt-8">
+        <div className="flex flex-col">
+          <h2 className="text-2xl font-semibold mb-4">Open Positions</h2>
+          {isStartupJobsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <JobCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : startupJobsError || !startupJobs || startupJobs.length === 0 ? (
+            <p className="text-muted-foreground italic">No open positions available</p>
+          ) : (
+            <Carousel className="w-full">
+              <CarouselContent>
+                {startupJobs.map((job: any) => (
+                  <CarouselItem key={job.id} className="md:basis-1/2 lg:basis-1/3">
+                    <JobCard
+                      job={job}
+                      allowEdit={isOwnProfile}
+                      startupName={profile.name}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex" />
+              <CarouselNext className="hidden md:flex" />
+            </Carousel>
+          )}
+        </div>
+      </div>
+
+      {/* Events Section */}
+      <div className="w-full px-4 md:px-6 lg:px-8 mt-8">
+        <div className="flex flex-col">
+          <h2 className="text-2xl font-semibold mb-4">Upcoming Events</h2>
+          {isStartupEventsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <EventCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : startupEventsError || !startupEvents || startupEvents.length === 0 ? (
+            <p className="text-muted-foreground italic">No upcoming events</p>
+          ) : (
+            <Carousel className="w-full">
+              <CarouselContent>
+                {startupEvents.map((event: any) => (
+                  <CarouselItem key={event.id} className="md:basis-1/2 lg:basis-1/3">
+                    <EventCard
+                      event={event}
+                      allowEdit={isOwnProfile}
+                      isPublic={true}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex" />
+              <CarouselNext className="hidden md:flex" />
+            </Carousel>
+          )}
         </div>
       </div>
     </div>
