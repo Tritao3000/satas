@@ -32,14 +32,27 @@ import {
   useUnregisterFromEvent,
 } from "@/lib/hooks/use-event-registration";
 import { cn } from "@/lib/utils";
+import { useQueryState } from "nuqs";
+import { useDebounce } from "use-debounce";
+import { fetcher } from "@/lib/fetcher";
+import useSWR from "swr";
+import { Event } from "@/lib/type";
 
 export default function EventsPage() {
-  const { events, isLoading, isError, mutate } = useEvents();
   const { myRegistrations, isLoading: isMyRegistrationsLoading } =
     useMyEventRegistrations();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState("all");
+
+  const [inputValue, setInputValue] = useState("");
+  const [searchTerm, setSearchTerm] = useQueryState("search", {
+    defaultValue: "",
+  });
+
+  const [activeTab, setActiveTab] = useQueryState("filter", {
+    defaultValue: "all",
+  });
+
+  const [debouncedValue] = useDebounce(inputValue, 300);
+
   const [filterOpen, setFilterOpen] = useState(false);
   const { userType, userId } = useProfile();
   const { register, isRegistering } = useRegisterForEvent();
@@ -50,44 +63,30 @@ export default function EventsPage() {
   >({});
 
   useEffect(() => {
-    if (!events) return;
-
-    let filtered = [...events];
-
-    if (searchTerm) {
-      const search = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (event) =>
-          event.title.toLowerCase().includes(search) ||
-          (event.description &&
-            event.description.toLowerCase().includes(search)) ||
-          event.location.toLowerCase().includes(search) ||
-          (event.startup?.name &&
-            event.startup.name.toLowerCase().includes(search))
-      );
+    if (debouncedValue !== undefined) {
+      setSearchTerm(debouncedValue);
     }
+  }, [debouncedValue, setSearchTerm]);
 
-    const now = new Date();
-    if (activeTab === "upcoming") {
-      filtered = filtered.filter((event) => new Date(event.date) >= now);
-    } else if (activeTab === "past") {
-      filtered = filtered.filter((event) => new Date(event.date) < now);
-    }
+  useEffect(() => {
+    setInputValue(searchTerm || "");
+  }, [searchTerm]);
 
-    filtered.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return activeTab === "past"
-        ? dateB.getTime() - dateA.getTime()
-        : dateA.getTime() - dateB.getTime();
-    });
+  const getJobsUrl = () => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.append("search", searchTerm);
+    if (activeTab) params.append("filter", activeTab);
 
-    setFilteredEvents(filtered);
-  }, [events, searchTerm, activeTab]);
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    const queryString = params.toString();
+    return `/api/events${queryString ? `?${queryString}` : ""}`;
   };
+
+  const {
+    data: events,
+    error: isError,
+    isLoading,
+    mutate,
+  } = useSWR<Event[]>(getJobsUrl(), fetcher);
 
   const filtersActive = activeTab !== "all" || searchTerm.trim() !== "";
 
@@ -143,7 +142,7 @@ export default function EventsPage() {
       );
     }
 
-    if (filteredEvents.length === 0) {
+    if (events?.length === 0) {
       return (
         <div className="text-center p-12 border rounded-lg bg-muted/50">
           <CalendarRange className="mx-auto size-10 text-muted-foreground mb-2" />
@@ -168,7 +167,7 @@ export default function EventsPage() {
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredEvents.map((event) => {
+        {events?.map((event) => {
           const isEventRegistered = registrationMap[event.id] || false;
           const isEventProcessing = processingEvents[event.id] || false;
 
@@ -234,8 +233,8 @@ export default function EventsPage() {
               type="search"
               placeholder="Search events..."
               className="pl-9"
-              value={searchTerm}
-              onChange={handleSearch}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
             />
           </div>
 
@@ -358,7 +357,7 @@ function RadioGroupItem({
         "relative flex items-start p-3 rounded-md transition-all cursor-pointer",
         checked
           ? "bg-primary/5 border-primary/10 border"
-          : "border border-transparent hover:bg-accent/50"
+          : "border border-transparent hover:bg-accent/50",
       )}
       onClick={onChange}
       onKeyDown={(e) => {
@@ -404,7 +403,7 @@ function RadioGroupItem({
               "h-4 w-4 rounded-full border transition-all flex items-center justify-center",
               checked
                 ? "border-primary border-[5px]"
-                : "border-muted-foreground/30"
+                : "border-muted-foreground/30",
             )}
           />
         </div>

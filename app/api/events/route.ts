@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { db } from "@/src/db";
 import { events, users } from "@/src/db/schema";
-import { eq, desc, and, gte } from "drizzle-orm";
+import { eq, desc, and, gte, ilike, or, lt, asc, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
 // GET - List all events
@@ -10,23 +10,46 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const startupId = searchParams.get("startupId");
+    const searchValue = searchParams.get("search");
+    const filter = searchParams.get("filter");
 
-    // Build the query based on conditions
-    let baseQuery = db.select().from(events);
+    console.log("search value", searchValue);
+    console.log("filter", filter);
 
-    // Execute the query with conditional filters
-    const eventsList = await (startupId
-      ? baseQuery
-          .where(eq(events.startupId, startupId))
-          .orderBy(desc(events.date))
-      : baseQuery.orderBy(desc(events.date)));
+    const whereConditions = [];
+
+    if (startupId) {
+      whereConditions.push(eq(events.startupId, startupId));
+    }
+
+    const now = new Date();
+    if (filter === "upcoming") {
+      whereConditions.push(gte(events.date, now));
+    } else if (filter === "past") {
+      whereConditions.push(lt(events.date, now));
+    }
+
+    if (searchValue) {
+      whereConditions.push(
+        or(
+          ilike(events.title, `%${searchValue}%`),
+          sql`similarity(${events.location}, ${searchValue}) > 0.3`,
+        ),
+      );
+    }
+
+    const eventsList = await db
+      .select()
+      .from(events)
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
+      .orderBy(filter === "past" ? desc(events.date) : asc(events.date));
 
     return NextResponse.json(eventsList);
   } catch (error) {
     console.error("Error fetching events:", error);
     return NextResponse.json(
       { error: "Failed to fetch events" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -46,7 +69,7 @@ export async function POST(request: Request) {
     if (authError || !user) {
       return NextResponse.json(
         { error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -60,14 +83,14 @@ export async function POST(request: Request) {
     if (userData.length === 0) {
       return NextResponse.json(
         { error: "Failed to fetch user data" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (userData[0].userType !== "startup") {
       return NextResponse.json(
         { error: "Only startups can create events" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -101,7 +124,7 @@ export async function POST(request: Request) {
     console.error("Error creating event:", error);
     return NextResponse.json(
       { error: "Failed to create event" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
