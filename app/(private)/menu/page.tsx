@@ -450,7 +450,9 @@ export default function DashboardPage() {
               className="bg-white text-blue-700 hover:bg-blue-50"
             >
               <Link
-                href={safeUserType === "startup" ? "/jobs/create" : "/jobs"}
+                href={
+                  safeUserType === "startup" ? "/menu/jobs/create" : "/jobs"
+                }
               >
                 {safeUserType === "startup" ? "Post a Job" : "Browse Jobs"}
                 <ArrowRight className="ml-2 h-4 w-4" />
