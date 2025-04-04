@@ -47,6 +47,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useJobWithApplications } from "@/lib/hooks/use-applications";
 import { useDebounce } from "@/lib/hooks/use-debounce";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function JobApplicationsPage({
   params,
@@ -65,6 +71,13 @@ export default function JobApplicationsPage({
   const [processingApplicationIds, setProcessingApplicationIds] = useState<
     Set<string>
   >(new Set());
+
+  const [totalCounts, setTotalCounts] = useState({
+    all: 0,
+    pending: 0,
+    accepted: 0,
+    rejected: 0,
+  });
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -104,6 +117,27 @@ export default function JobApplicationsPage({
   });
 
   const isLoading = isDataLoading || isProfileLoading;
+
+  useEffect(() => {
+    if (!isLoading && !debouncedSearchTerm && activeTab === "all") {
+      const pendingCount = applications.filter(
+        (app) => app.status === "pending"
+      ).length;
+      const acceptedCount = applications.filter(
+        (app) => app.status === "accepted"
+      ).length;
+      const rejectedCount = applications.filter(
+        (app) => app.status === "rejected"
+      ).length;
+
+      setTotalCounts({
+        all: applications.length,
+        pending: pendingCount,
+        accepted: acceptedCount,
+        rejected: rejectedCount,
+      });
+    }
+  }, [applications, isLoading, debouncedSearchTerm, activeTab]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -161,11 +195,6 @@ export default function JobApplicationsPage({
 
   const hasActiveFilters = debouncedSearchTerm || activeTab !== "all";
 
-  if (userType !== "startup") {
-    router.push("/menu");
-    return null;
-  }
-
   if (error) {
     return (
       <div className="container p-4">
@@ -220,25 +249,25 @@ export default function JobApplicationsPage({
             <TabsTrigger value="all">
               All
               <Badge variant="secondary" className="ml-2">
-                {isLoading ? "-" : applications.length}
+                {totalCounts.all}
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="pending">
               Pending
               <Badge variant="secondary" className="ml-2">
-                {isLoading ? "-" : pendingCount}
+                {totalCounts.pending}
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="accepted">
               Accepted
               <Badge variant="secondary" className="ml-2">
-                {isLoading ? "-" : acceptedCount}
+                {totalCounts.accepted}
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="rejected">
               Rejected
               <Badge variant="secondary" className="ml-2">
-                {isLoading ? "-" : rejectedCount}
+                {totalCounts.rejected}
               </Badge>
             </TabsTrigger>
           </TabsList>
@@ -398,23 +427,50 @@ export default function JobApplicationsPage({
                     <TableRow key={application.id}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
-                          <Avatar>
-                            {application.applicant?.image && (
-                              <AvatarImage
-                                className="object-cover"
-                                src={application.applicant.image}
-                                alt={application.applicant?.name || "Applicant"}
-                              />
-                            )}
-                            <AvatarFallback>
-                              {application.applicant?.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .toUpperCase()
-                                .substring(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
+                          <TooltipProvider delayDuration={300}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="relative group">
+                                  <Link
+                                    href={`/user/${application.applicant?.id}`}
+                                    className="block relative"
+                                  >
+                                    <Avatar className="h-11 w-11 border-2 border-background shadow-sm cursor-pointer group-hover:ring-2 group-hover:ring-primary/30 group-hover:scale-105 transition-all duration-200">
+                                      {application.applicant?.image && (
+                                        <AvatarImage
+                                          className="object-cover"
+                                          src={application.applicant.image}
+                                          alt={
+                                            application.applicant?.name ||
+                                            "Applicant"
+                                          }
+                                        />
+                                      )}
+                                      <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                                        {application.applicant?.name
+                                          .split(" ")
+                                          .map((n) => n[0])
+                                          .join("")
+                                          .toUpperCase()
+                                          .substring(0, 2)}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-primary rounded-full border-2 border-background opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  </Link>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent
+                                side="top"
+                                align="center"
+                                className="font-medium"
+                              >
+                                <p>{application.applicant?.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  Click to view profile
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                           <div>
                             <div>{application.applicant?.name}</div>
                           </div>
