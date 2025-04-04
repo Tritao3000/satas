@@ -16,6 +16,8 @@ type Application = {
   createdAt: string;
   updatedAt: string;
   applicant: Applicant | null;
+  coverLetter: string;
+  cvPath: string;
 };
 
 type JobDetails = {
@@ -30,7 +32,7 @@ type JobDetails = {
 export function useJobDetails(jobId: string | null) {
   const { data, error, isLoading, mutate } = useSWR<JobDetails>(
     jobId ? `/api/jobs/${jobId}` : null,
-    fetcher
+    fetcher,
   );
 
   return {
@@ -43,14 +45,14 @@ export function useJobDetails(jobId: string | null) {
 
 export function useApplications(
   jobId: string | null,
-  searchParams?: { search?: string; status?: string }
+  searchParams?: { search?: string; status?: string },
 ) {
   const getUrl = () => {
     if (!jobId) return null;
 
     const url = new URL(
       `/api/jobs/${jobId}/applications`,
-      window.location.origin
+      window.location.origin,
     );
 
     if (searchParams?.search) {
@@ -81,7 +83,7 @@ export function useApplications(
 
 export function useJobWithApplications(
   jobId: string | null,
-  searchParams?: { search?: string; status?: string }
+  searchParams?: { search?: string; status?: string },
 ) {
   const {
     job,
@@ -99,7 +101,7 @@ export function useJobWithApplications(
 
   const updateApplicationStatus = async (
     applicationId: string,
-    newStatus: string
+    newStatus: string,
   ) => {
     if (!jobId) return;
 
@@ -118,12 +120,12 @@ export function useJobWithApplications(
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          errorData.error || "Failed to update application status"
+          errorData.error || "Failed to update application status",
         );
       }
 
       const updatedApplications = applications.map((app) =>
-        app.id === applicationId ? { ...app, status: newStatus as any } : app
+        app.id === applicationId ? { ...app, status: newStatus as any } : app,
       );
 
       await mutateApplications(updatedApplications, {

@@ -11,7 +11,7 @@ import { eq, and, inArray } from "drizzle-orm";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const jobId = (await params).id;
@@ -29,7 +29,7 @@ export async function GET(
     if (authError || !user) {
       return NextResponse.json(
         { error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -42,7 +42,7 @@ export async function GET(
     if (jobDetails.length === 0) {
       return NextResponse.json(
         { error: "Job not found or unauthorized" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -54,6 +54,8 @@ export async function GET(
         status: jobApplications.status,
         createdAt: jobApplications.createdAt,
         updatedAt: jobApplications.updatedAt,
+        cvPath: jobApplications.cvPath,
+        coverLetter: jobApplications.coverLetter,
       })
       .from(jobApplications)
       .where(eq(jobApplications.jobId, jobId));
@@ -87,6 +89,8 @@ export async function GET(
         id: application.id,
         jobId: application.jobId,
         status: application.status,
+        cvPath: application.cvPath,
+        coverLetter: application.coverLetter,
         createdAt: application.createdAt?.toISOString(),
         updatedAt: application.updatedAt?.toISOString(),
         applicant: applicant
@@ -111,13 +115,13 @@ export async function GET(
           app.applicant?.name.toLowerCase().includes(searchTerm) ||
           app.applicant?.email.toLowerCase().includes(searchTerm) ||
           (app.applicant?.location &&
-            app.applicant.location.toLowerCase().includes(searchTerm))
+            app.applicant.location.toLowerCase().includes(searchTerm)),
       );
     }
 
     transformedData.sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
     return NextResponse.json(transformedData);
@@ -125,14 +129,14 @@ export async function GET(
     console.error("Error fetching job applications:", error);
     return NextResponse.json(
       { error: "Failed to load job applications" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const jobId = (await params).id;
@@ -141,14 +145,14 @@ export async function PATCH(
     if (!applicationId || !status) {
       return NextResponse.json(
         { error: "Application ID and status are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!["pending", "accepted", "rejected"].includes(status)) {
       return NextResponse.json(
         { error: "Invalid status. Must be pending, accepted, or rejected" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -161,7 +165,7 @@ export async function PATCH(
     if (authError || !user) {
       return NextResponse.json(
         { error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -174,7 +178,7 @@ export async function PATCH(
     if (jobDetails.length === 0) {
       return NextResponse.json(
         { error: "Job not found or unauthorized" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -184,15 +188,15 @@ export async function PATCH(
       .where(
         and(
           eq(jobApplications.id, applicationId),
-          eq(jobApplications.jobId, jobId)
-        )
+          eq(jobApplications.jobId, jobId),
+        ),
       )
       .limit(1);
 
     if (existingApplication.length === 0) {
       return NextResponse.json(
         { error: "Application not found or does not belong to this job" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -210,7 +214,7 @@ export async function PATCH(
     console.error("Error updating application status:", error);
     return NextResponse.json(
       { error: "Failed to update application status" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
