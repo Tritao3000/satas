@@ -165,6 +165,12 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
           href: "/menu/applications",
           isCurrentPage: true,
         });
+      } else if (pathname.includes("/menu/registrations")) {
+        breadcrumbs.push({
+          label: "Registrations",
+          href: "/menu/registrations",
+          isCurrentPage: true,
+        });
       } else if (pathname.includes("/menu/profile-setup")) {
         breadcrumbs.push({
           label: "Profile Setup",

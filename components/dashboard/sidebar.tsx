@@ -13,6 +13,7 @@ import {
   PaletteIcon,
   ChevronsUpDown,
   CalendarDays,
+  ReceiptText,
 } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -74,6 +75,13 @@ const navItems: NavItem[] = [
     href: "/menu/applications",
     icon: UserCog,
     description: "Track your job applications",
+    role: "individual",
+  },
+  {
+    name: "My Registrations",
+    href: "/menu/registrations",
+    icon: ReceiptText,
+    description: "View your event registrations",
     role: "individual",
   },
   {
