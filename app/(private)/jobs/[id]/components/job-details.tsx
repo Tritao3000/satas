@@ -32,7 +32,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
-import { cn } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
@@ -53,6 +52,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import ApplyButton from "@/components/jobs/apply-job-button";
 
 interface Job {
   id: string;
@@ -95,7 +95,6 @@ export default function JobDetails({
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
-  const [hasApplied, setHasApplied] = useState(false);
 
   const getBadgeVariant = (type: string) => {
     switch (type) {
@@ -138,63 +137,6 @@ export default function JobDetails({
       setShowDeleteDialog(false);
     }
   };
-
-  const applyForJob = async () => {
-    if (userType === "startup") return;
-
-    setIsApplying(true);
-    try {
-      const response = await fetch("/api/jobs/apply", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ jobId: job.id }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to apply for this job");
-      }
-
-      toast.success("Application submitted successfully", {
-        description: "Your application has been sent to the company.",
-      });
-      setHasApplied(true);
-    } catch (error: any) {
-      if (error.message === "You have already applied for this job") {
-        toast.info("You have already applied for this job");
-        setHasApplied(true);
-      } else {
-        toast.error(error.message || "Error applying for job", {
-          description: "Please try again later.",
-        });
-      }
-    } finally {
-      setIsApplying(false);
-    }
-  };
-
-  useEffect(() => {
-    if (userType === "individual") {
-      const checkApplicationStatus = async () => {
-        try {
-          const response = await fetch("/api/jobs/applications");
-          if (response.ok) {
-            const applications = await response.json();
-            const alreadyApplied = applications.some(
-              (app: any) => app.jobId === job.id
-            );
-            setHasApplied(alreadyApplied);
-          }
-        } catch (error) {
-          console.error("Error checking application status:", error);
-        }
-      };
-
-      checkApplicationStatus();
-    }
-  }, [job.id, userType]);
 
   return (
     <div className="w-full">
@@ -243,29 +185,11 @@ export default function JobDetails({
               </div>
 
               <div className="flex flex-col gap-3 mt-2 md:mt-0">
-                <Button
-                  onClick={applyForJob}
-                  disabled={userType === "startup" || hasApplied || isApplying}
-                  size="lg"
-                  className={cn(
-                    "font-medium",
-                    userType === "startup" || hasApplied
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  )}
-                >
-                  {isApplying ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4 mr-2" />
-                  )}
-                  {userType === "startup"
-                    ? "You own this posting"
-                    : hasApplied
-                      ? "Already Applied"
-                      : "Apply Now"}
-                </Button>
-
+                <ApplyButton
+                  jobId={job.id}
+                  isApplying={isApplying}
+                  setIsApplying={setIsApplying}
+                />
                 <div className="flex justify-end gap-2">
                   {startupData && (
                     <TooltipProvider>
@@ -375,22 +299,11 @@ export default function JobDetails({
                 </div>
               </CardContent>
               <CardFooter className="pt-2 border-t flex justify-end">
-                <Button
-                  onClick={applyForJob}
-                  disabled={userType === "startup" || hasApplied || isApplying}
-                  className="mt-4"
-                >
-                  {isApplying ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="mr-2 h-4 w-4" />
-                  )}
-                  {userType === "startup"
-                    ? "You own this posting"
-                    : hasApplied
-                      ? "Already Applied"
-                      : "Apply Now"}
-                </Button>
+                <ApplyButton
+                  jobId={job.id}
+                  isApplying={isApplying}
+                  setIsApplying={setIsApplying}
+                />
               </CardFooter>
             </Card>
           </div>
@@ -485,7 +398,7 @@ export default function JobDetails({
                       <p>
                         Last updated:{" "}
                         {new Date(
-                          job.updatedAt || job.createdAt
+                          job.updatedAt || job.createdAt,
                         ).toLocaleDateString()}
                       </p>
                     </div>

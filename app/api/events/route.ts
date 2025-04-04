@@ -13,9 +13,6 @@ export async function GET(request: Request) {
     const searchValue = searchParams.get("search");
     const filter = searchParams.get("filter");
 
-    console.log("search value", searchValue);
-    console.log("filter", filter);
-
     const whereConditions = [];
 
     if (startupId) {
