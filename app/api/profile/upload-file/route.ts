@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     if (!file || !bucket || !fileName) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -42,13 +42,14 @@ export async function POST(request: NextRequest) {
       .upload(filePath, buffer, {
         cacheControl: "3600",
         upsert: true,
+        contentType: file.type,
       });
 
     if (uploadError) {
       console.error("Upload error:", uploadError);
       return NextResponse.json(
         { error: `Error uploading file: ${uploadError.message}` },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
     console.error("Server error:", error);
     return NextResponse.json(
       { error: `Server error: ${error.message}` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -98,6 +98,8 @@ export const jobApplications = pgTable("job_applications", {
     .notNull()
     .references(() => individualProfiles.userId, { onDelete: "cascade" }),
   status: text("status").notNull(),
+  coverLetter: text("cover_letter"),
+  cvPath: text("cv_path"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
@@ -128,7 +130,7 @@ export const events = pgTable(
       startupIdIdx: index("events_startup_id_idx").on(table.startupId),
       dateIdx: index("events_date_idx").on(table.date),
     };
-  }
+  },
 );
 
 export const eventRegistrations = pgTable(
@@ -148,15 +150,15 @@ export const eventRegistrations = pgTable(
     return {
       eventIdIdx: index("event_registrations_event_id_idx").on(table.eventId),
       registrantIdIdx: index("event_registrations_registrant_id_idx").on(
-        table.registrantId
+        table.registrantId,
       ),
       // Ensure a user can only register once for an event
       uniqueRegistration: uniqueIndex("event_registrations_unique").on(
         table.eventId,
-        table.registrantId
+        table.registrantId,
       ),
     };
-  }
+  },
 );
 
 export type Event = typeof events;

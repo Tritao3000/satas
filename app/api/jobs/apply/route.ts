@@ -7,16 +7,15 @@ import { randomUUID } from "crypto";
 
 export async function POST(request: Request) {
   try {
-  
-    const body = await request.json();
-    const { jobId } = body;
-
-    console.log("Job ID:", jobId);
+    const formData = await request.formData();
+    const jobId = formData.get("jobId")?.toString();
+    const coverLetter = formData.get("coverLetter")?.toString() || "";
+    const cv = formData.get("cv")?.toString();
 
     if (!jobId) {
       return NextResponse.json(
         { error: "Job ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +29,7 @@ export async function POST(request: Request) {
     if (authError || !user) {
       return NextResponse.json(
         { error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -44,14 +43,14 @@ export async function POST(request: Request) {
     if (userData.length === 0) {
       return NextResponse.json(
         { error: "Failed to fetch user data" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (userData[0].userType !== "individual") {
       return NextResponse.json(
         { error: "Only individuals can apply for jobs" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -62,16 +61,14 @@ export async function POST(request: Request) {
       .where(
         and(
           eq(jobApplications.jobId, jobId),
-          eq(jobApplications.applicantId, user.id)
-        )
+          eq(jobApplications.applicantId, user.id),
+        ),
       );
-
-    console.log("Existing applications:", existingApplications);
 
     if (existingApplications.length > 0) {
       return NextResponse.json(
         { error: "You have already applied for this job" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -83,6 +80,8 @@ export async function POST(request: Request) {
         jobId: jobId,
         applicantId: user.id,
         status: "pending",
+        coverLetter: coverLetter,
+        cvPath: cv,
         createdAt: new Date(),
         updatedAt: new Date(),
       })
@@ -93,7 +92,7 @@ export async function POST(request: Request) {
     console.error("Error applying for job:", error);
     return NextResponse.json(
       { error: "Failed to submit job application" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
