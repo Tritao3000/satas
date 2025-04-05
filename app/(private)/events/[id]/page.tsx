@@ -69,19 +69,19 @@ const getInitial = (name?: string) => {
 };
 
 interface EventPageProps {
-  params: { id: string } | Promise<{ id: string }>;
+  params: Promise<{ id: string }> | undefined;
 }
 
 export default function EventPage({ params }: EventPageProps) {
   const resolvedParams = params instanceof Promise ? use(params) : params;
-  const eventId = resolvedParams.id;
+  const eventId = resolvedParams?.id;
   const {
     event,
     isLoading: eventLoading,
     isError: eventError,
-  } = useEvent(eventId);
+  } = useEvent(eventId || "");
   const { registrations, isLoading: registrationsLoading } =
-    useEventRegistrations(eventId);
+    useEventRegistrations(eventId || "");
   const { userId, userType, isLoading: isProfileLoading } = useProfile();
 
   useEffect(() => {
@@ -116,11 +116,11 @@ export default function EventPage({ params }: EventPageProps) {
       return;
     }
 
-    await register(eventId);
+    await register(eventId || "");
   };
 
   const handleUnregister = async () => {
-    await unregister(eventId);
+    await unregister(eventId || "");
   };
 
   const handleEditEvent = () => {
