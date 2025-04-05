@@ -7,7 +7,7 @@ import { cookies } from "next/headers";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> | { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const awaitedParams = await params;
   const eventId = awaitedParams.id;

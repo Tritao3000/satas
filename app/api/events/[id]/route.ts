@@ -7,7 +7,7 @@ import { eq, and } from "drizzle-orm";
 // GET - Retrieve a specific event
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> | { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const awaitedParams = await params;
@@ -36,7 +36,7 @@ export async function GET(
 // PUT - Update an event
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> | { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const awaitedParams = await params;
@@ -108,7 +108,7 @@ export async function PUT(
 // DELETE - Remove an event
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> | { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const awaitedParams = await params;
