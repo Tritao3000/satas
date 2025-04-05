@@ -8,7 +8,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ReactScan } from "@/components/react-scan";
 
 const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
+  ? `https://${process.env.NEXT_PUBLIC_URL}`
   : "http://localhost:3000";
 
 export const metadata = {
