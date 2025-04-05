@@ -68,12 +68,13 @@ const getInitial = (name?: string) => {
   return name.charAt(0).toUpperCase();
 };
 
-export default function EventPage({
-  params,
-}: {
-  params: Promise<{ id: string }> | { id: string };
-}) {
-  const eventId = params instanceof Promise ? use(params).id : params.id;
+interface EventPageProps {
+  params: { id: string } | Promise<{ id: string }>;
+}
+
+export default function EventPage({ params }: EventPageProps) {
+  const resolvedParams = params instanceof Promise ? use(params) : params;
+  const eventId = resolvedParams.id;
   const {
     event,
     isLoading: eventLoading,
