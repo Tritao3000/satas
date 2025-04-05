@@ -2,8 +2,7 @@
 
 import useSWR from "swr";
 import { useState } from "react";
-import { StartupProfileFormData } from "@/lib/type";
-import { IndividualProfileFormData } from "@/components/profile/edit/individual-profile-form";
+import { StartupProfileFormData, IndividualProfileFormData } from "@/lib/type";
 import { fetcher } from "../fetcher";
 
 export function useProfileData(profileType: "startup" | "individual" | null) {
