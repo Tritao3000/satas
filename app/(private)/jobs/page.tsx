@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense, ReactNode } from "react";
 import { JobCard } from "@/components/jobs/job-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,6 @@ import { useDebounce } from "use-debounce";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { Job } from "@/lib/type";
-import React from "react";
 import Link from "next/link";
 import { useProfile } from "@/lib/hooks/use-profile-content";
 import {
@@ -34,6 +33,14 @@ import {
 } from "@/components/jobs/jobs-page-skeleton";
 
 export default function JobsPage() {
+  return (
+    <Suspense fallback={<JobsPageLoading />}>
+      <JobsContent />
+    </Suspense>
+  );
+}
+
+function JobsContent() {
   const [inputValue, setInputValue] = useState("");
   const isComponentMounted = useRef(true);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -380,14 +387,56 @@ export default function JobsPage() {
   );
 }
 
+function JobsPageLoading() {
+  return (
+    <div className="md:container py-4 md:py-8">
+      <div className="space-y-8">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Jobs</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              Browse through job opportunities from innovative startups
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search jobs by title..."
+              className="pl-9"
+              disabled
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              disabled
+            >
+              <Filter className="h-4 w-4" />
+              Filters
+            </Button>
+          </div>
+        </div>
+
+        <JobsPageSkeleton />
+      </div>
+    </div>
+  );
+}
+
 interface RadioGroupItemProps {
   id: string;
   checked: boolean;
   onChange: () => void;
   label: string;
   description?: string;
-  icon?: React.ReactNode;
-  indicator?: React.ReactNode;
+  icon?: ReactNode;
+  indicator?: ReactNode;
 }
 
 function RadioGroupItem({
