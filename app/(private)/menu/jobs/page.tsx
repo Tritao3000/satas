@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense, ReactNode } from "react";
 import { useJobs } from "@/lib/hooks/use-jobs";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/jobs/job-card";
@@ -11,11 +11,18 @@ import { useRouter } from "next/navigation";
 import { useProfile } from "@/lib/hooks/use-profile-content";
 import { JobsManagementSkeleton } from "@/components/jobs/jobs-management-skeleton";
 import { Input } from "@/components/ui/input";
-import React from "react";
 import { useQueryState } from "nuqs";
 import { useDebounce } from "use-debounce";
 
 export default function JobsManagementPage() {
+  return (
+    <Suspense fallback={<JobsManagementLoading />}>
+      <JobsManagementContent />
+    </Suspense>
+  );
+}
+
+function JobsManagementContent() {
   const router = useRouter();
   const { userType, isLoading: isProfileLoading, userId } = useProfile();
   const isComponentMounted = useRef(true);
@@ -181,6 +188,43 @@ export default function JobsManagementPage() {
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function JobsManagementLoading() {
+  return (
+    <div className="md:container py-4 md:py-8">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold">Manage Job Listings</h1>
+          <p className="text-muted-foreground text-sm">
+            Create and manage your job postings
+          </p>
+        </div>
+        <Button asChild>
+          <Link href="/menu/jobs/create">
+            <PlusIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Create Job</span>
+          </Link>
+        </Button>
+      </div>
+
+      <div className="mb-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search your job listings..."
+            className="pl-9"
+            disabled
+          />
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <JobsManagementSkeleton />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use, useEffect } from "react";
+import { useState, use, useEffect, Suspense } from "react";
 import {
   Card,
   CardContent,
@@ -56,6 +56,18 @@ import {
 import ViewApplication from "@/components/applications/view-application";
 
 export default function JobApplicationsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  return (
+    <Suspense fallback={<ApplicationsLoading />}>
+      <JobApplicationsContent params={params} />
+    </Suspense>
+  );
+}
+
+function JobApplicationsContent({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -602,6 +614,49 @@ export default function JobApplicationsPage({
           </CardContent>
         </Card>
       </Tabs>
+    </div>
+  );
+}
+
+function ApplicationsLoading() {
+  return (
+    <div className="container p-4 space-y-6">
+      <div className="flex items-center gap-2">
+        <div>
+          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-4 w-48" />
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 items-start md:items-center">
+        <Skeleton className="h-10 w-[320px]" />
+        <Skeleton className="h-10 w-[250px]" />
+      </div>
+
+      <Card>
+        <CardContent className="p-4">
+          <div className="grid grid-cols-6 gap-4 mb-4">
+            {[1, 2, 3, 4, 5, 6, 7].map((header) => (
+              <Skeleton key={header} className="h-6 w-full" />
+            ))}
+          </div>
+          {[1, 2, 3, 4].map((row) => (
+            <div key={row} className="grid grid-cols-6 gap-4 py-4 border-t">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <Skeleton className="h-6 w-28" />
+              </div>
+              <Skeleton className="h-6 w-24" />
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-6 w-20" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+              <div className="flex justify-end">
+                <Skeleton className="h-8 w-[130px]" />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { BreadcrumbContextType, BreadcrumbItem } from "../type";
 import { useEvent } from "../hooks/use-events";
 import { useJob } from "../hooks/use-jobs";
