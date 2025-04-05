@@ -14,9 +14,9 @@ import { EditJobSkeleton } from "@/components/jobs/edit-job-skeleton";
 export default function EditJobPage({
   params,
 }: {
-  params: Promise<{ id: string }> | { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const jobId = params instanceof Promise ? use(params).id : params.id;
+  const jobId = use(params).id;
   const router = useRouter();
   const { job, isLoading: isJobLoading, isError } = useJob(jobId);
   const { userId, userType, isLoading: isProfileLoading } = useProfile();

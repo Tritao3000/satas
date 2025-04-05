@@ -58,7 +58,7 @@ import ViewApplication from "@/components/applications/view-application";
 export default function JobApplicationsPage({
   params,
 }: {
-  params: Promise<{ id: string }> | { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -82,7 +82,7 @@ export default function JobApplicationsPage({
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  const jobId = params instanceof Promise ? use(params).id : params.id;
+  const jobId = use(params).id;
 
   useEffect(() => {
     if (debouncedSearchTerm === initialSearch && activeTab === initialStatus) {
@@ -243,7 +243,8 @@ export default function JobApplicationsPage({
       <Tabs
         defaultValue="all"
         value={activeTab}
-        onValueChange={handleTabChange}>
+        onValueChange={handleTabChange}
+      >
         <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 items-start md:items-center">
           <TabsList>
             <TabsTrigger value="all">
@@ -292,7 +293,8 @@ export default function JobApplicationsPage({
               {activeTab !== "all" && (
                 <Badge
                   variant="outline"
-                  className="capitalize flex items-center gap-1">
+                  className="capitalize flex items-center gap-1"
+                >
                   {activeTab === "pending" && <Clock className="h-3 w-3" />}
                   {activeTab === "accepted" && <Check className="h-3 w-3" />}
                   {activeTab === "rejected" && <X className="h-3 w-3" />}
@@ -311,7 +313,8 @@ export default function JobApplicationsPage({
               size="sm"
               onClick={clearFilters}
               className="h-7 text-xs"
-              disabled={isLoading}>
+              disabled={isLoading}
+            >
               Clear filters
             </Button>
           </div>
@@ -338,7 +341,8 @@ export default function JobApplicationsPage({
                 {[1, 2, 3, 4].map((row) => (
                   <div
                     key={row}
-                    className="grid grid-cols-6 gap-4 py-4 border-t">
+                    className="grid grid-cols-6 gap-4 py-4 border-t"
+                  >
                     <div className="flex items-center gap-2">
                       <Skeleton className="h-10 w-10 rounded-full" />
                       <Skeleton className="h-6 w-28" />
@@ -367,7 +371,8 @@ export default function JobApplicationsPage({
                     <Button
                       variant="outline"
                       onClick={clearFilters}
-                      className="mt-4">
+                      className="mt-4"
+                    >
                       Clear Filters
                     </Button>
                   </>
@@ -431,7 +436,8 @@ export default function JobApplicationsPage({
                                 <div className="relative group">
                                   <Link
                                     href={`/user/${application.applicant?.id}`}
-                                    className="block relative">
+                                    className="block relative"
+                                  >
                                     <Avatar className="h-11 w-11 border-2 border-background shadow-sm cursor-pointer group-hover:ring-2 group-hover:ring-primary/30 group-hover:scale-105 transition-all duration-200">
                                       {application.applicant?.image && (
                                         <AvatarImage
@@ -459,7 +465,8 @@ export default function JobApplicationsPage({
                               <TooltipContent
                                 side="top"
                                 align="center"
-                                className="font-medium">
+                                className="font-medium"
+                              >
                                 <p>{application.applicant?.name}</p>
                                 <p className="text-xs text-muted-foreground">
                                   Click to view profile
@@ -487,7 +494,8 @@ export default function JobApplicationsPage({
                       <TableCell>
                         <a
                           href={`mailto:${application.applicant?.email}`}
-                          className="flex items-center gap-1 text-primary hover:underline">
+                          className="flex items-center gap-1 text-primary hover:underline"
+                        >
                           <Mail className="h-3.5 w-3.5" />
                           <span>{application.applicant?.email}</span>
                         </a>
@@ -506,7 +514,8 @@ export default function JobApplicationsPage({
                                 ? "default"
                                 : "destructive"
                           }
-                          className="flex w-fit items-center gap-1">
+                          className="flex w-fit items-center gap-1"
+                        >
                           {application.status === "pending" && (
                             <Clock className="h-3 w-3" />
                           )}
@@ -527,7 +536,8 @@ export default function JobApplicationsPage({
                             variant="ghost"
                             size="sm"
                             disabled
-                            className="flex items-center gap-1 min-w-[130px] justify-between">
+                            className="flex items-center gap-1 min-w-[130px] justify-between"
+                          >
                             <span>Updating...</span>
                             <Loader2 className="h-4 w-4 animate-spin" />
                           </Button>
@@ -537,7 +547,8 @@ export default function JobApplicationsPage({
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="flex items-center gap-1 min-w-[130px] justify-between">
+                                className="flex items-center gap-1 min-w-[130px] justify-between"
+                              >
                                 <span>Update Status</span>
                                 <ChevronDown className="h-4 w-4" />
                               </Button>
@@ -548,7 +559,8 @@ export default function JobApplicationsPage({
                                 onClick={() =>
                                   handleUpdateStatus(application.id, "pending")
                                 }
-                                className="flex items-center gap-2">
+                                className="flex items-center gap-2"
+                              >
                                 <Clock className="h-4 w-4" />
                                 Mark as Pending
                               </DropdownMenuItem>
@@ -557,7 +569,8 @@ export default function JobApplicationsPage({
                                 onClick={() =>
                                   handleUpdateStatus(application.id, "accepted")
                                 }
-                                className="flex items-center gap-2 text-green-600">
+                                className="flex items-center gap-2 text-green-600"
+                              >
                                 <Check className="h-4 w-4" />
                                 Accept Application
                               </DropdownMenuItem>
@@ -566,7 +579,8 @@ export default function JobApplicationsPage({
                                 onClick={() =>
                                   handleUpdateStatus(application.id, "rejected")
                                 }
-                                className="flex items-center gap-2 text-destructive">
+                                className="flex items-center gap-2 text-destructive"
+                              >
                                 <X className="h-4 w-4" />
                                 Reject Application
                               </DropdownMenuItem>

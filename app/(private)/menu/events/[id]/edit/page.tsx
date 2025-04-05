@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/button";
 export default function EditEventPage({
   params,
 }: {
-  params: Promise<{ id: string }> | { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const eventId = params instanceof Promise ? use(params).id : params.id;
+  const eventId = use(params).id;
   const router = useRouter();
   const { event, canEdit, isLoading, isError } = useEventOwnership(eventId);
 
