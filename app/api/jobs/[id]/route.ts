@@ -7,7 +7,7 @@ import { eq, and } from "drizzle-orm";
 // GET - Retrieve a specific job
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> | { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const awaitedParams = await params;
