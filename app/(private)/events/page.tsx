@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +39,14 @@ import useSWR from "swr";
 import { Event } from "@/lib/type";
 
 export default function EventsPage() {
+  return (
+    <Suspense fallback={<EventsPageSkeleton />}>
+      <EventsContent />
+    </Suspense>
+  );
+}
+
+function EventsContent() {
   const { myRegistrations, isLoading: isMyRegistrationsLoading } =
     useMyEventRegistrations();
 
@@ -357,7 +365,7 @@ function RadioGroupItem({
         "relative flex items-start p-3 rounded-md transition-all cursor-pointer",
         checked
           ? "bg-primary/5 border-primary/10 border"
-          : "border border-transparent hover:bg-accent/50",
+          : "border border-transparent hover:bg-accent/50"
       )}
       onClick={onChange}
       onKeyDown={(e) => {
@@ -403,9 +411,57 @@ function RadioGroupItem({
               "h-4 w-4 rounded-full border transition-all flex items-center justify-center",
               checked
                 ? "border-primary border-[5px]"
-                : "border-muted-foreground/30",
+                : "border-muted-foreground/30"
             )}
           />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EventsPageSkeleton() {
+  return (
+    <div className="md:container py-4 md:py-8">
+      <div className="space-y-8">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Community Events
+            </h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              Discover networking events, workshops, and opportunities
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search events..."
+              className="pl-9"
+              disabled
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              disabled
+            >
+              <Filter className="h-4 w-4" />
+              Filters
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <EventCardSkeleton key={index} />
+          ))}
         </div>
       </div>
     </div>
