@@ -14,6 +14,7 @@ import {
   Pencil,
 } from "lucide-react";
 import { IndividualProfileProps } from "@/lib/type";
+import { ensureHttps } from "@/lib/utils";
 
 export function IndividualProfile({ profile }: IndividualProfileProps) {
   return (
@@ -98,7 +99,7 @@ export function IndividualProfile({ profile }: IndividualProfileProps) {
                   {profile.website && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={profile.website}
+                        href={ensureHttps(profile.website)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center"
@@ -111,7 +112,7 @@ export function IndividualProfile({ profile }: IndividualProfileProps) {
                   {profile.linkedin && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={profile.linkedin}
+                        href={ensureHttps(profile.linkedin)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center"
@@ -183,7 +184,7 @@ export function IndividualProfile({ profile }: IndividualProfileProps) {
                   <div className="pt-4 space-y-2">
                     {profile.github && (
                       <a
-                        href={profile.github}
+                        href={ensureHttps(profile.github)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center text-sm hover:text-primary"
@@ -194,7 +195,7 @@ export function IndividualProfile({ profile }: IndividualProfileProps) {
                     )}
                     {profile.twitter && (
                       <a
-                        href={profile.twitter}
+                        href={ensureHttps(profile.twitter)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center text-sm hover:text-primary"

@@ -25,6 +25,7 @@ import useSWR, { mutate } from "swr";
 import { useEffect } from "react";
 import { useProfile } from "@/lib/hooks/use-profile-content";
 import { ProfileSkeleton } from "@/components/profile/profile-skeleton";
+import { ensureHttps } from "@/lib/utils";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -157,7 +158,7 @@ export default function UserProfilePage() {
                   {profile.website && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={profile.website}
+                        href={ensureHttps(profile.website)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center"
@@ -170,7 +171,7 @@ export default function UserProfilePage() {
                   {profile.linkedin && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={profile.linkedin}
+                        href={ensureHttps(profile.linkedin)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center"
@@ -242,7 +243,7 @@ export default function UserProfilePage() {
                   <div className="pt-4 space-y-2">
                     {profile.github && (
                       <a
-                        href={profile.github}
+                        href={ensureHttps(profile.github)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center text-sm hover:text-primary"
@@ -253,7 +254,7 @@ export default function UserProfilePage() {
                     )}
                     {profile.twitter && (
                       <a
-                        href={profile.twitter}
+                        href={ensureHttps(profile.twitter)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center text-sm hover:text-primary"

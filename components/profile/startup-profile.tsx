@@ -13,6 +13,7 @@ import {
   Pencil,
 } from "lucide-react";
 import { StartupProfileProps } from "@/lib/type";
+import { ensureHttps } from "@/lib/utils";
 
 export function StartupProfile({ profile }: StartupProfileProps) {
   return (
@@ -97,7 +98,7 @@ export function StartupProfile({ profile }: StartupProfileProps) {
                   {profile.website && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={profile.website}
+                        href={ensureHttps(profile.website)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center"
@@ -110,7 +111,7 @@ export function StartupProfile({ profile }: StartupProfileProps) {
                   {profile.linkedin && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={profile.linkedin}
+                        href={ensureHttps(profile.linkedin)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center"

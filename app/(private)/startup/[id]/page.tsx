@@ -1,6 +1,5 @@
 "use client";
 
-
 import { notFound, useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,6 +32,7 @@ import { JobCardSkeleton } from "@/components/jobs/job-card-skeleton";
 import { EventCardSkeleton } from "@/components/events/event-card-skeleton";
 import { useProfile } from "@/lib/hooks/use-profile-content";
 import { ProfileSkeleton } from "@/components/profile/profile-skeleton";
+import { ensureHttps } from "@/lib/utils";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -184,7 +184,7 @@ export default function StartupProfilePage() {
                   {profile.website && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={profile.website}
+                        href={ensureHttps(profile.website)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center"
@@ -197,7 +197,7 @@ export default function StartupProfilePage() {
                   {profile.linkedin && (
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={profile.linkedin}
+                        href={ensureHttps(profile.linkedin)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center"
@@ -295,12 +295,17 @@ export default function StartupProfilePage() {
               ))}
             </div>
           ) : startupJobsError || !startupJobs || startupJobs.length === 0 ? (
-            <p className="text-muted-foreground italic">No open positions available</p>
+            <p className="text-muted-foreground italic">
+              No open positions available
+            </p>
           ) : (
             <Carousel className="w-full">
               <CarouselContent>
                 {startupJobs.map((job: any) => (
-                  <CarouselItem key={job.id} className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem
+                    key={job.id}
+                    className="md:basis-1/2 lg:basis-1/3"
+                  >
                     <JobCard
                       job={job}
                       allowEdit={isOwnProfile}
@@ -326,13 +331,18 @@ export default function StartupProfilePage() {
                 <EventCardSkeleton key={i} />
               ))}
             </div>
-          ) : startupEventsError || !startupEvents || startupEvents.length === 0 ? (
+          ) : startupEventsError ||
+            !startupEvents ||
+            startupEvents.length === 0 ? (
             <p className="text-muted-foreground italic">No upcoming events</p>
           ) : (
             <Carousel className="w-full">
               <CarouselContent>
                 {startupEvents.map((event: any) => (
-                  <CarouselItem key={event.id} className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem
+                    key={event.id}
+                    className="md:basis-1/2 lg:basis-1/3"
+                  >
                     <EventCard
                       event={event}
                       allowEdit={isOwnProfile}

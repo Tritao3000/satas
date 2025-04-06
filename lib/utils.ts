@@ -14,3 +14,13 @@ export function formatDate(dateString: string): string {
     year: "numeric",
   });
 }
+
+export function ensureHttps(url: string | null | undefined): string {
+  if (!url) return "";
+
+  if (url.match(/^https?:\/\//i)) {
+    return url;
+  }
+
+  return `https://${url}`;
+}
