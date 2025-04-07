@@ -1,5 +1,6 @@
 import { GalleryVerticalEnd } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 export default async function AuthLayout({
   children,
@@ -11,10 +12,7 @@ export default async function AuthLayout({
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="/" className="flex items-center gap-2 font-medium">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GalleryVerticalEnd className="size-4" />
-            </div>
-            <h1 className="font-bold tracking-tight">SATAS</h1>
+            <Image src="/images/logo.png" alt="Logo" width={60} height={60} />
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
