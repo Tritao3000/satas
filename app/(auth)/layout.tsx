@@ -31,7 +31,7 @@ export default async function AuthLayout({
         <div className="relative z-10 flex h-full flex-col justify-center p-12">
           <div className="w-full max-w-md">
             <Badge variant="outline" className="mb-4">
-              Social Aid for Talent Acquisition Startups
+              Start AT A Startup
             </Badge>
             <h2 className="text-3xl font-bold mb-4">
               Connect with the best talent and startups

@@ -14,7 +14,7 @@ const defaultUrl = process.env.NEXT_PUBLIC_URL
 export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "Satas",
-  description: "Social Aid for Talent Acquisition Startups",
+  description: "Start AT A Startup",
 };
 
 const geistSans = Geist({
