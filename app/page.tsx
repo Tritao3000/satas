@@ -11,10 +11,12 @@ import { Faq as FAQ } from "@/components/landing-page/faq";
 import { Team } from "@/components/landing-page/team";
 import { Cta as CTA } from "@/components/landing-page/cta";
 import { Footer } from "@/components/landing-page/footer";
+import { Navbar } from "@/components/landing-page/navbar";
 
 export default async function Home() {
   return (
     <>
+      <Navbar />
       <Hero
         images={{
           first: "https://shadcnblocks.com/images/block/avatar-1.webp",
