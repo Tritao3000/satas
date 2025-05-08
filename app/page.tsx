@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect } from "react";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button"; // Assuming button path
 import { Zap, BarChart, CheckCircle } from "lucide-react"; // Example icons
 import { Hero } from "@/components/landing-page/hero";
@@ -13,7 +17,25 @@ import { Cta as CTA } from "@/components/landing-page/cta";
 import { Footer } from "@/components/landing-page/footer";
 import { Navbar } from "@/components/landing-page/navbar";
 
-export default async function Home() {
+export default function Home() {
+  const { setTheme, resolvedTheme, theme: activeTheme } = useTheme();
+
+  useEffect(() => {
+    const originalTheme = activeTheme || resolvedTheme;
+    setTheme("light");
+
+    return () => {
+      // Attempt to restore the original theme when unmounting
+      // This might need adjustment based on desired UX
+      if (originalTheme && originalTheme !== "light") {
+        setTheme(originalTheme);
+      } else if (!originalTheme && resolvedTheme !== "light") {
+        // If no active theme was set, but resolved was dark, set it back
+        setTheme(resolvedTheme || "system"); // or just 'system' or 'dark'
+      }
+    };
+  }, [setTheme, resolvedTheme, activeTheme]);
+
   return (
     <>
       <div className="max-w-7xl container ">
