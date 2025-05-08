@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "../ui/badge";
 
 interface TeamMember {
   id: string;
@@ -22,65 +23,65 @@ const Team = ({
     {
       id: "person-1",
       name: "Name",
-      role: "Role",
+      role: "Head of Marketing  ",
       avatar: "https://shadcnblocks.com/images/block/avatar-1.webp",
     },
     {
       id: "person-2",
       name: "Name",
-      role: "Role",
+      role: "Head of Marketing",
       avatar: "https://shadcnblocks.com/images/block/avatar-2.webp",
     },
     {
       id: "person-3",
       name: "Name",
-      role: "Role",
+      role: "Head of Marketing",
       avatar: "https://shadcnblocks.com/images/block/avatar-3.webp",
     },
     {
       id: "person-4",
       name: "Name",
-      role: "Role",
+      role: "Head of Marketing",
       avatar: "https://shadcnblocks.com/images/block/avatar-4.webp",
     },
     {
       id: "person-5",
       name: "Name",
-      role: "Role",
+      role: "Head of Marketing",
       avatar: "https://shadcnblocks.com/images/block/avatar-5.webp",
     },
     {
       id: "person-6",
       name: "Name",
-      role: "Role",
+      role: "Head of Marketing",
       avatar: "https://shadcnblocks.com/images/block/avatar-6.webp",
     },
     {
       id: "person-7",
       name: "Name",
-      role: "Role",
+      role: "Head of Marketing",
       avatar: "https://shadcnblocks.com/images/block/avatar-7.webp",
     },
     {
       id: "person-8",
       name: "Name",
-      role: "Role",
+      role: "Head of Marketing",
       avatar: "https://shadcnblocks.com/images/block/avatar-8.webp",
     },
   ],
 }: TeamProps) => {
   return (
-    <section className="py-32">
-      <div className="container flex flex-col items-center text-center">
-        <p className="semibold">{subheading}</p>
-        <h2 className="my-6 text-2xl font-bold text-pretty lg:text-4xl">
+    <section className="py-20">
+      <div className=" flex flex-col ">
+        <Badge className="semibold w-fit">{subheading}</Badge>
+        <h2 className="my-6 text-2xl font-bold text-pretty md:text-4xl">
           {heading}
         </h2>
-        <p className="mb-8 max-w-3xl text-muted-foreground lg:text-xl">
+        <p className="mb-8 max-w-3xl text-muted-foreground text-lg font-medium">
           {description}
         </p>
       </div>
-      <div className="container mt-16 grid gap-x-8 gap-y-16 md:grid-cols-2 lg:grid-cols-4">
+      <div className=" mt-12 grid gap-x-8 gap-y-16 grid-cols-2 lg:grid-cols-4">
         {members.map((person) => (
           <div key={person.id} className="flex flex-col items-center">
             <Avatar className="mb-4 size-20 border md:mb-5 lg:size-24">

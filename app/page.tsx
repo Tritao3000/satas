@@ -16,25 +16,28 @@ import { Navbar } from "@/components/landing-page/navbar";
 export default async function Home() {
   return (
     <>
-      <Navbar />
-      <Hero
-        images={{
-          first: "https://shadcnblocks.com/images/block/avatar-1.webp",
-          second: "https://shadcnblocks.com/images/block/avatar-2.webp",
-          third: "https://shadcnblocks.com/images/block/avatar-3.webp",
-          fourth: "https://shadcnblocks.com/images/block/avatar-4.webp",
-        }}
-      />
-      <Logos />
-      <Feature {...({} as any)} />
-      <Stats />
-      <CaseStudy />
-      <ForWho />
-      <Roadmap {...({} as any)} />
-      <FAQ />
-      <Team />
-      <CTA {...({} as any)} />
-      <Footer />
+      <div className="max-w-7xl container ">
+        <Navbar />
+        <Hero
+          images={{
+            first: "https://shadcnblocks.com/images/block/avatar-1.webp",
+            second: "https://shadcnblocks.com/images/block/avatar-2.webp",
+            third: "https://shadcnblocks.com/images/block/avatar-3.webp",
+            fourth: "https://shadcnblocks.com/images/block/avatar-4.webp",
+          }}
+        />
+        <Logos />
+        <Feature {...({} as any)} />
+        <Stats />
+        {/* <CaseStudy /> */}
+        <ForWho />
+        <Roadmap {...({} as any)} />
+
+        <Team />
+        <CTA {...({} as any)} />
+        <FAQ />
+        <Footer />
+      </div>
     </>
   );
 }
