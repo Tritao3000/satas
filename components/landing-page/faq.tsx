@@ -17,28 +17,33 @@ interface FaqProps {
 }
 
 const Faq = ({
-  heading = "Frequently asked questions",
-  description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Elig doloremque mollitia fugiat omnis!",
+  heading = "Frequently Asked Questions",
+  description = "Find answers to common questions about using SATAS.",
   items = [
     {
-      question: "What is a FAQ?",
+      question: "What is SATAS?",
       answer:
-        "A FAQ is a list of frequently asked questions and answers on a particular topic.",
+        "SATAS (Start At A Startup) is a platform designed to connect innovative startups with talented students for job opportunities, internships, and events.",
     },
     {
-      question: "What is the purpose of a FAQ?",
+      question: "How does SATAS help startups?",
       answer:
-        "The purpose of a FAQ is to provide answers to common questions and help users find the information they need quickly and easily.",
+        "We provide startups with access to a diverse pool of student talent, easy job posting tools, application management, and event hosting capabilities to find the right candidates.",
     },
     {
-      question: "How do I create a FAQ?",
+      question: "How does SATAS help students?",
       answer:
-        "To create a FAQ, you need to compile a list of common questions and answers on a particular topic and organize them in a clear and easy-to-navigate format.",
+        "Students can discover exciting job and internship opportunities at startups, build their professional network through events, and find companies that align with their career goals.",
     },
     {
-      question: "What are the benefits of a FAQ?",
+      question: "Is SATAS free to use?",
       answer:
-        "The benefits of a FAQ include providing quick and easy access to information, reducing the number of support requests, and improving the overall user experience.",
+        "Yes, both for students and startups. We are currently in beta and we are offering a free plan for both students and startups.",
+    },
+    {
+      question: "How do I join an event?",
+      answer:
+        "Browse the events section on the platform. You can filter by type (career fair, workshop, etc.) and register directly for events that interest you.",
     },
   ],
 }: FaqProps) => {

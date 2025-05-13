@@ -16,6 +16,7 @@ import { Team } from "@/components/landing-page/team";
 import { Cta as CTA } from "@/components/landing-page/cta";
 import { Footer } from "@/components/landing-page/footer";
 import { Navbar } from "@/components/landing-page/navbar";
+import { ScrollToTopButton } from "@/components/landing-page/scroll-to-top-button";
 
 export default function Home() {
   const { setTheme, resolvedTheme, theme: activeTheme } = useTheme();
@@ -49,17 +50,30 @@ export default function Home() {
           }}
         />
         <Logos />
-        <Feature {...({} as any)} />
-        <Stats />
+        <section id="features">
+          <Feature {...({} as any)} />
+        </section>
+        <section id="stats">
+          <Stats />
+        </section>
         {/* <CaseStudy /> */}
-        <ForWho />
-        <Roadmap {...({} as any)} />
-
-        <Team />
+        <section id="for-who">
+          <ForWho />
+        </section>
+        <section id="roadmap">
+          <Roadmap {...({} as any)} />
+        </section>
+        <section id="team">
+          <Team />
+        </section>
+        {/* CTA might not need an ID unless linked, e.g., id="contact" or id="signup" */}
         <CTA {...({} as any)} />
-        <FAQ />
+        <section id="faq">
+          <FAQ />
+        </section>
         <Footer />
       </div>
+      <ScrollToTopButton />
     </>
   );
 }

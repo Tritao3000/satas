@@ -15,32 +15,32 @@ interface StatsProps {
 }
 
 const Stats = ({
-  heading = "Platform performance insights",
-  description = "Ensuring stability and scalability for all users",
+  heading = "Impact by the Numbers",
+  description = "See how SATAS is fostering growth and opportunity.",
   link = {
-    text: "Read the full impact report",
-    url: "https://www.shadcnblocks.com",
+    text: "Learn more about our mission",
+    url: "#",
   },
   stats = [
     {
       id: "stat-1",
-      value: "250%+",
-      label: "average growth in user engagement",
+      value: "1000+",
+      label: "startups actively hiring",
     },
     {
       id: "stat-2",
-      value: "$2.5m",
-      label: "annual savings per enterprise partner",
+      value: "5000+",
+      label: "students finding opportunities",
     },
     {
       id: "stat-3",
-      value: "200+",
-      label: "integrations with top industry platforms",
+      value: "50+",
+      label: "events hosted connecting talent",
     },
     {
       id: "stat-4",
-      value: "99.9%",
-      label: "customer satisfaction over the last year",
+      value: "95%",
+      label: "satisfaction rate from users",
     },
   ],
 }: StatsProps) => {

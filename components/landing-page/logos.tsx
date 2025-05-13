@@ -26,7 +26,7 @@ interface Logos3Props {
 }
 
 const Logos3 = ({
-  heading = "Trusted by these companies",
+  heading = "Powering Connections for Startups & Students",
   logos = [
     {
       id: "logo-1",

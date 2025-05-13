@@ -16,57 +16,33 @@ interface TeamProps {
 }
 
 const Team = ({
-  heading = "Meet our team",
-  subheading = "We're hiring",
-  description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Elig doloremque mollitia fugiat omnis! Porro facilis quo animi consequatur. Explicabo.",
+  heading = "Meet the Team Behind SATAS",
+  subheading = "We are hiring!",
+  description = "We are a dedicated group of students and alumni focused on empowering students and startups to achieve their goals. Get to know the people making SATAS happen.",
   members = [
     {
       id: "person-1",
-      name: "Name",
-      role: "Head of Marketing  ",
+      name: "Lourenço  Mourão",
+      role: "Role goes here",
       avatar: "https://shadcnblocks.com/images/block/avatar-1.webp",
     },
     {
       id: "person-2",
-      name: "Name",
-      role: "Head of Marketing",
+      name: "Tiago Pereira",
+      role: "Role goes here",
       avatar: "https://shadcnblocks.com/images/block/avatar-2.webp",
     },
     {
       id: "person-3",
-      name: "Name",
-      role: "Head of Marketing",
+      name: "Carolina Lee",
+      role: "Role goes here",
       avatar: "https://shadcnblocks.com/images/block/avatar-3.webp",
     },
     {
       id: "person-4",
-      name: "Name",
-      role: "Head of Marketing",
+      name: "João Sousa",
+      role: "Role goes here",
       avatar: "https://shadcnblocks.com/images/block/avatar-4.webp",
-    },
-    {
-      id: "person-5",
-      name: "Name",
-      role: "Head of Marketing",
-      avatar: "https://shadcnblocks.com/images/block/avatar-5.webp",
-    },
-    {
-      id: "person-6",
-      name: "Name",
-      role: "Head of Marketing",
-      avatar: "https://shadcnblocks.com/images/block/avatar-6.webp",
-    },
-    {
-      id: "person-7",
-      name: "Name",
-      role: "Head of Marketing",
-      avatar: "https://shadcnblocks.com/images/block/avatar-7.webp",
-    },
-    {
-      id: "person-8",
-      name: "Name",
-      role: "Head of Marketing",
-      avatar: "https://shadcnblocks.com/images/block/avatar-8.webp",
     },
   ],
 }: TeamProps) => {

@@ -30,17 +30,17 @@ interface HeroProps {
 }
 
 const Hero = ({
-  heading = "Blocks built with Shadcn & Tailwind",
-  description = "Finely crafted components built with React, Tailwind and Shadcn UI. Developers can copy and paste these blocks directly into their project.",
+  heading = "Where Startups Meet Students",
+  description = "SATAS is the premier platform bridging the gap between innovative startups seeking talent and ambitious students looking for opportunities. Find jobs, post openings, and discover events.",
   button = {
-    text: "Get Started",
-    url: "#",
+    text: "Explore Opportunities",
+    url: "#features",
   },
   testimonial = {
-    quote: "Focused strategy, swift delivery",
-    author: "John Doe",
-    role: "CEO",
-    company: "Company",
+    quote: "SATAS transformed how we find interns!",
+    author: "Jane Smith",
+    role: "HR Manager",
+    company: "Innovatech",
     avatars: [
       {
         image: "https://shadcnblocks.com/images/block/avatar-1.webp",

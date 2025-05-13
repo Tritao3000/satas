@@ -27,40 +27,36 @@ interface FooterProps {
 const Footer = ({
   logo = {
     src: logoBlack,
-    alt: "blocks for shadcn/ui",
-    title: "Shadcnblocks.com",
-    url: "https://www.shadcnblocks.com",
+    alt: "Satas Logo",
+    title: "Satas",
+    url: "https://www.satas.app",
   },
-  tagline = "Components made easy.",
+  tagline = "Connect startups with students.",
   menuItems = [
     {
-      title: "Product",
+      title: "Sections",
       links: [
-        { text: "Overview", url: "#" },
-        { text: "Pricing", url: "#" },
-        { text: "Marketplace", url: "#" },
-        { text: "Features", url: "#" },
-        { text: "Integrations", url: "#" },
-        { text: "Pricing", url: "#" },
+        { text: "Features", url: "#features" },
+        { text: "Stats", url: "#stats" },
+        { text: "Use Cases", url: "#for-who" },
+        { text: "Roadmap", url: "#roadmap" },
+        { text: "Team", url: "#team" },
+        { text: "FAQ", url: "#faq" },
       ],
     },
     {
       title: "Company",
       links: [
-        { text: "About", url: "#" },
-        { text: "Team", url: "#" },
-        { text: "Blog", url: "#" },
-        { text: "Careers", url: "#" },
+        { text: "About", url: "#team" },
+        { text: "Blog", url: "/blog" },
         { text: "Contact", url: "#" },
-        { text: "Privacy", url: "#" },
       ],
     },
     {
-      title: "Resources",
+      title: "Legal",
       links: [
-        { text: "Help", url: "#" },
-        { text: "Sales", url: "#" },
-        { text: "Advertise", url: "#" },
+        { text: "Terms", url: "#" },
+        { text: "Privacy", url: "#" },
       ],
     },
     {
@@ -69,10 +65,11 @@ const Footer = ({
         { text: "Twitter", url: "#" },
         { text: "Instagram", url: "#" },
         { text: "LinkedIn", url: "#" },
+        { text: "Facebook", url: "#" },
       ],
     },
   ],
-  copyright = "© 2024 Shadcnblocks.com. All rights reserved.",
+  copyright = "© 2025 Satas. All rights reserved.",
   bottomLinks = [
     { text: "Terms and Conditions", url: "#" },
     { text: "Privacy Policy", url: "#" },
@@ -84,7 +81,7 @@ const Footer = ({
         <div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
           <div className="col-span-2 mb-8 lg:mb-0">
             <div className="flex items-center gap-2 lg:justify-start">
-              <a href="https://shadcnblocks.com">
+              <a href="https://www.satas.app">
                 <Image
                   src={logo.src}
                   alt={logo.alt}

@@ -16,16 +16,16 @@ interface CtaProps {
 }
 
 const Cta = ({
-  heading = "Call to Action",
-  description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Elig doloremque mollitia fugiat omnis!",
+  heading = "Ready to Start at a Startup?",
+  description = "Join the SATAS community today. Whether you're looking for talent or opportunity, your journey starts here.",
   buttons = {
     primary: {
-      text: "Get Started",
-      url: "https://www.shadcnblocks.com",
+      text: "Sign Up Now",
+      url: "/sign-up",
     },
     secondary: {
-      text: "Learn More",
-      url: "https://www.shadcnblocks.com",
+      text: "Post a Job / Event",
+      url: "#",
     },
   },
 }: CtaProps) => {

@@ -13,23 +13,23 @@ interface ForWhoProps {
 }
 
 const ForWho = ({
-  heading = "A better way to build websites",
-  description = "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Minima doloribus illum, labore quis facilis molestias!",
+  heading = "Built for Connection",
+  description = "Whether you're a startup seeking fresh talent or a student ready to make an impact, SATAS is your platform.",
   features = [
     {
       id: "feature-1",
-      title: "Built for artists and designers",
-      subtitle: "FOR DESIGNERS",
+      title: "Find Your Next Innovator",
+      subtitle: "FOR STARTUPS",
       description:
-        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Minima doloribus illum, labore quis facilis molestias!",
+        "Access a pool of motivated students eager to contribute. Post jobs, browse profiles, and manage applications easily.",
       image: "https://shadcnblocks.com/images/block/placeholder-1.svg",
     },
     {
       id: "feature-2",
-      title: "Built for coders and developers",
-      subtitle: "FOR DEVELOPERS",
+      title: "Launch Your Startup Career",
+      subtitle: "FOR STUDENTS",
       description:
-        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Minima doloribus illum, labore quis facilis molestias!",
+        "Discover exciting roles at dynamic startups. Attend events, build your network, and find your perfect match.",
       image: "https://shadcnblocks.com/images/block/placeholder-4.svg",
     },
   ],

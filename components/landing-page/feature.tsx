@@ -14,30 +14,30 @@ interface FeatureProps {
 }
 
 const Feature = ({
-  heading = "Blocks built with Shadcn & Tailwind",
-  description = "Finely crafted components built with React, Tailwind and Shadcn UI. Developers can copy and paste these blocks directly into their project.",
+  heading = "Discover What SATAS Offers",
+  description = "From finding the perfect candidate to landing your dream internship, SATAS provides the tools and connections you need.",
   feature1 = {
-    title: "UI/UX Design",
+    title: "Targeted Job Board",
     description:
-      "Creating intuitive user experiences with modern interface design principles and user-centered methodologies.",
+      "Startups post opportunities, students find relevant roles. Filter by skill, location, and industry.",
     image: "https://shadcnblocks.com/images/block/placeholder-1.svg",
   },
   feature2 = {
-    title: "Responsive Development",
+    title: "Engaging Events",
     description:
-      "Building websites that look and function perfectly across all devices and screen sizes.",
+      "Connect through virtual and in-person career fairs, workshops, and networking sessions.",
     image: "https://shadcnblocks.com/images/block/placeholder-2.svg",
   },
   feature3 = {
-    title: "Brand Integration",
+    title: "Startup Discovery",
     description:
-      "Seamlessly incorporating your brand identity into every aspect of your website's design.",
+      "Students explore innovative companies, learn about their missions, and find the right fit.",
     image: "https://shadcnblocks.com/images/block/placeholder-1.svg",
   },
   feature4 = {
-    title: "Performance Optimization",
+    title: "Simplified Recruitment",
     description:
-      "Ensuring fast loading times and smooth performance through optimized code and assets.",
+      "Startups streamline hiring with easy application management and direct student outreach.",
     image: "https://shadcnblocks.com/images/block/placeholder-2.svg",
   },
 }: FeatureProps) => {
